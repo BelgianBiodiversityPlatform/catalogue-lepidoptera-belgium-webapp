@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 
 .DS_Store
+website/settings_local.py
 
 ### Python template
 # Byte-compiled / optimized / DLL files
@@ -108,3 +109,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+.idea/
