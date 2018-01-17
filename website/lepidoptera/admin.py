@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Family, Species, Province, TimePeriod, SpeciesPresence
 
+admin.site.site_header = 'Catalogue of the Lepidoptera of Belgium'
 
 @admin.register(Family)
 class FamilyAdmin(admin.ModelAdmin):
