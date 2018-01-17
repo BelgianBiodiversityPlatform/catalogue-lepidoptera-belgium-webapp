@@ -16,7 +16,18 @@ class Species(models.Model):
 
 class Province(models.Model):
     name = models.CharField(max_length=255)
-    code = models.CharField(max_length=3)
+    code = models.CharField(max_length=3, unique=True)
+    order = models.IntegerField(unique=True, help_text="In presence tables: order in which the provinces are displayed")
+    historical = models.BooleanField(help_text="The province doesn't exists anymore")
+    recent = models.BooleanField(help_text="The province was created at province split")
+
+    # reference to an external polygon for map display. # Exact data source to be defined, for example BEL_adm2.shp
+    # (We need to add a polygon for historical Brabant, though)
+    polygon_reference = models.IntegerField(unique=True)
+
+    class Meta:
+        ordering = ['order']
+
 
 
 class TimePeriod(models.Model):

@@ -14,7 +14,7 @@ class SpeciesAdmin(admin.ModelAdmin):
 
 @admin.register(Province)
 class ProvinceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('order', 'code', 'name', 'historical', 'recent', 'polygon_reference')
 
 
 @admin.register(TimePeriod)
