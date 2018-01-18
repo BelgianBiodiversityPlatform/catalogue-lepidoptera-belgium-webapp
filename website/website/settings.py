@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
+from django.utils.translation import gettext_lazy as _
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -99,6 +100,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+LANGUAGES = [
+    ('de', _('German')),
+    ('en', _('English')),
+    ('fr', _('French')),
+    ('nl', _('Dutch')),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

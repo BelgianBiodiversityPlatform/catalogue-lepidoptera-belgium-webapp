@@ -46,4 +46,4 @@ class PageFragment(models.Model):
     content_nl = MarkdownxField(blank=True)
     content_en = MarkdownxField(blank=True)
     content_fr = MarkdownxField(blank=True)
-    content_ge = MarkdownxField(blank=True)
+    content_de = MarkdownxField(blank=True)
