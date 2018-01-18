@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Family, Species, Province, TimePeriod, SpeciesPresence
+from markdownx.admin import MarkdownxModelAdmin
+
+from .models import Family, Species, Province, TimePeriod, SpeciesPresence, PageFragment
 
 admin.site.site_header = 'Catalogue of the Lepidoptera of Belgium'
 
@@ -26,3 +28,10 @@ class TimePeriodAdmin(admin.ModelAdmin):
 @admin.register(SpeciesPresence)
 class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
     pass
+
+
+class PageFragmentAdmin(MarkdownxModelAdmin):
+    list_display = ('identifier', 'content_en')
+
+
+admin.site.register(PageFragment, PageFragmentAdmin)

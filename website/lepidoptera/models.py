@@ -1,4 +1,5 @@
 from django.db import models
+from markdownx.models import MarkdownxField
 
 
 class Family(models.Model):
@@ -29,7 +30,6 @@ class Province(models.Model):
         ordering = ['order']
 
 
-
 class TimePeriod(models.Model):
     name = models.CharField(max_length=255)
     icon = models.ImageField()
@@ -39,3 +39,11 @@ class SpeciesPresence(models.Model):
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     period = models.ForeignKey(TimePeriod, on_delete=models.CASCADE)
+
+
+class PageFragment(models.Model):
+    identifier = models.SlugField(unique=True)
+    content_nl = MarkdownxField(blank=True)
+    content_en = MarkdownxField(blank=True)
+    content_fr = MarkdownxField(blank=True)
+    content_ge = MarkdownxField(blank=True)
