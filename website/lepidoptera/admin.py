@@ -31,7 +31,7 @@ class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
 
 
 class PageFragmentAdmin(MarkdownxModelAdmin):
-    list_display = ('identifier', 'content_en')
+    list_display = ('identifier', 'content_en', 'content_nl', 'content_de', 'content_fr')
 
 
 admin.site.register(PageFragment, PageFragmentAdmin)

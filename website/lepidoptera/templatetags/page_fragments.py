@@ -18,10 +18,4 @@ def get_page_fragment(context, identifier):
 
     fragment = PageFragment.objects.get(identifier=identifier)
 
-    # We try to get the content in the request language, but fallback to PAGE_FRAGMENT_FALLBACK_LANGUAGE if no
-    # translation exists
-    translated_content = getattr(fragment,  _get_field_name(context.request.LANGUAGE_CODE))
-    if translated_content == '':
-        translated_content = getattr(fragment, _get_field_name(settings.PAGE_FRAGMENT_FALLBACK_LANGUAGE ))
-
-    return mark_safe(markdownify(translated_content))
+    return mark_safe(markdownify(fragment.get_content_in(context.request.LANGUAGE_CODE)))
