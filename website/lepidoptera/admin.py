@@ -1,9 +1,10 @@
+from django.conf import settings
 from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
 
 from .models import Family, Species, Province, TimePeriod, SpeciesPresence, PageFragment
 
-admin.site.site_header = 'Catalogue of the Lepidoptera of Belgium'
+admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
 @admin.register(Family)
 class FamilyAdmin(admin.ModelAdmin):

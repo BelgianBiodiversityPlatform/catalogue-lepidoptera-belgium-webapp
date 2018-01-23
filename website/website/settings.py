@@ -59,6 +59,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -113,5 +114,11 @@ LANGUAGES = [
 STATIC_URL = '/static/'
 
 PAGE_FRAGMENT_FALLBACK_LANGUAGE = 'en'
+
+WEBSITE_NAME = "Catalogue of the Lepidoptera of Belgium"
+
+SETTINGS_EXPORT = [
+    'WEBSITE_NAME',
+]
 
 from .settings_local import *
