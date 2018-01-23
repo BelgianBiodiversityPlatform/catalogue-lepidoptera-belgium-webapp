@@ -112,4 +112,6 @@ LANGUAGES = [
 
 STATIC_URL = '/static/'
 
+PAGE_FRAGMENT_FALLBACK_LANGUAGE = 'en'
+
 from .settings_local import *
