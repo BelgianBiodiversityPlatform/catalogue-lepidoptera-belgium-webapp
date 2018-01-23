@@ -18,6 +18,8 @@
             </div>
 
             {% include 'lepidoptera/_language_selector.html' %}
+
+            <a href="{% url 'admin:index' %}">Admin</a>
         </div>
 
         {% block content %}{% endblock %}
