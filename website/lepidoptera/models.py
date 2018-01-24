@@ -4,10 +4,30 @@ from django.db import models
 from markdownx.models import MarkdownxField
 
 
+class Status(models.Model):
+    verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "statuses"
+
+
 class Family(models.Model):
-    family_id = models.IntegerField(unique=True)  # ID from the Access database, not Django's PK
+    verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+
     name = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
+
+    vernacular_name = models.CharField(max_length=255, blank=True)
+
+    text = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = "families"

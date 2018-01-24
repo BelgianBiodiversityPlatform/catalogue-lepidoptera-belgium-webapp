@@ -1,14 +1,16 @@
 from django.conf import settings
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Family, Species, Province, TimePeriod, SpeciesPresence, PageFragment
+from .models import Family, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
+
 @admin.register(Family)
-class FamilyAdmin(admin.ModelAdmin):
-    pass
+class FamilyAdmin(TranslationAdmin):
+    readonly_fields = ('verbatim_family_id', )
 
 
 @admin.register(Species)
@@ -29,6 +31,11 @@ class TimePeriodAdmin(admin.ModelAdmin):
 @admin.register(SpeciesPresence)
 class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Status)
+class StatusAdmin(admin.ModelAdmin):
+    readonly_fields = ('verbatim_status_id',)
 
 
 class PageFragmentAdmin(MarkdownxModelAdmin):

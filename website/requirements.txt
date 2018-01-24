@@ -4,4 +4,4 @@ psycopg2==2.7.3.2
 pytz==2017.3
 git+https://github.com/neutronX/django-markdownx@715359b
 django-settings-export==1.2.1
-
+git+https://github.com/deschler/django-modeltranslation@b24e4d3

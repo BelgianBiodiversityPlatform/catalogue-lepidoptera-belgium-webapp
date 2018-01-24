@@ -23,6 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',  # Must be before Admin
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -113,7 +115,9 @@ LANGUAGES = [
 
 STATIC_URL = '/static/'
 
-PAGE_FRAGMENT_FALLBACK_LANGUAGE = 'en'
+PAGE_FRAGMENT_FALLBACK_LANGUAGE = 'en'  # PageFragment: custom mechanism for translating markdown content
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'  # ModelTranslation is used for other models translatable models (Family, ...)
 
 WEBSITE_NAME = "Catalogue of the Lepidoptera of Belgium"
 
