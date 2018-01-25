@@ -16,6 +16,8 @@ class Status(models.Model):
 
 
 class Family(models.Model):
+    ALLOWED_STATUS_IDS = [1, 2]
+
     verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
 

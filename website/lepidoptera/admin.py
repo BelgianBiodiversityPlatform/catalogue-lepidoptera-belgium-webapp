@@ -10,7 +10,14 @@ admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE
 
 @admin.register(Family)
 class FamilyAdmin(TranslationAdmin):
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'status':
+            kwargs['queryset'] = Status.objects.filter(pk__in=Family.ALLOWED_STATUS_IDS)
+
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
     readonly_fields = ('verbatim_family_id', )
+    list_display = ('name', 'author', 'status')
 
 
 @admin.register(Species)
