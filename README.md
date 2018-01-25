@@ -29,4 +29,8 @@ B. data populate
 
     $ psql -d <DATABASE_NAME> -f initial_data/access/converted/CatLepBelgium_be.sql
     
-    
+To discuss with team
+====================
+
+- Show the page fragment mechanism/markdown and ask if ok
+- Family overview on home page: vernacular name always id Dutch? Or current language with Dutch fallback? Something else?

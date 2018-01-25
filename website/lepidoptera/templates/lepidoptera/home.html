@@ -1,11 +1,18 @@
 {% extends "lepidoptera/base.html" %}
 
 {% load page_fragments %}
+{% load i18n %}
 
 {% block content %}
     <div class="row">
         <div class="col">
             {% get_page_fragment 'welcome' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <h1>{% trans "Overview of all valid families" %}</h1>
         </div>
     </div>
 
