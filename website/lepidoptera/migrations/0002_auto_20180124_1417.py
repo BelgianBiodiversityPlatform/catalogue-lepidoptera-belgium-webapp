@@ -3,6 +3,37 @@
 from django.db import migrations
 
 
+def populate_all(apps, schema_editor):
+    populate_provinces(apps, schema_editor)
+    populate_page_fragments(apps, schema_editor)
+
+
+def populate_page_fragments(apps, schema_editor):
+    PageFragment = apps.get_model('lepidoptera', 'PageFragment')
+
+    PageFragment.objects.create(identifier='welcome',
+                                content_nl="""
+Welkom!
+=======
+    
+**Lorem ipsum dolor sit amet**, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
+labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
+nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
+esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt 
+in culpa qui officia deserunt mollit anim id est laborum""",
+                                content_fr="""
+Bienvenue !
+===========
+    
+**Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore """,
+                                content_en="""
+Welcome!
+========
+    
+**Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore 
+""")
+
+
 def populate_provinces(apps, schema_editor):
     Province = apps.get_model('lepidoptera', 'Province')
 
@@ -37,5 +68,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_provinces),
+        migrations.RunPython(populate_all),
     ]
