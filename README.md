@@ -29,6 +29,8 @@ B. data populate
 
     $ psql -d <DATABASE_NAME> -f initial_data/access/converted/CatLepBelgium_be.sql
     
+$ python manage.py access_import
+    
 To discuss with team
 ====================
 

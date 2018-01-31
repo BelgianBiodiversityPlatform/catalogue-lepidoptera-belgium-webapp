@@ -1,0 +1,7 @@
+<div class="card">
+    <img class="card-img-top" src="{% if family.representative_picture %}{{ family.representative_picture_thumbnail.url }}{% else %}{% endif %}" alt="Species representative picture">
+
+    <h5 class="card-title">{{ family.name }}</h5>
+    <p class="card-text">X Species</p>
+    <a href="#" class="btn btn-primary">View family</a>
+</div>

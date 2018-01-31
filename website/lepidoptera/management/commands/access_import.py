@@ -11,7 +11,6 @@ MODELS_TO_TRUNCATE = [Status, Family]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 
-
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
     desc = cursor.description
@@ -64,7 +63,11 @@ class Command(LepidopteraCommand):
 
                                           text=text_clean(result.FamilyText),
 
-                                          status=Status.objects.get(verbatim_status_id=result.StatusID))
+                                          status=Status.objects.get(verbatim_status_id=result.StatusID),
+
+                                          # FamilyID is duplicated: a verbatim, non editable field for traceability
+                                          # but also a (modifiable) display order
+                                          display_order=family_id)
                     self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))

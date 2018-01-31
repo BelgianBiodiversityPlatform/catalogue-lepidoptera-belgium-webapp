@@ -1,10 +1,15 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
+from imagekit.processors import ResizeToFit
 
 
 class Status(models.Model):
+    VERBATIM_ID_VALID_FAMILY = 1
+    VERBATIM_ID_FAMILY_SYNONYM = 2
+
     verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
     name = models.CharField(max_length=255)
 
@@ -15,8 +20,13 @@ class Status(models.Model):
         verbose_name_plural = "statuses"
 
 
+class ValidFamiliesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
+
+
 class Family(models.Model):
-    ALLOWED_STATUS_IDS = [1, 2]
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY, Status.VERBATIM_ID_FAMILY_SYNONYM]
 
     verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
@@ -27,6 +37,17 @@ class Family(models.Model):
     vernacular_name = models.CharField(max_length=255, blank=True)
 
     text = models.TextField(blank=True)
+
+    representative_picture = models.ImageField(blank=True, null=True)
+    representative_picture_thumbnail = ImageSpecField(source='representative_picture',
+                                                      processors=[ResizeToFit(640, 480)],
+                                                      format='JPEG',
+                                                      options={'quality': 95})
+
+    display_order = models.IntegerField(unique=True)
+
+    objects = models.Manager()  # The default manager.
+    valid_families_objects = ValidFamiliesManager()
 
     def __str__(self):
         return self.name

@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'markdownx',
+    'imagekit',
 
     'lepidoptera'
 ]
@@ -124,5 +125,7 @@ WEBSITE_NAME = "Catalogue of the Lepidoptera of Belgium"
 SETTINGS_EXPORT = [
     'WEBSITE_NAME',
 ]
+
+MEDIA_URL = "/media/"
 
 from .settings_local import *

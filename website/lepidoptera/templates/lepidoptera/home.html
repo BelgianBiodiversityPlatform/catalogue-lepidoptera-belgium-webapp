@@ -16,4 +16,18 @@
         </div>
     </div>
 
+    {% for family in families %}
+        {% if forloop.counter0|divisibleby:4 %}
+        <div class="row">
+        {% endif %}
+
+            <div class="col-sm-3">
+                {% include 'lepidoptera/_family_card.html' %}
+            </div>
+
+        {% if forloop.counter|divisibleby:4 %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
 {% endblock content %}
