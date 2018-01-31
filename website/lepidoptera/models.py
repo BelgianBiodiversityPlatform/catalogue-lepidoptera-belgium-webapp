@@ -49,7 +49,7 @@ class Family(models.Model):
 
     display_order = models.IntegerField(unique=True)
 
-    objects = models.Manager()  # The default manager.
+    objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
 
     # TODO: implements
