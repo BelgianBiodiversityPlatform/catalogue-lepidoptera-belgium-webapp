@@ -10,6 +10,9 @@ class Status(models.Model):
     VERBATIM_ID_VALID_FAMILY = 1
     VERBATIM_ID_FAMILY_SYNONYM = 2
 
+    VERBATIM_ID_VALID_SUBFAMILY = 3
+    VERBATIM_ID_SUBFAMILY_SYNONYM = 4
+
     verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
     name = models.CharField(max_length=255)
 
@@ -48,6 +51,10 @@ class Family(models.Model):
 
     objects = models.Manager()  # The default manager.
     valid_families_objects = ValidFamiliesManager()
+
+    # TODO: implements
+    def species_count(self):
+        return 0
 
     def __str__(self):
         return self.name
