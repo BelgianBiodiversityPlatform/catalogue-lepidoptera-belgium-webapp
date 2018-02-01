@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
@@ -51,6 +52,9 @@ class Family(models.Model):
 
     objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
+
+    def get_absolute_url(self):
+        return reverse('family_page', kwargs={'family_id': str(self.id)})
 
     # TODO: implements
     def species_count(self):
