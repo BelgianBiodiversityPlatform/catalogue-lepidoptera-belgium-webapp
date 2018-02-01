@@ -29,7 +29,24 @@ class ValidFamiliesManager(models.Manager):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
 
 
-class Family(models.Model):
+class DisplayOrderNavigable(object):
+    """Models that subclass this should have a 'display_order' field."""
+    def next(self):
+        """Return the next instance in display_order, or None if we're the last one."""
+        try:
+            return self.__class__.objects.filter(display_order__gt=self.display_order).order_by('display_order')[0]
+        except IndexError:
+            return None
+
+    def previous(self):
+        """Return the previous instance in display_order, or None if we're the first one."""
+        try:
+            return self.__class__.objects.filter(display_order__lt=self.display_order).order_by('-display_order')[0]
+        except IndexError:
+            return None
+
+
+class Family(models.Model, DisplayOrderNavigable):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY, Status.VERBATIM_ID_FAMILY_SYNONYM]
 
     verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")

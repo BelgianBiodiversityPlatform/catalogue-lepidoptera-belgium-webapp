@@ -36,3 +36,4 @@ To discuss with team
 
 - Show the page fragment mechanism/markdown and ask if ok
 - Family overview on home page: vernacular name always id Dutch? Or current language with Dutch fallback? Something else?
+- On home page: what's new... Should it be a simple block of text :(
