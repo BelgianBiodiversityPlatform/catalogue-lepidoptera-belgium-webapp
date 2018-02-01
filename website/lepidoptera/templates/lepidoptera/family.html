@@ -8,6 +8,9 @@
             <h1>{{ family.name }}</h1>
             <h2 class="text-muted">{% trans "Family" %}</h2>
 
+            <h1>{% trans "Subfamilies" %}</h1>
+            {%  include 'lepidoptera/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
+
         </div>
     </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{% for subfamily in subfamilies %}
+    {% if forloop.first %}
+        <table class="table table-bordered table-hover table-striped table-dark table-sm">
+            <thead><tr><th scope="col">{% trans 'Name' %}</th></tr></thead>
+            <tbody>
+    {% endif %}
+
+                <tr>
+                    <td>{{ subfamily.name }}</td>
+                </tr>
+
+    {%  if forloop.last %}
+            </tbody>
+        </table>
+    {% endif %}
+
+{% empty %}
+    {% trans "No records found." %}
+{% endfor %}
