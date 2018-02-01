@@ -3,13 +3,14 @@ from collections import namedtuple
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
-from lepidoptera.models import Family, Status
+from lepidoptera.models import Family, Status, Subfamily
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
+
 
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
@@ -69,5 +70,24 @@ class Command(LepidopteraCommand):
                                           # but also a (modifiable) display order
                                           display_order=family_id)
                     self.w('.', ending='')
+
+            self.w('Importing from tblSubfamilies...', ending='')
+            cursor.execute('SELECT * FROM "tblSubfamilies"');
+            for result in namedtuplefetchall(cursor):
+                Subfamily.objects.create(verbatim_subfamily_id=result.SubfamilyID,
+                                         family=Family.objects.get(verbatim_family_id=result.FamilyID),
+                                         status=Status.objects.get(verbatim_status_id=result.StatusID),
+                                         name=text_clean(result.SubfamilyName),
+                                         author=text_clean(result.SubfamilyAuthor),
+
+                                         vernacular_name_nl=text_clean(result.SubFamilyNameNL),
+                                         vernacular_name_en=text_clean(result.SubFamilyNameEN),
+                                         vernacular_name_fr=text_clean(result.SubFamilyNameFR),
+                                         vernacular_name_de=text_clean(result.SubFamilyNameGE),
+
+                                         text=text_clean(result.SubfamilyText),
+
+                                         display_order=result.SubfamilyID)
+                self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))

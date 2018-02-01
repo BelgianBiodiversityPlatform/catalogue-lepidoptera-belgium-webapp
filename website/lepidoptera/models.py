@@ -63,6 +63,28 @@ class Family(models.Model):
         verbose_name_plural = "families"
 
 
+class Subfamily(models.Model):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY, Status.VERBATIM_ID_SUBFAMILY_SYNONYM]
+
+    verbatim_subfamily_id = models.IntegerField(unique=True, help_text="From the Access database")
+
+    family = models.ForeignKey(Family, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+
+    name = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+
+    vernacular_name = models.CharField(max_length=255, blank=True)
+
+    text = models.TextField(blank=True)
+
+    # Not sure if it'll be used, but ready just in case (same logic as families)
+    display_order = models.IntegerField(unique=True)
+
+    class Meta:
+        verbose_name_plural = "subfamilies"
+
+
 class Species(models.Model):
     name = models.CharField(max_length=255)
 
