@@ -49,14 +49,20 @@ class RepresentativePictureNotNullFilter(NotNullFilter):
     parameter_name = "representative_picture"
 
 
-@admin.register(Family)
-class FamilyAdmin(TranslationAdmin):
+class LimitStatusChoiceMixin(object):
+    """To avoid duplication: Mixin for ModelAdmin.
+
+    If the model has a status field (FK to Status), limit choices to model.ALLOWED_VERBATIM_STATUS_IDS
+    """
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'status':
-            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=Family.ALLOWED_VERBATIM_STATUS_IDS)
+            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=self.model.ALLOWED_VERBATIM_STATUS_IDS)
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
+
+@admin.register(Family)
+class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     readonly_fields = ('verbatim_family_id', )
 
     list_display = ('display_order', 'name', 'author', 'status')
@@ -65,13 +71,7 @@ class FamilyAdmin(TranslationAdmin):
 
 
 @admin.register(Subfamily)
-class SubfamilyAdmin(TranslationAdmin):
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'status':
-            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=Subfamily.ALLOWED_VERBATIM_STATUS_IDS)
-
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
+class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     readonly_fields = ('verbatim_subfamily_id', )
 
     list_display = ('display_order', 'name', 'family', 'author', 'status')
@@ -80,13 +80,7 @@ class SubfamilyAdmin(TranslationAdmin):
 
 
 @admin.register(Tribus)
-class TribusAdmin(TranslationAdmin):
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'status':
-            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=Tribus.ALLOWED_VERBATIM_STATUS_IDS)
-
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
+class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     readonly_fields = ('verbatim_tribus_id', )
 
     list_display = ('display_order', 'name', 'subfamily', 'author', 'status')
