@@ -15,10 +15,9 @@
                 {% endif %}
             </p>
 
-            <h1>{{ family.name }}</h1>
-            <h2 class="text-muted">{% trans "Family" %}</h2>
+            <h1>{{ family.name }} <small class="text-muted">{% trans "Family" %}</small></h1>
 
-            <h1>{% trans "Subfamilies" %}</h1>
+            <h2>{% trans "Subfamilies" %}</h2>
             {%  include 'lepidoptera/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
 
         </div>
