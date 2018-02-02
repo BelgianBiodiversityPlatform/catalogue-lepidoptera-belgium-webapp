@@ -3,11 +3,11 @@ from collections import namedtuple
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
-from lepidoptera.models import Family, Status, Subfamily
+from lepidoptera.models import Family, Status, Subfamily, Tribus
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family, Subfamily]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 
@@ -48,7 +48,7 @@ class Command(LepidopteraCommand):
             self.w(self.style.SUCCESS('OK'))
 
             self.w('Importing from tblFamilies...', ending='')
-            cursor.execute('SELECT * FROM "tblFamilies"');
+            cursor.execute('SELECT * FROM "tblFamilies"')
             for result in namedtuplefetchall(cursor):
                 family_id = result.FamilyID
 
@@ -71,8 +71,10 @@ class Command(LepidopteraCommand):
                                           display_order=family_id)
                     self.w('.', ending='')
 
+            self.w(self.style.SUCCESS('OK'))
+
             self.w('Importing from tblSubfamilies...', ending='')
-            cursor.execute('SELECT * FROM "tblSubfamilies"');
+            cursor.execute('SELECT * FROM "tblSubfamilies"')
             for result in namedtuplefetchall(cursor):
                 Subfamily.objects.create(verbatim_subfamily_id=result.SubfamilyID,
                                          family=Family.objects.get(verbatim_family_id=result.FamilyID),
@@ -88,6 +90,31 @@ class Command(LepidopteraCommand):
                                          text=text_clean(result.SubfamilyText),
 
                                          display_order=result.SubfamilyID)
+                self.w('.', ending='')
+
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing from tblTribus...', ending='')
+            cursor.execute('SELECT * FROM "tblTribus"')
+            for result in namedtuplefetchall(cursor):
+                # Consistency check: is tribus.subfamily.family_id == tribus.family_id ?
+                if result.FamilyID != Subfamily.objects.get(verbatim_subfamily_id=result.SubfamilyID).family.verbatim_family_id:
+                    raise CommandError("Family/Subfamily inconsistency detected for tblTribus with ID={}".format(result.TribusID))
+
+                Tribus.objects.create(verbatim_tribus_id=result.TribusID,
+                                      subfamily=Subfamily.objects.get(verbatim_subfamily_id=result.SubfamilyID),
+                                      status=Status.objects.get(verbatim_status_id=result.StatusID),
+                                      name=text_clean(result.TribusName),
+                                      author=text_clean(result.TribusAuthor),
+
+                                      vernacular_name_nl=text_clean(result.TribusNameNL),
+                                      vernacular_name_en=text_clean(result.TribusNameEN),
+                                      vernacular_name_fr=text_clean(result.TribusNameFR),
+                                      vernacular_name_de=text_clean(result.TribusNameGE),
+
+                                      text=text_clean(result.TribusText),
+
+                                      display_order=result.TribusID)
                 self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))

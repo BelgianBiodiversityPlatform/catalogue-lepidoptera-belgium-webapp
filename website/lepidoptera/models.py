@@ -14,6 +14,9 @@ class Status(models.Model):
     VERBATIM_ID_VALID_SUBFAMILY = 3
     VERBATIM_ID_SUBFAMILY_SYNONYM = 4
 
+    VERBATIM_ID_VALID_TRIBUS = 13
+    VERBATIM_ID_TRIBUS_SYNONYM = 14
+
     verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
     name = models.CharField(max_length=255)
 
@@ -30,7 +33,7 @@ class ValidFamiliesManager(models.Manager):
 
 
 class DisplayOrderNavigable(object):
-    """Models that subclass this should have a 'display_order' field."""
+    """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
     def next(self):
         """Return the next instance in display_order, or None if we're the last one."""
         try:
@@ -46,7 +49,7 @@ class DisplayOrderNavigable(object):
             return None
 
 
-class Family(models.Model, DisplayOrderNavigable):
+class Family(DisplayOrderNavigable, models.Model):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY, Status.VERBATIM_ID_FAMILY_SYNONYM]
 
     verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")
@@ -102,8 +105,36 @@ class Subfamily(models.Model):
     # Not sure if it'll be used, but ready just in case (same logic as families)
     display_order = models.IntegerField(unique=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = "subfamilies"
+
+
+class Tribus(models.Model):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS, Status.VERBATIM_ID_TRIBUS_SYNONYM]
+
+    verbatim_tribus_id = models.IntegerField(unique=True, help_text="From the Access database")
+
+    subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
+
+    name = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+
+    vernacular_name = models.CharField(max_length=255, blank=True)
+
+    text = models.TextField(blank=True)
+
+    # Not sure if it'll be used, but ready just in case (same logic as families)
+    display_order = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "tribus"
 
 
 class Species(models.Model):

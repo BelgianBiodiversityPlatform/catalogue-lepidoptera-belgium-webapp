@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Family, Subfamily, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
+from .models import Family, Subfamily, Tribus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -77,6 +77,19 @@ class SubfamilyAdmin(TranslationAdmin):
     list_display = ('display_order', 'name', 'family', 'author', 'status')
 
     list_filter = ['family']
+
+
+@admin.register(Tribus)
+class TribusAdmin(TranslationAdmin):
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'status':
+            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=Tribus.ALLOWED_VERBATIM_STATUS_IDS)
+
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    readonly_fields = ('verbatim_tribus_id', )
+
+    list_display = ('display_order', 'name', 'subfamily', 'author', 'status')
 
 
 @admin.register(Species)
