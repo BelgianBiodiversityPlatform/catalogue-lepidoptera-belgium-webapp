@@ -5,18 +5,18 @@
 {% block content %}
     <div class="row">
         <div class="col">
-            <h1>{{ family.name }}</h1>
-            <h2 class="text-muted">{% trans "Family" %}</h2>
-
             <p>
                 {% if family.previous %}
-                    <a class="btn btn-primary" href="{{ family.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ family.previous.name }}</a>
+                    <a class="btn btn-outline-primary" href="{{ family.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ family.previous.name }}</a>
                 {% endif %}
 
                 {% if family.next %}
-                    <a class="btn btn-primary" href="{{ family.next.get_absolute_url }}">{{ family.next.name }} <span class="oi oi-caret-right"></span></a>
+                    <a class="float-right btn btn-outline-primary" href="{{ family.next.get_absolute_url }}">{{ family.next.name }} <span class="oi oi-caret-right"></span></a>
                 {% endif %}
             </p>
+
+            <h1>{{ family.name }}</h1>
+            <h2 class="text-muted">{% trans "Family" %}</h2>
 
             <h1>{% trans "Subfamilies" %}</h1>
             {%  include 'lepidoptera/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
