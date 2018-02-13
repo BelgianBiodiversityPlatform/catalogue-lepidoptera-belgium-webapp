@@ -14,6 +14,9 @@ class Status(models.Model):
     VERBATIM_ID_VALID_SUBFAMILY = 3
     VERBATIM_ID_SUBFAMILY_SYNONYM = 4
 
+    VERBATIM_ID_VALID_GENUS = 5
+    VERBATIM_ID_GENUS_SYNONYM = 6
+
     VERBATIM_ID_VALID_TRIBUS = 13
     VERBATIM_ID_TRIBUS_SYNONYM = 14
 
@@ -49,10 +52,16 @@ class DisplayOrderNavigable(object):
             return None
 
 
-class Family(DisplayOrderNavigable, models.Model):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY, Status.VERBATIM_ID_FAMILY_SYNONYM]
+class TaxonomicModel(models.Model):
+    """Common ground between all taxon-related models."""
+    @staticmethod
+    def get_verbatim_id_field():
+        # Blank/NULL allowed for post-import record
+        return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
-    verbatim_family_id = models.IntegerField(unique=True, help_text="From the Access database")
+    class Meta:
+        abstract = True
+
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=255)
@@ -62,13 +71,26 @@ class Family(DisplayOrderNavigable, models.Model):
 
     text = models.TextField(blank=True)
 
+    display_order = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Family(DisplayOrderNavigable, TaxonomicModel):
+    # Synonyms currently disabled at the family level since:
+    #   - we have no data for now
+    #   - this makes implementation a bit more complex (public-facing pages, validation, foreign key to self, ...)
+    #   - See genus for a full implementation
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY]
+
+    verbatim_family_id = TaxonomicModel.get_verbatim_id_field()
+
     representative_picture = models.ImageField(blank=True, null=True)
     representative_picture_thumbnail = ImageSpecField(source='representative_picture',
                                                       processors=[ResizeToFit(640, 480)],
                                                       format='JPEG',
                                                       options={'quality': 95})
-
-    display_order = models.IntegerField(unique=True)
 
     objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
@@ -80,61 +102,84 @@ class Family(DisplayOrderNavigable, models.Model):
     def species_count(self):
         return 0
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name_plural = "families"
 
 
-class Subfamily(models.Model):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY, Status.VERBATIM_ID_SUBFAMILY_SYNONYM]
+class Subfamily(TaxonomicModel):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY]
 
-    verbatim_subfamily_id = models.IntegerField(unique=True, help_text="From the Access database")
+    verbatim_subfamily_id = TaxonomicModel.get_verbatim_id_field()
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-
-    vernacular_name = models.CharField(max_length=255, blank=True)
-
-    text = models.TextField(blank=True)
-
-    # Not sure if it'll be used, but ready just in case (same logic as families)
-    display_order = models.IntegerField(unique=True)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name_plural = "subfamilies"
 
 
-class Tribus(models.Model):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS, Status.VERBATIM_ID_TRIBUS_SYNONYM]
+class Tribus(TaxonomicModel):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS]
 
-    verbatim_tribus_id = models.IntegerField(unique=True, help_text="From the Access database")
+    verbatim_tribus_id = TaxonomicModel.get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-
-    vernacular_name = models.CharField(max_length=255, blank=True)
-
-    text = models.TextField(blank=True)
-
-    # Not sure if it'll be used, but ready just in case (same logic as families)
-    display_order = models.IntegerField(unique=True)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name_plural = "tribus"
+
+
+class Genus(TaxonomicModel):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM]
+
+    verbatim_genus_id = TaxonomicModel.get_verbatim_id_field()
+
+    # Sometimes a genus appears under a tribu, but sometimes only under a subfamily or a family...
+    # One and only one of those can be filled
+    tribus = models.ForeignKey(Tribus, null=True, blank=True, on_delete=models.CASCADE)
+    subfamily = models.ForeignKey(Subfamily, null=True, blank=True, on_delete=models.CASCADE)
+    family = models.ForeignKey(Family, null=True, blank=True, on_delete=models.CASCADE)
+
+    synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "genera"
+
+    def parent(self):
+        # Return the direct parent
+        return self.tribus or self.subfamily or self.family
+
+    def parent_for_admin_list(self):
+        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
+
+    parent_for_admin_list.short_description = 'parent'
+
+    def clean(self):
+        errors_dics = {}  # we aggregate errors for a complete output
+
+        # Should be linked to either a tribus, a family or a subfamily
+        fields = [self.tribus, self.subfamily, self.family]
+        if len ([field for field in fields if field is not None]) != 1:
+            errors_dics['tribus'] = ValidationError('Choose a tribus OR a family OR a subfamily', code='invalid')
+            errors_dics['subfamily'] = ValidationError('Choose a tribus OR a family OR a subfamily', code='invalid')
+            errors_dics['family'] = ValidationError('Choose a tribus OR a family OR a subfamily', code='invalid')
+
+        # Synonym: we should know whom
+        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+                and not self.synonym_of):
+            errors_dics['synonym_of'] = ValidationError('If status=synonym, this field is mandatory')
+
+        # Accepted: synonym doesn't make any sense
+        if (self.status != Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+                and self.synonym_of):
+            errors_dics['synonym_of'] = ValidationError('If status=accepted, this field shouldn\'t be used')
+
+        if errors_dics:
+            raise ValidationError(errors_dics)
+
+    def save(self, *args, **kwargs):
+        # Let's make sure model.clean() is called on each save (validation also for import script)
+        self.full_clean()
+        return super(Genus, self).save(*args, **kwargs)
 
 
 class Species(models.Model):

@@ -1,18 +1,25 @@
 from modeltranslation.decorators import register
 from modeltranslation.translator import TranslationOptions
-from .models import Family, Subfamily, Tribus
+from .models import Family, Subfamily, Tribus, Genus
+
+
+class TaxonomicTranslatableModel(TranslationOptions):
+    fields = ('vernacular_name',)
 
 
 @register(Family)
-class FamilyTranslationOptions(TranslationOptions):
-    fields = ('vernacular_name',)
+class FamilyTranslationOptions(TaxonomicTranslatableModel):
+    pass
 
 
 @register(Subfamily)
-class SubfamilyTranslationOptions(TranslationOptions):
-    fields = ('vernacular_name',)
-
+class SubfamilyTranslationOptions(TaxonomicTranslatableModel):
+    pass
 
 @register(Tribus)
-class TribusTranslationOptions(TranslationOptions):
-    fields = ('vernacular_name',)
+class TribusTranslationOptions(TaxonomicTranslatableModel):
+    pass
+
+@register(Genus)
+class GenusTranslationOptions(TaxonomicTranslatableModel):
+    pass

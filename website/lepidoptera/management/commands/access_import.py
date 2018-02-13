@@ -3,14 +3,14 @@ from collections import namedtuple
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 
-from lepidoptera.models import Family, Status, Subfamily, Tribus
+from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
-
+NULL_GENUS_ID = 999010
 
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
@@ -115,6 +115,86 @@ class Command(LepidopteraCommand):
                                       text=text_clean(result.TribusText),
 
                                       display_order=result.TribusID)
+                self.w('.', ending='')
+
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing from tblGenera...', ending='')
+            cursor.execute('SELECT * FROM "tblGenera" ORDER BY "StatusID"')  # ORDER so accepted are knwon before synonyms referencing them
+            for result in namedtuplefetchall(cursor):
+                name = result.GenusName
+                genus_id = result.GenusID
+
+                tribus_id = result.TribusID
+                subfamily_id = result.SubfamilyID
+                family_id = result.FamilyID
+
+                if genus_id != NULL_GENUS_ID:
+                    # Find the parent link...
+                    if tribus_id is None and subfamily_id is None and family_id is not None:
+                        self.w('{} is only linked to a family'.format(name))
+                        parent_link = {'family': Family.objects.get(verbatim_family_id=family_id)}
+                    elif tribus_id is None and subfamily_id is not None:
+                        self.w('{} is linked to a subfamily'.format(name))
+
+                        # consistency check: the direct family and subfamily.family should be equal
+                        if family_id != Subfamily.objects.get(verbatim_subfamily_id=subfamily_id).family.verbatim_family_id:
+                            raise CommandError("Subfamily/Family inconsistency at the Genus level")
+
+                        parent_link = {'subfamily': Subfamily.objects.get(verbatim_subfamily_id=subfamily_id)}
+                    elif tribus_id is not None:
+                        self.w('{} is linked to a tribus'.format(name))
+
+                        # consistency check: the direct family and subfamily.family should be equal
+                        if family_id != Subfamily.objects.get(
+                                verbatim_subfamily_id=subfamily_id).family.verbatim_family_id:
+                            raise CommandError("Subfamily/Family inconsistency at the Genus level")
+
+                        # and direct subfamily should be equal to tribus.subfamily
+                        if subfamily_id != Tribus.objects.get(
+                                verbatim_tribus_id=tribus_id).subfamily.verbatim_subfamily_id:
+                            raise CommandError("Tribus/Subfamily inconsistency at the Genus level")
+                        parent_link = {'tribus': Tribus.objects.get(verbatim_tribus_id=tribus_id)}
+
+                    create_opts = {'verbatim_genus_id': genus_id,
+                                   'name': text_clean(result.GenusName),
+                                   'author': text_clean(result.GenusAuthor),
+
+                                   'vernacular_name_nl': text_clean(result.GenusNameNL),
+                                   'vernacular_name_en': text_clean(result.GenusNameEN),
+                                   'vernacular_name_fr': text_clean(result.GenusNameFR),
+                                   'vernacular_name_de': text_clean(result.GenusNameGE),
+                                   'text': text_clean(result.GenusText),
+                                   'status': Status.objects.get(verbatim_status_id=result.StatusID),
+                                   'display_order': genus_id}
+                    if result.GenusReferenceToHigherCategory:
+                        create_opts['synonym_of'] = Genus.objects.get(verbatim_genus_id=result.GenusReferenceToHigherCategory)
+
+                    create_opts.update(parent_link)
+
+                    Genus.objects.create(**create_opts)
+                    self.w('.', ending='')
+
+                # Consistency check: is tribus.subfamily.family_id == tribus.family_id ?
+                # if result.SubfamilyID != Tribus.objects.get(
+                #         verbatim_tribus_id=result.TribusID).subfamily.verbatim_subfamily_id:
+                #     raise CommandError(
+                #         "Subfamily/Tribus inconsistency detected for tblGenera with ID={}".format(result.GenusID))
+
+                # Tribus.objects.create(verbatim_tribus_id=result.TribusID,
+                #                       subfamily=Subfamily.objects.get(verbatim_subfamily_id=result.SubfamilyID),
+                #                       status=Status.objects.get(verbatim_status_id=result.StatusID),
+                #                       name=text_clean(result.TribusName),
+                #                       author=text_clean(result.TribusAuthor),
+                #
+                #                       vernacular_name_nl=text_clean(result.TribusNameNL),
+                #                       vernacular_name_en=text_clean(result.TribusNameEN),
+                #                       vernacular_name_fr=text_clean(result.TribusNameFR),
+                #                       vernacular_name_de=text_clean(result.TribusNameGE),
+                #
+                #                       text=text_clean(result.TribusText),
+                #
+                #                       display_order=result.TribusID)
                 self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))

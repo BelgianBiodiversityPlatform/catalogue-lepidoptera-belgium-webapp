@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Family, Subfamily, Tribus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
+from .models import Family, Subfamily, Tribus, Genus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -86,6 +86,22 @@ class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     list_display = ('display_order', 'name', 'subfamily', 'author', 'status')
 
 
+@admin.register(Genus)
+class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    readonly_fields = ('verbatim_genus_id', )
+
+    list_display = ('display_order', 'name', 'parent_for_admin_list', 'tribus', 'author', 'status')
+
+    fields = (('name', 'author'),
+              ('status', 'synonym_of'),
+              ('tribus', 'subfamily', 'family'),
+              'vernacular_name',
+              'text',
+              'display_order',
+              'verbatim_genus_id'
+              )
+
+
 @admin.register(Species)
 class SpeciesAdmin(admin.ModelAdmin):
     pass
@@ -104,11 +120,6 @@ class TimePeriodAdmin(admin.ModelAdmin):
 @admin.register(SpeciesPresence)
 class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
     pass
-
-
-@admin.register(Status)
-class StatusAdmin(admin.ModelAdmin):
-    readonly_fields = ('verbatim_status_id',)
 
 
 class PageFragmentAdmin(MarkdownxModelAdmin):
