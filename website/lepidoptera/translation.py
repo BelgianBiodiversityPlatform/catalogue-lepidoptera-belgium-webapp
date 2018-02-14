@@ -1,6 +1,6 @@
 from modeltranslation.decorators import register
 from modeltranslation.translator import TranslationOptions
-from .models import Family, Subfamily, Tribus, Genus
+from .models import Family, Subfamily, Tribus, Genus, Subgenus
 
 
 class TaxonomicTranslatableModel(TranslationOptions):
@@ -22,4 +22,8 @@ class TribusTranslationOptions(TaxonomicTranslatableModel):
 
 @register(Genus)
 class GenusTranslationOptions(TaxonomicTranslatableModel):
+    pass
+
+@register(Subgenus)
+class SubgenusTranslationOptions(TaxonomicTranslatableModel):
     pass

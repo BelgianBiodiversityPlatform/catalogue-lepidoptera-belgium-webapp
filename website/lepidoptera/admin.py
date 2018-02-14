@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Family, Subfamily, Tribus, Genus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
+from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -63,6 +63,8 @@ class LimitStatusChoiceMixin(object):
 
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name']
+
     readonly_fields = ('verbatim_family_id', )
 
     list_display = ('display_order', 'name', 'author', 'status')
@@ -72,6 +74,8 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 @admin.register(Subfamily)
 class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name']
+
     readonly_fields = ('verbatim_subfamily_id', )
 
     list_display = ('display_order', 'name', 'family', 'author', 'status')
@@ -81,6 +85,8 @@ class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 @admin.register(Tribus)
 class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name']
+
     readonly_fields = ('verbatim_tribus_id', )
 
     list_display = ('display_order', 'name', 'subfamily', 'author', 'status')
@@ -88,6 +94,8 @@ class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 @admin.register(Genus)
 class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name']
+
     readonly_fields = ('verbatim_genus_id', )
 
     list_display = ('display_order', 'name', 'parent_for_admin_list', 'tribus', 'author', 'status')
@@ -100,6 +108,27 @@ class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
               'display_order',
               'verbatim_genus_id'
               )
+
+    list_filter = (
+        ('status', admin.RelatedOnlyFieldListFilter),
+    )
+
+@admin.register(Subgenus)
+class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name']
+
+    readonly_fields = ('verbatim_subgenus_id', )
+
+    list_display = ('display_order', 'name', 'genus', 'author', 'status')
+
+    fields = (('name', 'author'),
+              'status',
+              'genus',
+              'vernacular_name',
+              'text',
+              'display_order',
+              'verbatim_subgenus_id'
+    )
 
 
 @admin.register(Species)

@@ -1,16 +1,17 @@
 from collections import namedtuple
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import CommandError
 from django.db import connection
 
-from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus
+from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
+
 
 def namedtuplefetchall(cursor):
     "Return all rows from a cursor as a namedtuple"
@@ -132,19 +133,17 @@ class Command(LepidopteraCommand):
                 if genus_id != NULL_GENUS_ID:
                     # Find the parent link...
                     if tribus_id is None and subfamily_id is None and family_id is not None:
-                        self.w('{} is only linked to a family'.format(name))
+                        # We only have a family...
                         parent_link = {'family': Family.objects.get(verbatim_family_id=family_id)}
                     elif tribus_id is None and subfamily_id is not None:
-                        self.w('{} is linked to a subfamily'.format(name))
-
+                        # Slightly better, we have a subfamily
                         # consistency check: the direct family and subfamily.family should be equal
                         if family_id != Subfamily.objects.get(verbatim_subfamily_id=subfamily_id).family.verbatim_family_id:
                             raise CommandError("Subfamily/Family inconsistency at the Genus level")
 
                         parent_link = {'subfamily': Subfamily.objects.get(verbatim_subfamily_id=subfamily_id)}
                     elif tribus_id is not None:
-                        self.w('{} is linked to a tribus'.format(name))
-
+                        # Even better: we have the tribus
                         # consistency check: the direct family and subfamily.family should be equal
                         if family_id != Subfamily.objects.get(
                                 verbatim_subfamily_id=subfamily_id).family.verbatim_family_id:
@@ -157,7 +156,7 @@ class Command(LepidopteraCommand):
                         parent_link = {'tribus': Tribus.objects.get(verbatim_tribus_id=tribus_id)}
 
                     create_opts = {'verbatim_genus_id': genus_id,
-                                   'name': text_clean(result.GenusName),
+                                   'name': text_clean(name),
                                    'author': text_clean(result.GenusAuthor),
 
                                    'vernacular_name_nl': text_clean(result.GenusNameNL),
@@ -175,26 +174,29 @@ class Command(LepidopteraCommand):
                     Genus.objects.create(**create_opts)
                     self.w('.', ending='')
 
-                # Consistency check: is tribus.subfamily.family_id == tribus.family_id ?
-                # if result.SubfamilyID != Tribus.objects.get(
-                #         verbatim_tribus_id=result.TribusID).subfamily.verbatim_subfamily_id:
-                #     raise CommandError(
-                #         "Subfamily/Tribus inconsistency detected for tblGenera with ID={}".format(result.GenusID))
+            self.w(self.style.SUCCESS('OK'))
 
-                # Tribus.objects.create(verbatim_tribus_id=result.TribusID,
-                #                       subfamily=Subfamily.objects.get(verbatim_subfamily_id=result.SubfamilyID),
-                #                       status=Status.objects.get(verbatim_status_id=result.StatusID),
-                #                       name=text_clean(result.TribusName),
-                #                       author=text_clean(result.TribusAuthor),
-                #
-                #                       vernacular_name_nl=text_clean(result.TribusNameNL),
-                #                       vernacular_name_en=text_clean(result.TribusNameEN),
-                #                       vernacular_name_fr=text_clean(result.TribusNameFR),
-                #                       vernacular_name_de=text_clean(result.TribusNameGE),
-                #
-                #                       text=text_clean(result.TribusText),
-                #
-                #                       display_order=result.TribusID)
+            self.w('Importing from tblSubgenera...', ending='')
+            cursor.execute('SELECT * FROM "tblSubgenera"')
+            for result in namedtuplefetchall(cursor):
+                Subgenus.objects.create(verbatim_subgenus_id=result.SubgenusID,
+                                        name=text_clean(result.SubgenusName),
+                                        author=text_clean(result.SubgenusAuthor),
+
+                                        vernacular_name_nl=text_clean(result.SubgenusNameNL),
+                                        vernacular_name_en=text_clean(result.SubgenusNameEN),
+                                        vernacular_name_fr=text_clean(result.SubgenusNameFR),
+                                        vernacular_name_de=text_clean(result.SubgenusNameGE),
+
+                                        text=text_clean(result.SubgenusText),
+
+                                        # Currently all subgenera are only linked to a genus, so that's the only
+                                        # taxonomic lin we (can) import
+                                        genus=Genus.objects.get(verbatim_genus_id=result.GenusID),
+                                        status=Status.objects.get(verbatim_status_id=result.StatusID),
+
+                                        display_order=result.SubgenusID
+                )
                 self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))

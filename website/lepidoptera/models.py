@@ -20,6 +20,11 @@ class Status(models.Model):
     VERBATIM_ID_VALID_TRIBUS = 13
     VERBATIM_ID_TRIBUS_SYNONYM = 14
 
+    VERBATIM_ID_VALID_SUBGENUS = 7
+    VERBATIM_ID_SUBGENUS_SYNONYM = 8
+
+    UNKNOWN = 15
+
     verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
     name = models.CharField(max_length=255)
 
@@ -129,7 +134,7 @@ class Tribus(TaxonomicModel):
 
 
 class Genus(TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM]
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM, Status.UNKNOWN]
 
     verbatim_genus_id = TaxonomicModel.get_verbatim_id_field()
 
@@ -169,7 +174,7 @@ class Genus(TaxonomicModel):
             errors_dics['synonym_of'] = ValidationError('If status=synonym, this field is mandatory')
 
         # Accepted: synonym doesn't make any sense
-        if (self.status != Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
                 and self.synonym_of):
             errors_dics['synonym_of'] = ValidationError('If status=accepted, this field shouldn\'t be used')
 
@@ -180,6 +185,17 @@ class Genus(TaxonomicModel):
         # Let's make sure model.clean() is called on each save (validation also for import script)
         self.full_clean()
         return super(Genus, self).save(*args, **kwargs)
+
+
+class Subgenus(TaxonomicModel):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBGENUS]
+
+    verbatim_subgenus_id = TaxonomicModel.get_verbatim_id_field()
+
+    genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "subgenera"
 
 
 class Species(models.Model):
