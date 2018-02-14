@@ -14,8 +14,10 @@
                 <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Accepted genera" %}
                 ({% trans "and" %} <span class="badge badge-pill badge-warning">{{ genus_synonym_counter }}</span> {% trans "synonyms" %})
             </li>
+            <li><li><span class="badge badge-pill badge-dark">{{ subgenus_counter }}</span> {% trans "Subgenera" %}</li></li>
             <li>
-                 <li><span class="badge badge-pill badge-dark">{{ subgenus_counter }}</span> {% trans "Subgenera" %}</li>
+                <span class="badge badge-pill badge-warning">{{ valid_species_counter }}</span> {% trans "Accepted species" %}
+                ({% trans "and" %} <span class="badge badge-pill badge-warning">{{ species_synonym_counter }}</span> {% trans "synonyms" %})
             </li>
         </ul>
     </div>

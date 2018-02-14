@@ -132,8 +132,21 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Species)
-class SpeciesAdmin(admin.ModelAdmin):
-    pass
+class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+    search_fields = ['name', 'code']
+
+    readonly_fields = ('verbatim_species_number', 'code')
+
+    list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
+
+    fields = (('verbatim_species_number', 'code'),
+              ('name', 'author'),
+              ('status', 'synonym_of'),
+              ('subgenus', 'genus'),
+              'vernacular_name',
+              'text',
+              'display_order',
+    )
 
 
 @admin.register(Province)

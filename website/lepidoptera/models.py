@@ -23,6 +23,9 @@ class Status(models.Model):
     VERBATIM_ID_VALID_SUBGENUS = 7
     VERBATIM_ID_SUBGENUS_SYNONYM = 8
 
+    VERBATIM_ID_VALID_SPECIES = 9
+    VERBATIM_ID_SPECIES_SYNONYM = 10
+
     UNKNOWN = 15
 
     verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
@@ -48,6 +51,17 @@ class AcceptedGenusManager(models.Manager):
 class SynonymGenusManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+
+
+class AcceptedSpeciesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
+
+
+class SynonymSpeciesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
+
 
 class DisplayOrderNavigable(object):
     """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
@@ -142,7 +156,18 @@ class Tribus(TaxonomicModel):
         verbose_name_plural = "tribus"
 
 
-class Genus(TaxonomicModel):
+class ParentForAdminListMixin(object):
+    """Exposes a parent_for_admin_list method, for polymorphic parents.
+
+    Needs a parent() method in implementing classes.
+    """
+    def parent_for_admin_list(self):
+        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
+
+    parent_for_admin_list.short_description = 'parent'
+
+
+class Genus(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM, Status.UNKNOWN]
 
     verbatim_genus_id = TaxonomicModel.get_verbatim_id_field()
@@ -164,13 +189,8 @@ class Genus(TaxonomicModel):
         verbose_name_plural = "genera"
 
     def parent(self):
-        # Return the direct parent
+        # Return the most direct parent
         return self.tribus or self.subfamily or self.family
-
-    def parent_for_admin_list(self):
-        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
-
-    parent_for_admin_list.short_description = 'parent'
 
     def clean(self):
         errors_dics = {}  # we aggregate errors for a complete output
@@ -196,7 +216,7 @@ class Genus(TaxonomicModel):
             raise ValidationError(errors_dics)
 
     def save(self, *args, **kwargs):
-        # Let's make sure model.clean() is called on each save (validation also for import script)
+        # Let's make sure model.clean() is called on each save (enable validation also for import script)
         self.full_clean()
         return super(Genus, self).save(*args, **kwargs)
 
@@ -212,8 +232,61 @@ class Subgenus(TaxonomicModel):
         verbose_name_plural = "subgenera"
 
 
-class Species(models.Model):
-    name = models.CharField(max_length=255)
+class Species(ParentForAdminListMixin, TaxonomicModel):
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM, Status.UNKNOWN]
+
+    verbatim_species_number = TaxonomicModel.get_verbatim_id_field()
+    code = models.CharField(max_length=50, blank=True, null=True)
+
+    synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    # TODO: implement synonym/accepted validations similar to genus
+
+    # Parents: sometimes a genus, sometimes a subgenus
+    subgenus = models.ForeignKey(Subgenus, null=True, blank=True, on_delete=models.CASCADE)
+    genus = models.ForeignKey(Genus, null=True, blank=True, on_delete=models.CASCADE)
+    # TODO: implement "only one" validation similar to genus
+
+    # The source database contains much more (currently unused) fields, mostly text, that we decide to ignore for
+    # now (focus first on taxonomy, and keep things as simple as possible)
+
+    # Managers:
+    objects = models.Manager()
+    accepted_objects = AcceptedSpeciesManager()
+    synonym_objects = SynonymSpeciesManager()
+
+    def parent(self):
+        # Return the most direct parent
+        return self.subgenus or self.genus
+
+    def clean(self):
+        errors_dics = {}  # we aggregate errors for a complete output
+
+        # Should be linked to either a subgenus or a genus, not both
+        fields = [self.subgenus, self.genus]
+        if len ([field for field in fields if field is not None]) != 1:
+            errors_dics['subgenus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
+            errors_dics['genus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
+
+        # Synonym: we should know whom
+        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
+                and not self.synonym_of):
+            errors_dics['synonym_of'] = ValidationError('If status=synonym, this field is mandatory')
+
+        # Accepted: synonym doesn't make any sense
+        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
+                and self.synonym_of):
+            errors_dics['synonym_of'] = ValidationError('If status=accepted, this field shouldn\'t be used')
+
+        if errors_dics:
+            raise ValidationError(errors_dics)
+
+    def save(self, *args, **kwargs):
+        # Let's make sure model.clean() is called on each save (enable validation also for import script)
+        self.full_clean()
+        return super(Species, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name_plural = "species"
 
 
 class Province(models.Model):
