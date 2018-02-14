@@ -11,8 +11,11 @@
             <li><span class="badge badge-pill badge-warning">{{ subfamily_counter }}</span> {% trans "Subfamilies" %}</li>
             <li><span class="badge badge-pill badge-dark">{{ tribus_counter }}</span> {% trans "Tribus" %}</li>
             <li>
-                <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Valid genera" %}
+                <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Accepted genera" %}
                 ({% trans "and" %} <span class="badge badge-pill badge-warning">{{ genus_synonym_counter }}</span> {% trans "synonyms" %})
+            </li>
+            <li>
+                 <li><span class="badge badge-pill badge-dark">{{ subgenus_counter }}</span> {% trans "Subgenera" %}</li>
             </li>
         </ul>
     </div>

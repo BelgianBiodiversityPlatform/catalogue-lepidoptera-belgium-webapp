@@ -40,6 +40,15 @@ class ValidFamiliesManager(models.Manager):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
 
 
+class AcceptedGenusManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
+
+
+class SynonymGenusManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+
 class DisplayOrderNavigable(object):
     """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
     def next(self):
@@ -145,6 +154,11 @@ class Genus(TaxonomicModel):
     family = models.ForeignKey(Family, null=True, blank=True, on_delete=models.CASCADE)
 
     synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+
+    # Managers:
+    objects = models.Manager()
+    accepted_objects = AcceptedGenusManager()
+    synonym_objects = SynonymGenusManager()
 
     class Meta:
         verbose_name_plural = "genera"
