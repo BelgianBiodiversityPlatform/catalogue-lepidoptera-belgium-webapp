@@ -1,0 +1,14 @@
+{% extends "lepidoptera/taxonomy/base.html" %}
+{% load i18n %}
+
+{% block top-links%}
+    {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=family only %}
+{% endblock top-links %}
+
+{% block page-title %}{{ family.name }}{% endblock %}
+{% block page-subtitle %}{% trans "Family" %}{% endblock %}
+
+{% block lower-levels %}
+    <h3>{% trans "Subfamilies" %}</h3>
+    {% include 'lepidoptera/taxonomy/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
+{% endblock lower-levels %}

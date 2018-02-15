@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Family
+from .models import Family, Subfamily
 
 
 def home_page(request):
@@ -12,4 +12,10 @@ def home_page(request):
 def family_page(request, family_id):
     family = Family.objects.get(pk=family_id)
 
-    return render(request, 'lepidoptera/family.html', {'family': family})
+    return render(request, 'lepidoptera/taxonomy/family.html', {'family': family})
+
+
+def subfamily_page(request, subfamily_id):
+    subfamily = Subfamily.objects.get(pk=subfamily_id)
+
+    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'subfamily': subfamily})

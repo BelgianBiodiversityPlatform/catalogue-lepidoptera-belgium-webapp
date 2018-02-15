@@ -113,6 +113,7 @@ class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
         ('status', admin.RelatedOnlyFieldListFilter),
     )
 
+
 @admin.register(Subgenus)
 class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     search_fields = ['name']
@@ -120,6 +121,11 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     readonly_fields = ('verbatim_subgenus_id', )
 
     list_display = ('display_order', 'name', 'genus', 'author', 'status')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "genus":
+            kwargs["queryset"] = Genus.objects.order_by('name')
+        return super(SubgenusAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (('name', 'author'),
               'status',
@@ -138,6 +144,14 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin):
     readonly_fields = ('verbatim_species_number', 'code')
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "genus":
+            kwargs["queryset"] = Genus.objects.order_by('name')
+
+        if db_field.name == "subgenus":
+            kwargs["queryset"] = Subgenus.objects.order_by('name')
+        return super(SpeciesAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (('verbatim_species_number', 'code'),
               ('name', 'author'),

@@ -1,0 +1,13 @@
+{% extends "lepidoptera/base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            {% block top-links %}{% endblock %}
+
+            <h1>{% block page-title %}{% endblock %} <small class="text-muted">{% block page-subtitle %}{% endblock %}</small></h1>
+
+            {% block lower-levels %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

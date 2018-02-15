@@ -126,9 +126,23 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     def get_absolute_url(self):
         return reverse('family_page', kwargs={'family_id': str(self.id)})
 
-    # TODO: implements
-    def species_count(self):
-        return 0
+    @property
+    def all_species(self):
+        return self.species_thru_subfamily.union(self.species_thru_genus)
+
+    @property
+    def species_thru_genus(self):
+        qs = Species.objects.none()
+        for genus in self.genus_set.all():
+            qs = qs.union(genus.all_species)
+        return qs
+
+    @property
+    def species_thru_subfamily(self):
+        qs = Species.objects.none()
+        for subfamily in self.subfamily_set.all():
+            qs = qs.union(subfamily.all_species)
+        return qs
 
     class Meta:
         verbose_name_plural = "families"
@@ -141,6 +155,24 @@ class Subfamily(TaxonomicModel):
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
 
+    @property
+    def all_species(self):
+        return self.species_thru_tribus.union(self.species_thru_genus)
+
+    @property
+    def species_thru_tribus(self):
+        qs = Species.objects.none()
+        for tribus in self.tribus_set.all():
+            qs = qs.union(tribus.all_species)
+        return qs
+
+    @property
+    def species_thru_genus(self):
+        qs = Species.objects.none()
+        for genus in self.genus_set.all():
+            qs = qs.union(genus.all_species)
+        return qs
+
     class Meta:
         verbose_name_plural = "subfamilies"
 
@@ -151,6 +183,17 @@ class Tribus(TaxonomicModel):
     verbatim_tribus_id = TaxonomicModel.get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
+
+    @property
+    def all_species(self):
+        return self.species_thru_genus
+
+    @property
+    def species_thru_genus(self):
+        qs = Species.objects.none()
+        for genus in self.genus_set.all():
+            qs = qs.union(genus.all_species)
+        return qs
 
     class Meta:
         verbose_name_plural = "tribus"
@@ -184,6 +227,22 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     objects = models.Manager()
     accepted_objects = AcceptedGenusManager()
     synonym_objects = SynonymGenusManager()
+
+    @property
+    def direct_species(self):
+        """Return species directly linked to this genus"""
+        return self.species_set.all()
+
+    @property
+    def all_species(self):
+        return self.direct_species.union(self.species_thru_subgenus)
+
+    @property
+    def species_thru_subgenus(self):
+        qs = Species.objects.none()
+        for subgenus in self.subgenus_set.all():
+            qs = qs.union(subgenus.all_species)
+        return qs
 
     class Meta:
         verbose_name_plural = "genera"
@@ -228,6 +287,14 @@ class Subgenus(TaxonomicModel):
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
+    @property
+    def all_species(self):
+        return self.direct_species
+
+    @property
+    def direct_species(self):
+        return self.species_set.all()
+
     class Meta:
         verbose_name_plural = "subgenera"
 
@@ -263,7 +330,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
 
         # Should be linked to either a subgenus or a genus, not both
         fields = [self.subgenus, self.genus]
-        if len ([field for field in fields if field is not None]) != 1:
+        if len([field for field in fields if field is not None]) != 1:
             errors_dics['subgenus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
             errors_dics['genus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
 

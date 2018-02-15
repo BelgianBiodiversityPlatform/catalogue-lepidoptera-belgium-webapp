@@ -8,7 +8,7 @@
     {% endif %}
 
                 <tr>
-                    <td>{{ subfamily.name }}</td>
+                    <td><a href="{% url 'subfamily_page' subfamily.id %}">{{ subfamily.name }}</a></td>
                 </tr>
 
     {%  if forloop.last %}

@@ -1,0 +1,15 @@
+{% extends "lepidoptera/taxonomy/base.html" %}
+{% load i18n %}
+
+{% block top-links%}
+    {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=subfamily only %}
+{% endblock %}
+
+{% block page-title %}{{ subfamily.name }}{% endblock %}
+{% block page-subtitle %}{% trans "Subfamily" %}{% endblock %}
+
+{% block lower-levels %}
+    <h3>{% trans "Tribus" %}</h3>
+
+    <h3>{% trans "(direct) Genera" %}</h3>
+{% endblock lower-levels %}
