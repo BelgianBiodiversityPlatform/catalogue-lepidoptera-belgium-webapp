@@ -321,6 +321,10 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     accepted_objects = AcceptedSpeciesManager()
     synonym_objects = SynonymSpeciesManager()
 
+    @property
+    def binomial_name(self):
+        return '{genus} {specific_epithet}'.format(genus=str(self.genus), specific_epithet=self.name)
+
     def parent(self):
         # Return the most direct parent
         return self.subgenus or self.genus

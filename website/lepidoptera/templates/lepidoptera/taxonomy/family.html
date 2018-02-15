@@ -11,4 +11,12 @@
 {% block lower-levels %}
     <h3>{% trans "Subfamilies" %}</h3>
     {% include 'lepidoptera/taxonomy/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
+
+    <h3>Species</h3>
+    <ul>
+    {% for s in family.all_species %}
+        <li><i>{{ s.binomial_name }}</i></li>
+    {% endfor %}
+    </ul>
+
 {% endblock lower-levels %}
