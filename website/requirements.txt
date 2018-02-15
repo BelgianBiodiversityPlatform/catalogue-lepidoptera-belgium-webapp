@@ -6,3 +6,4 @@ git+https://github.com/neutronX/django-markdownx@715359b
 django-settings-export==1.2.1
 git+https://github.com/deschler/django-modeltranslation@b24e4d3
 django-imagekit==4.0.2
+django-debug-toolbar==1.9

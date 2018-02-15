@@ -17,3 +17,5 @@ SECRET_KEY = 'XXXXXX'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+INTERNAL_IPS = ['127.0.0.1']  # For django-debug-toolbar
