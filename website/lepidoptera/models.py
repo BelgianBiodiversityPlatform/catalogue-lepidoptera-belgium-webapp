@@ -7,6 +7,60 @@ from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
 
 
+# Managers, helpers, ...
+class ValidFamiliesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
+
+
+class AcceptedGenusManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
+
+
+class SynonymGenusManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
+
+
+class AcceptedSpeciesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
+
+
+class SynonymSpeciesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
+
+
+class ParentForAdminListMixin(object):
+    """Exposes a parent_for_admin_list method, for polymorphic parents.
+
+    Needs a parent() method in implementing classes.
+    """
+    def parent_for_admin_list(self):
+        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
+
+    parent_for_admin_list.short_description = 'parent'
+
+
+class DisplayOrderNavigable(object):
+    """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
+    def next(self):
+        """Return the next instance in display_order, or None if we're the last one."""
+        try:
+            return self.__class__.objects.filter(display_order__gt=self.display_order).order_by('display_order')[0]
+        except IndexError:
+            return None
+
+    def previous(self):
+        """Return the previous instance in display_order, or None if we're the first one."""
+        try:
+            return self.__class__.objects.filter(display_order__lt=self.display_order).order_by('-display_order')[0]
+        except IndexError:
+            return None
+
+
 class Status(models.Model):
     VERBATIM_ID_VALID_FAMILY = 1
     VERBATIM_ID_FAMILY_SYNONYM = 2
@@ -36,48 +90,6 @@ class Status(models.Model):
 
     class Meta:
         verbose_name_plural = "statuses"
-
-
-class ValidFamiliesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
-
-
-class AcceptedGenusManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
-
-
-class SynonymGenusManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
-
-
-class AcceptedSpeciesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
-
-
-class SynonymSpeciesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
-
-
-class DisplayOrderNavigable(object):
-    """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
-    def next(self):
-        """Return the next instance in display_order, or None if we're the last one."""
-        try:
-            return self.__class__.objects.filter(display_order__gt=self.display_order).order_by('display_order')[0]
-        except IndexError:
-            return None
-
-    def previous(self):
-        """Return the previous instance in display_order, or None if we're the first one."""
-        try:
-            return self.__class__.objects.filter(display_order__lt=self.display_order).order_by('-display_order')[0]
-        except IndexError:
-            return None
 
 
 class TaxonomicModel(models.Model):
@@ -197,17 +209,6 @@ class Tribus(TaxonomicModel):
 
     class Meta:
         verbose_name_plural = "tribus"
-
-
-class ParentForAdminListMixin(object):
-    """Exposes a parent_for_admin_list method, for polymorphic parents.
-
-    Needs a parent() method in implementing classes.
-    """
-    def parent_for_admin_list(self):
-        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
-
-    parent_for_admin_list.short_description = 'parent'
 
 
 class Genus(ParentForAdminListMixin, TaxonomicModel):

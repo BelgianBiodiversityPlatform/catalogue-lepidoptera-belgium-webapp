@@ -212,9 +212,9 @@ class Command(LepidopteraCommand):
                     # We only have a genus...
                     parent_link = {'genus': Genus.objects.get(verbatim_genus_id=genus_id)}
                 elif subgenus_id is not None:
-                    # Consistenty check: direct genus_id == subgenus.genus_id
+                    # Consistency check: direct genus_id == subgenus.genus_id
                     if genus_id != Subgenus.objects.get(verbatim_subgenus_id=subgenus_id).genus.verbatim_genus_id:
-                        raise CommandError("Subgenus/Genus inconsistency at the Genus level")
+                        raise CommandError("Subgenus/Genus inconsistency at the Species level. SpeciesNumber={}".format(result.SpeciesNumber))
 
                     parent_link = {'subgenus': Subgenus.objects.get(verbatim_subgenus_id=subgenus_id)}
 
