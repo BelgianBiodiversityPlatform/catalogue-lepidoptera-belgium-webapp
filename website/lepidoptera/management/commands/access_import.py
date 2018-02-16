@@ -11,6 +11,7 @@ MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Specie
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
+NULL_SPECIES_NUMBER = 999010010
 
 
 def namedtuplefetchall(cursor):
@@ -207,38 +208,39 @@ class Command(LepidopteraCommand):
                 subgenus_id = result.SubgenusID
                 genus_id = result.GenusID
 
-                # Find the parent link...
-                if subgenus_id is None and genus_id is not None:
-                    # We only have a genus...
-                    parent_link = {'genus': Genus.objects.get(verbatim_genus_id=genus_id)}
-                elif subgenus_id is not None:
-                    # Consistency check: direct genus_id == subgenus.genus_id
-                    if genus_id != Subgenus.objects.get(verbatim_subgenus_id=subgenus_id).genus.verbatim_genus_id:
-                        raise CommandError("Subgenus/Genus inconsistency at the Species level. SpeciesNumber={}".format(result.SpeciesNumber))
+                if result.SpeciesNumber != NULL_SPECIES_NUMBER:
+                    # Find the parent link...
+                    if subgenus_id is None and genus_id is not None:
+                        # We only have a genus...
+                        parent_link = {'genus': Genus.objects.get(verbatim_genus_id=genus_id)}
+                    elif subgenus_id is not None:
+                        # Consistency check: direct genus_id == subgenus.genus_id
+                        if genus_id != Subgenus.objects.get(verbatim_subgenus_id=subgenus_id).genus.verbatim_genus_id:
+                            raise CommandError("Subgenus/Genus inconsistency at the Species level. SpeciesNumber={}".format(result.SpeciesNumber))
 
-                    parent_link = {'subgenus': Subgenus.objects.get(verbatim_subgenus_id=subgenus_id)}
+                        parent_link = {'subgenus': Subgenus.objects.get(verbatim_subgenus_id=subgenus_id)}
 
-                create_opts = {'verbatim_species_number': result.SpeciesNumber,
-                               'name': text_clean(result.SpeciesName),
-                               'code': text_clean(result.SpeciesCode),
+                    create_opts = {'verbatim_species_number': result.SpeciesNumber,
+                                   'name': text_clean(result.SpeciesName),
+                                   'code': text_clean(result.SpeciesCode),
 
-                               'author': text_clean(result.SpeciesAuthor),
+                                   'author': text_clean(result.SpeciesAuthor),
 
-                               'vernacular_name_nl': text_clean(result.SpeciesNameNL),
-                               'vernacular_name_en': text_clean(result.SpeciesNameEN),
-                               'vernacular_name_fr': text_clean(result.SpeciesNameFR),
-                               'vernacular_name_de': text_clean(result.SpeciesNameGE),
-                               'text': text_clean(result.SpeciesText),
-                               'status': Status.objects.get(verbatim_status_id=result.StatusID),
-                               'display_order': result.SpeciesNumber}
+                                   'vernacular_name_nl': text_clean(result.SpeciesNameNL),
+                                   'vernacular_name_en': text_clean(result.SpeciesNameEN),
+                                   'vernacular_name_fr': text_clean(result.SpeciesNameFR),
+                                   'vernacular_name_de': text_clean(result.SpeciesNameGE),
+                                   'text': text_clean(result.SpeciesText),
+                                   'status': Status.objects.get(verbatim_status_id=result.StatusID),
+                                   'display_order': result.SpeciesNumber}
 
-                if result.ReferenceToHigherCategory:
-                    create_opts['synonym_of'] = Species.objects.get(
-                        verbatim_species_number=result.ReferenceToHigherCategory)
+                    if result.ReferenceToHigherCategory:
+                        create_opts['synonym_of'] = Species.objects.get(
+                            verbatim_species_number=result.ReferenceToHigherCategory)
 
-                create_opts.update(parent_link)
+                    create_opts.update(parent_link)
 
-                Species.objects.create(**create_opts)
+                    Species.objects.create(**create_opts)
                 self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))
