@@ -1,10 +1,6 @@
 {% extends "lepidoptera/taxonomy/base.html" %}
 {% load i18n %}
 
-{% block page-title %}<i>{{ species.binomial_name }}</i>{% endblock %}
-
 {% block details %}
-    {% include "lepidoptera/taxonomy/_higher_levels.html" with taxonomy=species.all_parents_and_me %}
+    {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=species.binomial_name subtitle="Species" taxonomy=species.all_parents_and_me only %}
 {% endblock %}
-
-{% block page-subtitle %}{% trans "Species" %}{% endblock %}

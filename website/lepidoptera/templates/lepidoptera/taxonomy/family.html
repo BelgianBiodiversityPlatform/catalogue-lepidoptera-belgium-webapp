@@ -5,8 +5,9 @@
     {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=family only %}
 {% endblock top-links %}
 
-{% block page-title %}{{ family.name }}{% endblock %}
-{% block page-subtitle %}{% trans "Family" %}{% endblock %}
+{% block details %}
+    {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=family.name subtitle="Family" taxonomy=family.all_parents_and_me only %}
+{% endblock %}
 
 {% block lower-levels %}
     <h3>{% trans "Subfamilies" %}</h3>

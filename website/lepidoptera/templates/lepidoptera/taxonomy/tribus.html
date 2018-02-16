@@ -1,13 +1,6 @@
 {% extends "lepidoptera/taxonomy/base.html" %}
 {% load i18n %}
 
-{% block top-links%}
-    {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=tribus only %}
-{% endblock %}
-
-{% block page-title %}{{ tribus.name }}{% endblock %}
-{% block page-subtitle %}{% trans "Tribus" %}{% endblock %}
-
 {% block details %}
-    {% include "lepidoptera/taxonomy/_higher_levels.html" with taxonomy=tribus.all_parents_and_me %}
+    {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=tribus.name subtitle="Tribus" taxonomy=tribus.all_parents_and_me only %}
 {% endblock %}
