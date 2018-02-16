@@ -30,6 +30,7 @@ B. data populate
     $ psql -d <DATABASE_NAME> -f initial_data/access/converted/CatLepBelgium_be.sql
     
 $ python manage.py access_import
+$ python manage.py website_import initial_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv
     
 To discuss with team
 ====================
@@ -39,3 +40,20 @@ To discuss with team
 - On home page: what's new... Should it be a simple block of text :(
 - Show dynamic counters in footer
 - Ask if all taxonomic models should be "orderable" (prev/next)?
+
+To ask very soon to Willy:
+==========================
+
+- In Access DB, we have two species with SpeciesNumber=250110250... (access_import.py blocked because of this...)
+
+
+Data issues to solve on/before launch
+=====================================
+
+- Willy should set a representative picture for each family.
+- As we decided to ignore them, Willy needs to manually check (and enter if necessary) the families from the website 
+that don't appear in the Access database (list is given my website_import.py script, but as of Feb. 16, it is: Acrolepiidae, 
+Agonoxenidae, Amphisbatidae, Arctiidae, Chimabachidae, Depressariidaeare, Eriocraniidaeare, Ethmiidae, Lemoniidae, Lymantriidae, 
+Nolidaeare, Thaumetopoeidae)
+- I decided to drop (not import from access the species and genus "UNKNOWN"). Confirm it's fine...
+
