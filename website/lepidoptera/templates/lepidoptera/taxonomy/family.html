@@ -15,7 +15,7 @@
     <h3>Species</h3>
     <ul>
     {% for s in family.all_species %}
-        <li><i><a href="{% url 'species_page' s.pk %}">{{ s.binomial_name }}</a></i></li>
+        <li><i><a href="{{ s.get_absolute_url }}">{{ s.binomial_name }}</a></i></li>
     {% endfor %}
     </ul>
 

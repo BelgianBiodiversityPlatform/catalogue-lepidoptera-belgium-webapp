@@ -1,0 +1,14 @@
+{% load various_helpers %}
+
+{% for taxon in taxonomy %}
+    {{ taxon | to_class_name }}:
+        <b>
+            {% if not forloop.last %}
+                <a href="{{ taxon.get_absolute_url }}">{{ taxon }}</a>
+            {%  else %}
+                {{ taxon }}
+            {% endif %}
+        </b>
+
+    {% if not forloop.last %} > {% endif %}
+{% endfor %}

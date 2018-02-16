@@ -39,7 +39,7 @@ class ParentForAdminListMixin(object):
     Needs a parent() method in implementing classes.
     """
     def parent_for_admin_list(self):
-        return "{name} ({rank})".format(name=self.parent(), rank=self.parent().__class__.__name__)
+        return "{name} ({rank})".format(name=self.parent, rank=self.parent.__class__.__name__)
 
     parent_for_admin_list.short_description = 'parent'
 
@@ -102,6 +102,7 @@ class TaxonomicModel(models.Model):
     class Meta:
         abstract = True
 
+    # Common fields
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=255)
@@ -115,6 +116,20 @@ class TaxonomicModel(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def all_parents(self):
+        # Models subclassing must implement a .parent property (that returns None if top of the tree)
+        parents = []
+        model_instance = self.parent
+        while model_instance is not None:
+            parents = [model_instance] + parents
+            model_instance = model_instance.parent
+        return parents
+
+    @property
+    def all_parents_and_me(self):
+        return self.all_parents + [self]
 
 
 class Family(DisplayOrderNavigable, TaxonomicModel):
@@ -156,6 +171,10 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
             qs = qs.union(subfamily.all_species)
         return qs
 
+    @property
+    def parent(self):
+        return None  # Top of the tree
+
     class Meta:
         verbose_name_plural = "families"
 
@@ -166,6 +185,13 @@ class Subfamily(TaxonomicModel):
     verbatim_subfamily_id = TaxonomicModel.get_verbatim_id_field()
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('subfamily_page', kwargs={'subfamily_id': str(self.id)})
+
+    @property
+    def parent(self):
+        return self.family
 
     @property
     def all_species(self):
@@ -195,6 +221,13 @@ class Tribus(TaxonomicModel):
     verbatim_tribus_id = TaxonomicModel.get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('tribus_page', kwargs={'tribus_id': str(self.id)})
+
+    @property
+    def parent(self):
+        return self.subfamily
 
     @property
     def all_species(self):
@@ -229,6 +262,9 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     accepted_objects = AcceptedGenusManager()
     synonym_objects = SynonymGenusManager()
 
+    def get_absolute_url(self):
+        return reverse('genus_page', kwargs={'genus_id': str(self.id)})
+
     @property
     def direct_species(self):
         """Return species directly linked to this genus"""
@@ -248,6 +284,7 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     class Meta:
         verbose_name_plural = "genera"
 
+    @property
     def parent(self):
         # Return the most direct parent
         return self.tribus or self.subfamily or self.family
@@ -288,6 +325,13 @@ class Subgenus(TaxonomicModel):
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})
+
+    @property
+    def parent(self):
+        return self.genus
+
     @property
     def all_species(self):
         return self.direct_species
@@ -307,12 +351,10 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     code = models.CharField(max_length=50, blank=True, null=True)
 
     synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
-    # TODO: implement synonym/accepted validations similar to genus
 
     # Parents: sometimes a genus, sometimes a subgenus
     subgenus = models.ForeignKey(Subgenus, null=True, blank=True, on_delete=models.CASCADE)
     genus = models.ForeignKey(Genus, null=True, blank=True, on_delete=models.CASCADE)
-    # TODO: implement "only one" validation similar to genus
 
     # The source database contains much more (currently unused) fields, mostly text, that we decide to ignore for
     # now (focus first on taxonomy, and keep things as simple as possible)
@@ -322,10 +364,25 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     accepted_objects = AcceptedSpeciesManager()
     synonym_objects = SynonymSpeciesManager()
 
+    def get_absolute_url(self):
+        return reverse('species_page', kwargs={'species_id': str(self.id)})
+
     @property
     def binomial_name(self):
-        return '{genus} {specific_epithet}'.format(genus=str(self.genus), specific_epithet=self.name)
+        return '{genus} {specific_epithet}'.format(genus=self.genus_name, specific_epithet=self.name)
 
+    @property
+    def genus_name(self):
+        # Sometimes we need to go through subgenus to get it, sometimes it's directly available
+        if self.genus:
+            return self.genus.name
+        else:
+            return self.subgenus.genus.name
+
+    def __str__(self):
+        return self.binomial_name
+
+    @property
     def parent(self):
         # Return the most direct parent
         return self.subgenus or self.genus

@@ -1,0 +1,13 @@
+{% extends "lepidoptera/taxonomy/base.html" %}
+{% load i18n %}
+
+{% block top-links%}
+    {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=genus only %}
+{% endblock %}
+
+{% block page-title %}{{ genus.name }}{% endblock %}
+{% block page-subtitle %}{% trans "Genus" %}{% endblock %}
+
+{% block details %}
+    {% include "lepidoptera/taxonomy/_higher_levels.html" with taxonomy=genus.all_parents_and_me %}
+{% endblock %}
