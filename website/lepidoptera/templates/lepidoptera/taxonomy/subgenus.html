@@ -4,3 +4,9 @@
 {% block details %}
     {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=subgenus.name subtitle="Subgenus" taxonomy=subgenus.all_parents_and_me only %}
 {% endblock %}
+
+
+{% block lower-levels %}
+    <h3>{% trans "Species" %}</h3>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=subgenus.species_set.all only %}
+{% endblock lower-levels %}

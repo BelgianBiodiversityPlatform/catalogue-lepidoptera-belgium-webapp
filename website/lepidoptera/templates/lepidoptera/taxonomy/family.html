@@ -11,7 +11,10 @@
 
 {% block lower-levels %}
     <h3>{% trans "Subfamilies" %}</h3>
-    {% include 'lepidoptera/taxonomy/_subfamily_list_table.html' with subfamilies=family.subfamily_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.subfamily_set.all only %}
+
+    <h3>{% trans "(direct) Genera" %}</h3>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.genus_set.all only %}
 
     <h3>Species</h3>
     <ul>

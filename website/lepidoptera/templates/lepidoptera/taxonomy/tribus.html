@@ -4,3 +4,8 @@
 {% block details %}
     {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=tribus.name subtitle="Tribus" taxonomy=tribus.all_parents_and_me only %}
 {% endblock %}
+
+{% block lower-levels %}
+    <h3>{% trans "Genera" %}</h3>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=tribus.genus_set.all only %}
+{% endblock lower-levels %}

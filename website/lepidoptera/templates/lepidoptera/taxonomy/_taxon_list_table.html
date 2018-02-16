@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% for subfamily in subfamilies %}
+{% for taxon in taxon_list %}
     {% if forloop.first %}
         <table class="table table-bordered table-hover table-striped table-sm">
             <thead class="thead-dark"><tr><th scope="col">{% trans 'Name' %}</th></tr></thead>
@@ -8,7 +8,7 @@
     {% endif %}
 
                 <tr>
-                    <td><a href="{% url 'subfamily_page' subfamily.id %}">{{ subfamily.name }}</a></td>
+                    <td><a href="{{ taxon.get_absolute_url }}">{{ taxon.name }}</a></td>
                 </tr>
 
     {%  if forloop.last %}
