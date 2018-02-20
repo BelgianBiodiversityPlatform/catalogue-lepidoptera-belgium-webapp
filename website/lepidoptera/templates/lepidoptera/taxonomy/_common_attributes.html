@@ -1,6 +1,14 @@
 {% load i18n %}
 {% load various_helpers %}
 
+{%  if taxon.text %}
+    <div class="row">
+        <div class="col"><p class="alert alert-success" role="alert">{{ taxon.text }}</p></div>
+    </div>
+
+    <hr/>
+{% endif %}
+
 <dl class="row">
     <dt class="col-sm-2">{% trans "Classification" %}</dt>
     <dd class="col-sm-10">{% include "lepidoptera/taxonomy/_classification.html" with taxon=taxon only %}</dd>
@@ -31,5 +39,5 @@
             {% endfor %}
         </dd>
     {% endif %}
-
 </dl>
+<hr />

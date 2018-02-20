@@ -20,9 +20,19 @@ class Command(LepidopteraCommand):
 
                 try:
                     family = Family.objects.get(name=family_name)
+
+                    if family.text == '':
+                        family.text = text_clean(families_row['description'])
+                    else:
+                        self.w(self.style.WARNING(
+                            '\nFamily: {} already has a description, not importing...'.format(family))
+                        )
+
+                    family.save()
+
                 except Family.DoesNotExist:
                     missing_families.append(family_name)
 
-                self.w('.')
+                self.w('.', ending='')
 
-            self.w(self.style.WARNING('Missing families: {}'.format(', '.join(missing_families))))
+            self.w(self.style.WARNING('\nMissing families: {}'.format(', '.join(missing_families))))

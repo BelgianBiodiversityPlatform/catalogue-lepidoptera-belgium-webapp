@@ -53,6 +53,8 @@ To ask very soon to Willy:
 901040010
 601210010
 
+- In website_import, we don't import the Family description if there's already something in the text field. IS it correct? 
+Or maybe we can import in all case if data is better on website than in Access?
 
 
 Data issues to solve on/before launch

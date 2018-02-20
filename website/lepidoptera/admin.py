@@ -67,7 +67,7 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
     readonly_fields = ('verbatim_family_id', )
 
-    list_display = ('display_order', 'name', 'author', 'status')
+    list_display = ('display_order', 'name', 'author', 'text')
 
     list_filter = [RepresentativePictureNotNullFilter]
 

@@ -13,6 +13,8 @@
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Subfamilies" taxon_list=family.subfamily_set.all only %}
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=family.genus_set.all only %}
 
+    <hr/>
+
     <h4>Species</h4>
     {%  include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species %}
 
