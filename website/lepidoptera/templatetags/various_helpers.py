@@ -1,4 +1,6 @@
 from django import template
+from django.utils.safestring import mark_safe
+from markdownx.utils import markdownify
 
 register = template.Library()
 
@@ -25,3 +27,8 @@ def field_in_all_available_languages(languages, model, field_name):
         return '/'
 
     return s[:-2]  # Drop the remaining ' ,'
+
+
+@register.filter()
+def markdown(value, arg=None):
+    return mark_safe(markdownify(value))

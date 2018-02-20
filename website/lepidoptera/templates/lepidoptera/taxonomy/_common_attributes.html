@@ -3,7 +3,9 @@
 
 {%  if taxon.text %}
     <div class="row">
-        <div class="col"><p class="alert alert-success" role="alert">{{ taxon.text }}</p></div>
+        <div class="col alert alert-success" role="alert">
+            {{ taxon.text|markdown }}
+        </div>
     </div>
 
     <hr/>

@@ -62,7 +62,7 @@ class LimitStatusChoiceMixin(object):
 
 
 @admin.register(Family)
-class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_family_id', )
@@ -73,7 +73,7 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Subfamily)
-class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subfamily_id', )
@@ -84,7 +84,7 @@ class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Tribus)
-class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_tribus_id', )
@@ -93,7 +93,7 @@ class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Genus)
-class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_genus_id', )
@@ -115,7 +115,7 @@ class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Subgenus)
-class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subgenus_id', )
@@ -138,7 +138,7 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin):
 
 
 @admin.register(Species)
-class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin):
+class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'code')

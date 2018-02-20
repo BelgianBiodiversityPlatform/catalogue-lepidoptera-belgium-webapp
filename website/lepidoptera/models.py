@@ -116,7 +116,7 @@ class TaxonomicModel(models.Model):
 
     vernacular_name = models.CharField(max_length=255, blank=True)
 
-    text = models.TextField(blank=True)
+    text = MarkdownxField(blank=True)
 
     display_order = models.IntegerField(unique=True)
 
