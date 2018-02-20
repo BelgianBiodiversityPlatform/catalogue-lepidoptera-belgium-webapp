@@ -101,6 +101,10 @@ class TaxonomicModel(models.Model):
         # Blank/NULL allowed for post-import record
         return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
+    @staticmethod
+    def get_synonym_of_field():
+        return models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='synonyms')
+
     class Meta:
         abstract = True
 
@@ -260,7 +264,7 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True, on_delete=models.CASCADE)
     family = models.ForeignKey(Family, null=True, blank=True, on_delete=models.CASCADE)
 
-    synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    synonym_of = TaxonomicModel.get_synonym_of_field()
 
     # Managers:
     objects = models.Manager()
@@ -355,7 +359,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     verbatim_species_number = TaxonomicModel.get_verbatim_id_field()
     code = models.CharField(max_length=50, blank=True, null=True)
 
-    synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    synonym_of = TaxonomicModel.get_synonym_of_field()
 
     # Parents: sometimes a genus, sometimes a subgenus
     subgenus = models.ForeignKey(Subgenus, null=True, blank=True, on_delete=models.CASCADE)

@@ -11,5 +11,25 @@
     </dd>
 
     <dt class="col-sm-2">{% trans "Status" %}</dt>
-    <dd class="col-sm-10">{{ taxon.status }}</dd>
+    <dd class="col-sm-10">
+        {{ taxon.status }}
+    </dd>
+
+    {% if taxon.synonym_of %}
+        <dt class="col-sm-2">{% trans "Synonym of " %}</dt>
+        <dd class="col-sm-10">
+            <a href="{{ taxon.synonym_of.get_absolute_url }}">{{ taxon.synonym_of.html_str }}</a>
+        </dd>
+    {% endif %}
+
+    {% if taxon.synonyms.all %}
+        <dt class="col-sm-2">{% trans "Synonyms" %}
+        <dd class="col-sm-10">
+            {% for synonym in taxon.synonyms.all %}
+                <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a>
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </dd>
+    {% endif %}
+
 </dl>
