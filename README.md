@@ -44,7 +44,15 @@ To discuss with team
 To ask very soon to Willy:
 ==========================
 
-- In Access DB, we have two species with SpeciesNumber=250110250... (access_import.py blocked because of this...)
+- In Access DB, we have duplicates speciesNumber for (2 records for each):
+450010011
+450010020
+300010151
+250110250
+450010010
+901040010
+601210010
+
 
 
 Data issues to solve on/before launch
