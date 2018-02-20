@@ -1,0 +1,9 @@
+<h1 class="display-4">
+    {% if taxon_name_italic %}<i>{% endif %}
+    {{ taxon_name }}
+    {% if taxon_name_italic %}</i>{% endif %}
+    {% if taxon_author %}
+        <b>{{ taxon_author }}</b>
+    {% endif %}
+    <span class="font-weight-light small badge badge-secondary">{{ taxon_rank }}</span>
+</h1>

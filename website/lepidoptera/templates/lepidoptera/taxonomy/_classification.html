@@ -1,6 +1,6 @@
 {% load various_helpers %}
 
-{% for taxon in taxonomy %}
+{% for taxon in taxon.all_parents_and_me %}
     {{ taxon | to_class_name }}:
         <b>
             {% if not forloop.last %}

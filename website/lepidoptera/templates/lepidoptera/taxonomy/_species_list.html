@@ -1,0 +1,5 @@
+<ul>
+    {% for s in species_list %}
+        <li><i><a href="{{ s.get_absolute_url }}">{{ s.binomial_name }}</a></i></li>
+    {% endfor %}
+</ul>

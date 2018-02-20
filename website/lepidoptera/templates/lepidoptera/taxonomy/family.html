@@ -6,21 +6,17 @@
 {% endblock top-links %}
 
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with title=family.name subtitle="Family" taxonomy=family.all_parents_and_me only %}
-{% endblock %}
+    {% include "lepidoptera/taxonomy/_title.html" with taxon_name=family.name taxon_rank="Family" only %}
+    {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=family %}
 
-{% block lower-levels %}
-    <h3>{% trans "Subfamilies" %}</h3>
+    <h2>{% trans "Lower taxa" %}</h2>
+    <h4>{% trans "Subfamilies" %}</h4>
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.subfamily_set.all only %}
 
-    <h3>{% trans "(direct) Genera" %}</h3>
+    <h4>{% trans "(direct) Genera" %}</h4>
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.genus_set.all only %}
 
-    <h3>Species</h3>
-    <ul>
-    {% for s in family.all_species %}
-        <li><i><a href="{{ s.get_absolute_url }}">{{ s.binomial_name }}</a></i></li>
-    {% endfor %}
-    </ul>
+    <h4>Species</h4>
+    {%  include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species %}
 
-{% endblock lower-levels %}
+{% endblock %}

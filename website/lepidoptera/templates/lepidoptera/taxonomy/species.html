@@ -2,5 +2,6 @@
 {% load i18n %}
 
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title_and_higher_levels.html" with italic_title=True title=species.binomial_name subtitle="Species" taxonomy=species.all_parents_and_me only %}
+    {% include "lepidoptera/taxonomy/_title.html" with taxon_name_italic=True taxon_name=species.binomial_name taxon_rank="Species" taxon_author=species.author only %}
+    {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=species %}
 {% endblock %}

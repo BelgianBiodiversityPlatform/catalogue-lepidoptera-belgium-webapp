@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load various_helpers %}
+
+<dl class="row">
+    <dt class="col-sm-2">{% trans "Classification" %}</dt>
+    <dd class="col-sm-10">{% include "lepidoptera/taxonomy/_classification.html" with taxon=taxon only %}</dd>
+
+    <dt class="col-sm-2">{% trans "Vernacular names" %}</dt>
+    <dd class="col-sm-10">
+        {% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}
+    </dd>
+</dl>

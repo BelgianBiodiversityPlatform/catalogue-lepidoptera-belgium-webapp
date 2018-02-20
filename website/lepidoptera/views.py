@@ -9,7 +9,7 @@ def home_page(request):
     return render(request, 'lepidoptera/home.html', {'families': families})
 
 
-# TODO: factorize code for the taxonrank_page views
+# TODO: factorize code for the taxonrank_page views?
 
 def family_page(request, family_id):
     family = Family.objects.get(pk=family_id)

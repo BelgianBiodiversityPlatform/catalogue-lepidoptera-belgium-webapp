@@ -14,7 +14,7 @@ def _get_field_name(language_code):
 
 @register.simple_tag(takes_context=True)
 def get_page_fragment(context, identifier):
-    """Return rendered HTML for the page frament with identifier, in the current language"""
+    """Return rendered HTML for the page fragment with identifier, in the current language"""
 
     fragment = PageFragment.objects.get(identifier=identifier)
 

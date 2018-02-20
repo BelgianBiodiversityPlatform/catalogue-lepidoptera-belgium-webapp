@@ -128,6 +128,7 @@ WEBSITE_NAME = "Catalogue of the Lepidoptera of Belgium"
 
 SETTINGS_EXPORT = [
     'WEBSITE_NAME',
+    'LANGUAGES'
 ]
 
 MEDIA_URL = "/media/"
