@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
@@ -116,6 +118,9 @@ class TaxonomicModel(models.Model):
 
     def __str__(self):
         return self.name
+
+    def html_str(self):
+        return self.__str__()
 
     @property
     def all_parents(self):
@@ -381,6 +386,9 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
 
     def __str__(self):
         return self.binomial_name
+
+    def html_str(self):
+        return format_html("<i>{}</i>", self.__str__() )
 
     @property
     def parent(self):

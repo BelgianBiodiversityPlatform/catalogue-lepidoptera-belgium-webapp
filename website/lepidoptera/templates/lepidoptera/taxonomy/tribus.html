@@ -5,7 +5,6 @@
     {% include "lepidoptera/taxonomy/_title.html" with taxon_name=tribus.name taxon_rank="Tribus" only %}
     {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=tribus %}
 
-    <h2>{% trans "Lower taxa" %}</h2>
-    <h4>{% trans "Genera" %}</h4>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=tribus.genus_set.all only %}
+    <h2>{% trans "Direct lower taxa" %}</h2>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=tribus.genus_set.all only %}
 {% endblock %}

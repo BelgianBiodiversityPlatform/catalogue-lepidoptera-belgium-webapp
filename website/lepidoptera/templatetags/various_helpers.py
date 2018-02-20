@@ -21,4 +21,7 @@ def field_in_all_available_languages(languages, model, field_name):
         if field_value:
             s = s + '{field_value} ({lang_code}), '.format(field_value=field_value, lang_code=lang_code)
 
+    if s == '':
+        return '/'
+
     return s[:-2]  # Drop the remaining ' ,'

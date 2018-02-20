@@ -9,12 +9,9 @@
     {% include "lepidoptera/taxonomy/_title.html" with taxon_name=family.name taxon_rank="Family" only %}
     {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=family %}
 
-    <h2>{% trans "Lower taxa" %}</h2>
-    <h4>{% trans "Subfamilies" %}</h4>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.subfamily_set.all only %}
-
-    <h4>{% trans "(direct) Genera" %}</h4>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with taxon_list=family.genus_set.all only %}
+    <h2>{% trans "Direct lower taxa" %}</h2>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Subfamilies" taxon_list=family.subfamily_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=family.genus_set.all only %}
 
     <h4>Species</h4>
     {%  include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species %}

@@ -1,21 +1,28 @@
 {% load i18n %}
+<p>
+    <a class="btn btn-primary" data-toggle="collapse" href="#container_{{ title }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Show {{ title }} ({{ taxon_list|length }})
+    </a>
+</p>
 
-{% for taxon in taxon_list %}
-    {% if forloop.first %}
-        <table class="table table-bordered table-hover table-striped table-sm">
-            <thead class="thead-dark"><tr><th scope="col">{% trans 'Name' %}</th></tr></thead>
-            <tbody>
-    {% endif %}
+<div class="collapse" id="container_{{ title }}">
+    {% for taxon in taxon_list %}
+        {% if forloop.first %}
+            <table class="table table-bordered table-hover table-striped table-sm">
+                <thead class="thead-dark"><tr><th scope="col">{% trans 'Name' %}</th></tr></thead>
+                <tbody>
+        {% endif %}
 
-                <tr>
-                    <td><a href="{{ taxon.get_absolute_url }}">{{ taxon.name }}</a></td>
-                </tr>
+                    <tr>
+                        <td><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></td>
+                    </tr>
 
-    {%  if forloop.last %}
-            </tbody>
-        </table>
-    {% endif %}
+        {%  if forloop.last %}
+                </tbody>
+            </table>
+        {% endif %}
 
-{% empty %}
-    {% trans "No records found." %}
-{% endfor %}
+    {% empty %}
+        {% trans "No records found." %}
+    {% endfor %}
+</div>
