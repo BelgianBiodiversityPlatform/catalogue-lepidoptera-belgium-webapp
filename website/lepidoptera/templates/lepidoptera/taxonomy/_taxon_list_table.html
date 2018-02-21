@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load various_helpers %}
 
 {% if taxon_list.all %}
     <p>
@@ -11,12 +12,21 @@
         {% for taxon in taxon_list %}
             {% if forloop.first %}
                 <table class="table table-bordered table-hover table-striped table-sm">
-                    <thead class="thead-dark"><tr><th scope="col">{% trans 'Name' %}</th></tr></thead>
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">{% trans 'Name' %}</th>
+                            <th scope="col">{% trans 'Vernacular names' %}</th>
+                            <th scope="col">{% trans 'Status' %}</th>
+                        </tr>
+                    </thead>
+
                     <tbody>
             {% endif %}
 
                     <tr>
                         <td><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></td>
+                        <td>{% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}</td>
+                        <td>{{ taxon.status }}</td>
                     </tr>
 
             {%  if forloop.last %}
