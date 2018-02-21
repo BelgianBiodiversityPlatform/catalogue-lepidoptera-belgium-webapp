@@ -150,7 +150,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
 
     verbatim_family_id = TaxonomicModel.get_verbatim_id_field()
 
-    representative_picture = models.ImageField(blank=True, null=True)
+    representative_picture = models.ImageField(blank=True, null=True, upload_to='family_representative_pictures')
     representative_picture_thumbnail = ImageSpecField(source='representative_picture',
                                                       processors=[ResizeToFit(640, 480)],
                                                       format='JPEG',
@@ -447,7 +447,10 @@ class Province(models.Model):
 
 class TimePeriod(models.Model):
     name = models.CharField(max_length=255)
-    icon = models.ImageField()
+    icon = models.ImageField(upload_to='time_period_icons')
+
+    def __str__(self):
+        return self.name
 
 
 class SpeciesPresence(models.Model):

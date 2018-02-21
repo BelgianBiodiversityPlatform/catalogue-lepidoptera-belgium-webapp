@@ -132,5 +132,6 @@ SETTINGS_EXPORT = [
 ]
 
 MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 from .settings_local import *

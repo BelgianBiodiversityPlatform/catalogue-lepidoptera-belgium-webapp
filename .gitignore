@@ -2,6 +2,7 @@
 
 .DS_Store
 website/settings_local.py
+media_root/
 
 ### Python template
 # Byte-compiled / optimized / DLL files
