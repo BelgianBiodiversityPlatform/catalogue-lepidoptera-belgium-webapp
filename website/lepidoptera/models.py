@@ -1,15 +1,44 @@
+import itertools
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
 
 
 # Managers, helpers, ...
+class SpeciesManager(models.Manager):
+    def get_with_name_and_author(self, name_and_author_string):
+        """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
+
+        name_part = " ".join(name_and_author_string.split(" ", 2)[:2]) # cut after second space
+        name_part = name_part.strip()  # Remove leading/trailing whitespaces
+
+        name_part_genus, name_part_species = name_part.split()
+
+        author_part = name_and_author_string.replace(name_part, '')
+        author_part = author_part.strip()
+
+        all_matching_species = self.get_queryset().filter(name=name_part_species, author=author_part)
+
+        # Empty queryset: raise DoesNotExists
+        if len(all_matching_species) == 0:
+            raise Species.DoesNotExist()
+        else:
+            # One or several results. Ideally, one and only one should also match the genus
+            all_matching_species = [species for species in all_matching_species if species.genus_name == name_part_genus]
+
+            if len(all_matching_species) > 1:
+                raise Species.MultipleObjectsReturned
+            elif len(all_matching_species) == 0:
+                raise Species.DoesNotExist()
+
+            return all_matching_species[0]
+
+
 class ValidFamiliesManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
@@ -139,6 +168,12 @@ class TaxonomicModel(models.Model):
     @property
     def all_parents_and_me(self):
         return self.all_parents + [self]
+
+    @property
+    def admin_change_url(self):
+        return reverse('admin:{app_label}_{model_name}_change'.format(app_label=self._meta.app_label,
+                                                                      model_name=self._meta.model_name),
+                       args=(self.pk,))
 
 
 class Family(DisplayOrderNavigable, TaxonomicModel):
@@ -369,12 +404,18 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     # now (focus first on taxonomy, and keep things as simple as possible)
 
     # Managers:
-    objects = models.Manager()
+    objects = SpeciesManager()
     accepted_objects = AcceptedSpeciesManager()
     synonym_objects = SynonymSpeciesManager()
 
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
+
+    @property
+    def family(self):
+        for taxon in self.all_parents:
+            if taxon.__class__.__name__ == 'Family':
+                return taxon
 
     @property
     def binomial_name(self):
@@ -444,8 +485,15 @@ class Province(models.Model):
     class Meta:
         ordering = ['order']
 
+    def __str__(self):
+        return self.name
+
 
 class TimePeriod(models.Model):
+    BEFORE_1980_NAME = 'Before 1980'
+    BETWEEN_1980_2004_NAME = '1980-2004'
+    SINCE_2004_NAME = 'After 2004'
+
     name = models.CharField(max_length=255)
     icon = models.ImageField(upload_to='time_period_icons')
 
@@ -457,6 +505,10 @@ class SpeciesPresence(models.Model):
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     period = models.ForeignKey(TimePeriod, on_delete=models.CASCADE)
+    present = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('species', 'province', 'period')
 
 
 class PageFragment(models.Model):

@@ -40,6 +40,8 @@ To discuss with team
 - On home page: what's new... Should it be a simple block of text :(
 - Show dynamic counters in footer
 - Ask if all taxonomic models should be "orderable" (prev/next)?
+- Ask if the species presence in a province should be markable as unknown
+- Show reconciliation (website script) so they have a better idea of how all that works.
 
 To ask very soon to Willy:
 ==========================

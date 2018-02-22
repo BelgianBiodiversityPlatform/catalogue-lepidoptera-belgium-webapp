@@ -61,6 +61,10 @@ class LimitStatusChoiceMixin(object):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class SpeciesPresenceInline(admin.TabularInline):
+    model = SpeciesPresence
+
+
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
@@ -161,6 +165,8 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
               'text',
               'display_order',
     )
+
+    inlines = [SpeciesPresenceInline, ]
 
 
 @admin.register(Province)
