@@ -1,4 +1,4 @@
-import itertools
+from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -194,6 +194,10 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
 
+    def species_count(self):
+        #return self.all_species.count()
+        return 0
+
     def get_absolute_url(self):
         return reverse('family_page', kwargs={'family_id': str(self.id)})
 
@@ -372,6 +376,11 @@ class Subgenus(TaxonomicModel):
     def get_absolute_url(self):
         return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})
 
+    @denormalized(models.CharField, max_length=255)
+    @depend_on_related('Genus')
+    def genus_name(self):
+        return self.genus.name
+
     @property
     def parent(self):
         return self.genus
@@ -417,17 +426,45 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
             if taxon.__class__.__name__ == 'Family':
                 return taxon
 
+    # So far, not much faster than the initial (more readable) implementation
+    # @property
+    # def new_binomial_name(self):
+    #     sql = """
+    #     SELECT
+    #       CASE
+    #         WHEN lepidoptera_species.genus_id IS NOT NULL
+    #           THEN g.name
+    #         ELSE
+    #           l.name
+    #         END
+    #       || ' ' || "lepidoptera_species"."name"
+    #
+    #     FROM lepidoptera_species
+    #
+    #     LEFT JOIN lepidoptera_genus g ON lepidoptera_species.genus_id = g.id
+    #     LEFT JOIN lepidoptera_subgenus ls ON lepidoptera_species.subgenus_id = ls.id
+    #     LEFT JOIN lepidoptera_genus l ON ls.genus_id = l.id
+    #
+    #     WHERE "lepidoptera_species".id=%s"""
+    #
+    #     with connection.cursor() as cursor:
+    #         cursor.execute(sql, [self.pk])
+    #         row = cursor.fetchone()
+    #     return row[0]
+
     @property
     def binomial_name(self):
         return '{genus} {specific_epithet}'.format(genus=self.genus_name, specific_epithet=self.name)
 
-    @property
+    @denormalized(models.CharField, max_length=255)
+    @depend_on_related('Genus')
+    @depend_on_related('Subgenus')
     def genus_name(self):
         # Sometimes we need to go through subgenus to get it, sometimes it's directly available
         if self.genus:
             return self.genus.name
         else:
-            return self.subgenus.genus.name
+            return self.subgenus.genus_name
 
     def __str__(self):
         return self.binomial_name

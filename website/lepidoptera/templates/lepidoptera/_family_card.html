@@ -6,7 +6,7 @@
 
     <div class="card-body">
         <h5 class="card-title">{{ family.name }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ family.all_species.count }} {% trans "species in Belgium" %}.</h6>
+        <h6 class="card-subtitle mb-2 text-muted">{{ family.species_count }} {% trans "species in Belgium" %}.</h6>
         <a href="{% url 'family_page' family.id %}" class="btn btn-outline-primary btn-sm">View family</a>
     </div>
 </div>

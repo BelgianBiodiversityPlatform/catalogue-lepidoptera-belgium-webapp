@@ -31,6 +31,9 @@ B. data populate
     
 $ python manage.py access_import
 $ python manage.py website_import initial_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv
+
+$ python manage.py denorm_init or needed before, in config?)
+$ python manage.py denorm_rebuild (after all data populate)
     
 To discuss with team
 ====================
@@ -42,6 +45,7 @@ To discuss with team
 - Ask if all taxonomic models should be "orderable" (prev/next)?
 - Ask if the species presence in a province should be markable as unknown
 - Show reconciliation (website script) so they have a better idea of how all that works.
+- Show validation in admin
 
 To ask very soon to Willy:
 ==========================

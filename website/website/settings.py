@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'markdownx',
     'imagekit',
     'debug_toolbar',
+    'denorm',
 
     'lepidoptera'
 ]
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
 
+    'denorm.middleware.DenormMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
