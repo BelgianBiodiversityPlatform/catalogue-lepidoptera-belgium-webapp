@@ -18,9 +18,10 @@ A. Configuration
 2) Create a PostgreSQL database
 3) Duplicate settings_local.template.py to settings_local.py and configure the previously created database
 4) $ python manage.py migrate
-5) $ python manage.py createsuperuser)
-6) (in production:) $ python manage.py collectstatic
-7) (in production:) $ run wsgi server
+5) $ python manage.py denorm_init
+6) $ python manage.py createsuperuser)
+7) (in production:) $ python manage.py collectstatic
+8) (in production:) run wsgi server
 
 B. data populate
 ----------------
@@ -30,9 +31,9 @@ B. data populate
     $ psql -d <DATABASE_NAME> -f initial_data/access/converted/CatLepBelgium_be.sql
     
 $ python manage.py access_import
-$ python manage.py website_import initial_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv
+$ python manage.py website_import initial_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv initial_data/website_extract_andre/LepidopteraAtlas/LASpecies.csv
 
-$ python manage.py denorm_init or needed before, in config?)
+ or needed before, in config?)
 $ python manage.py denorm_rebuild (after all data populate)
     
 To discuss with team
@@ -46,22 +47,8 @@ To discuss with team
 - Ask if the species presence in a province should be markable as unknown
 - Show reconciliation (website script) so they have a better idea of how all that works.
 - Show validation in admin
-
-To ask very soon to Willy:
-==========================
-
-- In Access DB, we have duplicates speciesNumber for (2 records for each):
-450010011
-450010020
-300010151
-250110250
-450010010
-901040010
-601210010
-
 - In website_import, we don't import the Family description if there's already something in the text field. IS it correct? 
 Or maybe we can import in all case if data is better on website than in Access?
-
 
 Data issues to solve on/before launch
 =====================================
