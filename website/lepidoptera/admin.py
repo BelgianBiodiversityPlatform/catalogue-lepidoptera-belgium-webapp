@@ -145,7 +145,7 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmi
 class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
-    readonly_fields = ('verbatim_species_number', 'code', 'binomial_name')
+    readonly_fields = ('verbatim_species_number', 'binomial_name')
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
 
@@ -157,7 +157,8 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
             kwargs["queryset"] = Subgenus.objects.order_by('name')
         return super(SpeciesAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = (('verbatim_species_number', 'code'),
+    fields = ('verbatim_species_number',
+              'code',
               ('name', 'author', 'binomial_name'),
               ('status', 'synonym_of'),
               ('subgenus', 'genus'),

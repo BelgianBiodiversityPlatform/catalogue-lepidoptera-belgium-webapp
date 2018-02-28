@@ -1,6 +1,7 @@
 from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
@@ -397,11 +398,19 @@ class Subgenus(TaxonomicModel):
         verbose_name_plural = "subgenera"
 
 
+def validate_only_numbers_and_uppercase(value):
+    if not all(c.isdigit() or c.isupper() for c in value):
+        raise ValidationError("The code can onbly contains numbers and uppercase letters")
+
+
 class Species(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM, Status.UNKNOWN]
 
     verbatim_species_number = TaxonomicModel.get_verbatim_id_field()
-    code = models.CharField(max_length=50, blank=True, null=True)
+    code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
+        validate_only_numbers_and_uppercase,
+        MinLengthValidator(4)
+    ])
 
     synonym_of = TaxonomicModel.get_synonym_of_field()
 
