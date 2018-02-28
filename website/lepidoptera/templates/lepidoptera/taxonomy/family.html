@@ -16,6 +16,6 @@
     <hr/>
 
     <h4>Species</h4>
-    {%  include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species provinces=all_provinces %}
+    {% include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species provinces=all_provinces timeperiods=all_timeperiods%}
 
 {% endblock %}

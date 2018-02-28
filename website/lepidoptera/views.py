@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province
+from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod
 
 
 def home_page(request):
@@ -16,7 +16,8 @@ def family_page(request, family_id):
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'family': family,
-        'all_provinces': Province.objects.all()
+        'all_provinces': Province.objects.all(),
+        'all_timeperiods': TimePeriod.objects.all()
     })
 
 
