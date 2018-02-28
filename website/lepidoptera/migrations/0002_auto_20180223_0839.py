@@ -70,8 +70,12 @@ def populate_provinces(apps, schema_editor):
                             polygon_reference=2)
     Province.objects.create(name="Limburg", code="LI", order=15, historical=False, recent=False,
                             polygon_reference=10)
+    Province.objects.create(name="Vlaams Brabant", code="VBR", order=17, historical=False, recent=True,
+                            polygon_reference=5)
     Province.objects.create(name="Brabant", code="BR", order=20, historical=True, recent=False,
                             polygon_reference=13)
+    Province.objects.create(name="Brabant Wallon", code="BRW", order=23, historical=False, recent=True,
+                            polygon_reference=7)
     Province.objects.create(name="Hainaut", code="HA", order=25, historical=False, recent=False,
                             polygon_reference=8)
     Province.objects.create(name="Namur", code="NA", order=30, historical=False, recent=False,
@@ -80,10 +84,6 @@ def populate_provinces(apps, schema_editor):
                             polygon_reference=9)
     Province.objects.create(name="Luxembourg", code="LX", order=40, historical=False, recent=False,
                             polygon_reference=11)
-    Province.objects.create(name="Vlaams Brabant", code="VB", order=45, historical=False, recent=True,
-                            polygon_reference=5)
-    Province.objects.create(name="Brabant Wallon", code="BW", order=50, historical=False, recent=True,
-                            polygon_reference=7)
 
 
 class Migration(migrations.Migration):
