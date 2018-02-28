@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus
+from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province
 
 
 def home_page(request):
@@ -14,7 +14,10 @@ def home_page(request):
 def family_page(request, family_id):
     family = Family.objects.get(pk=family_id)
 
-    return render(request, 'lepidoptera/taxonomy/family.html', {'family': family})
+    return render(request, 'lepidoptera/taxonomy/family.html', {
+        'family': family,
+        'all_provinces': Province.objects.all()
+    })
 
 
 def subfamily_page(request, subfamily_id):

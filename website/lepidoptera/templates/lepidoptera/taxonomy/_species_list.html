@@ -1,5 +1,28 @@
-<ul>
-    {% for s in species_list %}
-        <li><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a></li>
-    {% endfor %}
-</ul>
+{%  load i18n %}
+{%  load various_helpers %}
+
+<table class="table table-bordered table-hover table-striped table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">{% trans 'Name' %}</th>
+
+            {% for province in provinces %}
+                <th scope="col">{{ province.code }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for s in species_list %}
+            <tr>
+                <td><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a></td>
+
+                {% for province in provinces %}
+                <td>
+                    {% species_presence_icon s.id province.code %}
+                </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

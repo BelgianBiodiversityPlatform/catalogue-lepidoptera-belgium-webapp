@@ -2,6 +2,8 @@ from django import template
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
+from lepidoptera.models import Species
+
 register = template.Library()
 
 
@@ -9,6 +11,14 @@ register = template.Library()
 def to_class_name(value):
     return value.__class__.__name__
 
+@register.simple_tag
+def species_presence_icon(species_pk, province_code):
+    presences_strings = []
+
+    for presence in Species.objects.get(pk=species_pk).speciespresence_set.filter(province__code=province_code):
+        presences_strings.append(presence.period.name)
+
+    return ', '.join(presences_strings)
 
 @register.simple_tag
 def field_in_all_available_languages(languages, model, field_name):

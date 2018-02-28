@@ -40,7 +40,6 @@ To discuss with team
 ====================
 
 - Show the page fragment mechanism/markdown and ask if ok
-- Family overview on home page: vernacular name always id Dutch? Or current language with Dutch fallback? Something else?
 - On home page: what's new... Should it be a simple block of text :(
 - Show dynamic counters in footer
 - Ask if all taxonomic models should be "orderable" (prev/next)?
@@ -49,6 +48,22 @@ To discuss with team
 - Show validation in admin
 - In website_import, we don't import the Family description if there's already something in the text field. IS it correct? 
 Or maybe we can import in all case if data is better on website than in Access?
+- Word document: what is "families by thumbnails" on start page?
+
+Meeting 23feb notes:
+====================
+
+- Species code should be editable (unique I guess), since it's used as a key in other databases
+- What's new on home page. We only need:
+    - Some automated counter for new entities (X new photographs and Y new species last month)
+    - A free block of text to enter a narrative
+ - Family descriptions: we can overwrite what's in the database from what's in the website.
+ - Imago: it's on species page, there's no need for  global image gallery
+ - We need to import/show hosts plants from Access
+ - Journals/litterature info: only from database, no need to import from website
+ - I Copied 6000 pictures, to be linked with species according to Theo's naming logic
+ - Display: last updated only for important models (use Django's history), and display in a way that make clear that the model has been updated, not the page  
+ 
 
 Data issues to solve on/before launch
 =====================================
