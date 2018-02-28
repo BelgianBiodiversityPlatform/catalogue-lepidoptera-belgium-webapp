@@ -113,11 +113,10 @@ class Command(LepidopteraCommand):
             try:
                 family = Family.objects.get(name=family_name)
 
-                if family.text == '':
-                    family.text = text_clean(families_row['description'])
-                else:
+                if family.text != '':
                     families_with_already_a_description.append(family_name)
 
+                family.text = text_clean(families_row['description'])
                 family.save()
 
             except Family.DoesNotExist:
@@ -126,4 +125,6 @@ class Command(LepidopteraCommand):
             self.w('.', ending='')
 
         self.w(self.style.WARNING('\nMissing families: {}'.format(', '.join(missing_families))))
-        self.w(self.style.WARNING('\nFamilies with already a description (not overwritten): {}'.format(', '.join(families_with_already_a_description))))
+        self.w(self.style.NOTICE('\nFamilies with already a description (overwritten, nothing to do): {}'.format(
+            ', '.join(families_with_already_a_description)))
+        )
