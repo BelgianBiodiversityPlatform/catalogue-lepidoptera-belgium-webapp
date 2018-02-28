@@ -1,4 +1,5 @@
 from django import template
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
@@ -11,14 +12,18 @@ register = template.Library()
 def to_class_name(value):
     return value.__class__.__name__
 
+
 @register.simple_tag
-def species_presence_icon(species_pk, province_code):
-    presences_strings = []
+def species_presence_icons(species_pk, province_code):
+    icon_urls = (p.period.icon.url for p in Species.objects.get(pk=species_pk).speciespresence_set.filter(
+            province__code=province_code))
 
-    for presence in Species.objects.get(pk=species_pk).speciespresence_set.filter(province__code=province_code):
-        presences_strings.append(presence.period.name)
+    imgs = ''
+    for url in icon_urls:
+        imgs = imgs + format_html("<img style=\"position: absolute; left: 0 \" src=\"{0}\" />", url)
 
-    return ', '.join(presences_strings)
+    return mark_safe('<span style="position: relative;">' + imgs + '</span>')
+
 
 @register.simple_tag
 def field_in_all_available_languages(languages, model, field_name):
