@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title.html" with taxon_name=subfamily.name taxon_rank="Subfamily" only %}
+    {% include "lepidoptera/taxonomy/_title.html" with taxon=subfamily taxon_rank="Subfamily" %}
     {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=subfamily %}
 
     <h2>{% trans "Direct lower taxa" %}</h2>

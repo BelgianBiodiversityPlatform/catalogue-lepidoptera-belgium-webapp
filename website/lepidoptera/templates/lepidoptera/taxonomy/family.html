@@ -6,7 +6,7 @@
 {% endblock top-links %}
 
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title.html" with taxon_name=family.name taxon_rank="Family" only %}
+    {% include "lepidoptera/taxonomy/_title.html" with taxon=family taxon_rank="Family" %}
     {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=family %}
 
     <h2>{% trans "Direct lower taxa" %}</h2>

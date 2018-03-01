@@ -2,17 +2,11 @@
 {% load various_helpers %}
 
 
-{% if request.user.is_superuser %}
-    <div class="row">
-        <div class="col">
-            <a class="btn btn-danger" href="{{ taxon.admin_change_url }}"><span class="oi oi-lock-locked" title="admin interface"></span> Edit in admin</a>
-        </div>
-    </div>
-{% endif %}
-
 <div class="row">
     {% if taxon.text %}
-        <div class="col-8 alert alert-success" role="alert">{{ taxon.text|markdown }}</div>
+        <div class="col-8">
+            <div class="alert alert-success">{{ taxon.text|markdown }}</div>
+        </div>
     {% endif %}
 
     {% if taxon.representative_picture %} {# Currently: only for families #}
@@ -22,7 +16,11 @@
     {% endif %}
 </div>
 
-<hr/>
+<div class="row">
+    <div class="col">
+        <hr/>
+    </div>
+</div>
 
 <dl class="row">
     <dt class="col-sm-2">{% trans "Classification" %}</dt>

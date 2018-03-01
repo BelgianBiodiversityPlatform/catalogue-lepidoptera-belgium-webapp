@@ -1,11 +1,7 @@
 {% extends "lepidoptera/base.html" %}
 
 {% block content %}
-    <div class="row">
-        <div class="col">
-            {% block top-links %}{% endblock %}
+    {% block top-links %}{% endblock %}
 
-            {% block details %}{% endblock details %}
-        </div>
-    </div>
+    {% block details %}{% endblock details %}
 {% endblock %}

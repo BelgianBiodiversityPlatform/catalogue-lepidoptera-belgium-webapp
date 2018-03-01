@@ -1,9 +1,11 @@
-<p>
-    {% if entity.previous %}
-        <a class="btn btn-outline-primary" href="{{ entity.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ entity.previous.name }}</a>
-    {% endif %}
+<div class="row">
+    <div class="col">
+        {% if entity.previous %}
+            <a class="btn btn-outline-primary" href="{{ entity.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ entity.previous.name }}</a>
+        {% endif %}
 
-    {% if entity.next %}
-        <a class="float-right btn btn-outline-primary" href="{{ entity.next.get_absolute_url }}">{{ entity.next.name }} <span class="oi oi-caret-right"></span></a>
-    {% endif %}
-</p>
+        {% if entity.next %}
+            <a class="float-right btn btn-outline-primary" href="{{ entity.next.get_absolute_url }}">{{ entity.next.name }} <span class="oi oi-caret-right"></span></a>
+        {% endif %}
+    </div>
+</div>
