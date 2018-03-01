@@ -1,6 +1,8 @@
 {%  load i18n %}
 {%  load various_helpers %}
 
+<h2>{% trans "Species" %}</h2>
+
 <p class="text-center">
     {% for period in timeperiods %}
         <img src="{{ period.icon.url }}" /> = {{ period.name }}

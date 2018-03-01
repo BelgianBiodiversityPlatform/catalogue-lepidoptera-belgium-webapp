@@ -2,9 +2,6 @@
 {% load i18n %}
 
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title.html" with taxon=subgenus taxon_rank="Subgenus" %}
-    {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=subgenus %}
-
     <h2>{% trans "Direct lower taxa" %}</h2>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Species" taxon_list=subgenus.species_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Species" taxon_list=taxon.species_set.all only %}
 {% endblock %}

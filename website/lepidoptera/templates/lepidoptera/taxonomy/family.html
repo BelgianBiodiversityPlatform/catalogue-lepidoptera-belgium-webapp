@@ -1,21 +1,13 @@
 {% extends "lepidoptera/taxonomy/base.html" %}
 {% load i18n %}
 
-{% block top-links%}
-    {% include 'lepidoptera/taxonomy/_next_previous.html' with entity=family only %}
-{% endblock top-links %}
-
 {% block details %}
-    {% include "lepidoptera/taxonomy/_title.html" with taxon=family taxon_rank="Family" %}
-    {% include "lepidoptera/taxonomy/_common_attributes.html" with taxon=family %}
-
     <h2>{% trans "Direct lower taxa" %}</h2>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Subfamilies" taxon_list=family.subfamily_set.all only %}
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=family.genus_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Subfamilies" taxon_list=taxon.subfamily_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=taxon.genus_set.all only %}
 
     <hr/>
 
-    <h4>Species</h4>
-    {% include "lepidoptera/taxonomy/_species_list.html" with species_list=family.all_species provinces=all_provinces timeperiods=all_timeperiods%}
+    {% include "lepidoptera/taxonomy/_species_list.html" with species_list=taxon.all_species provinces=all_provinces timeperiods=all_timeperiods%}
 
 {% endblock %}

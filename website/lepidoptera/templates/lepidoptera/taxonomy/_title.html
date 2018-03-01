@@ -1,5 +1,11 @@
+{% load various_helpers %}
+
 <div class="row">
     <div class="col">
+        {% if request.user.is_superuser %}
+            <a class="btn-sm btn btn-danger" href="{{ taxon.admin_change_url }}"><span class="oi oi-lock-locked" title="admin interface"></span> Edit {{ taxon|to_class_name }} in admin</a>
+        {% endif %}
+
         <h1 class="display-4">
             {% if species_mode %}<i>{% endif %}
             <b>
@@ -8,12 +14,8 @@
 
             {% if taxon.author %}<span class="font-weight-light text-muted">{{ taxon.author }}</span>{% endif %}
 
-            <span class="small badge badge-secondary float-right">{{ taxon_rank }}</span>
+            <span class="small badge badge-secondary float-right">{{ taxon|to_class_name }}</span>
         </h1>
-
-        {% if request.user.is_superuser %}
-            <a class="btn btn-danger" href="{{ taxon.admin_change_url }}"><span class="oi oi-lock-locked" title="admin interface"></span> Edit in admin</a>
-        {% endif %}
 
         <hr/>
     </div>

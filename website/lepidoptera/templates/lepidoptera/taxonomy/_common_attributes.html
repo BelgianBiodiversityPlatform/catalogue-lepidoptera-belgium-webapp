@@ -1,7 +1,6 @@
 {% load i18n %}
 {% load various_helpers %}
 
-
 <div class="row">
     {% if taxon.text %}
         <div class="col-8">
@@ -14,11 +13,15 @@
             <img class="img-fluid img-thumbnail" src="{{ taxon.representative_picture_thumbnail.url }}" />
         </div>
     {% endif %}
+
+    {% if taxon.text or taxon.representative_picture %}
+        <div class="col"><hr/></div>
+    {%  endif %}
 </div>
 
 <div class="row">
     <div class="col">
-        <hr/>
+        <h2>{% trans "Details" %}</h2>
     </div>
 </div>
 

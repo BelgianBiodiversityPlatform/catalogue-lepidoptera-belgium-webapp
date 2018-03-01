@@ -4,9 +4,9 @@ from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Provinc
 
 
 def home_page(request):
-    families = Family.valid_families_objects.all().order_by('display_order')
+    valid_families = Family.valid_families_objects.all().order_by('display_order')
 
-    return render(request, 'lepidoptera/home.html', {'families': families})
+    return render(request, 'lepidoptera/home.html', {'families': valid_families})
 
 
 # TODO: factorize code for the taxonrank_page views?
@@ -15,7 +15,7 @@ def family_page(request, family_id):
     family = Family.objects.get(pk=family_id)
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
-        'family': family,
+        'taxon': family,
         'all_provinces': Province.objects.all(),
         'all_timeperiods': TimePeriod.objects.all()
     })
@@ -24,28 +24,28 @@ def family_page(request, family_id):
 def subfamily_page(request, subfamily_id):
     subfamily = Subfamily.objects.get(pk=subfamily_id)
 
-    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'subfamily': subfamily})
+    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'taxon': subfamily})
 
 
 def tribus_page(request, tribus_id):
     tribus = Tribus.objects.get(pk=tribus_id)
 
-    return render(request, 'lepidoptera/taxonomy/tribus.html', {'tribus': tribus})
+    return render(request, 'lepidoptera/taxonomy/tribus.html', {'taxon': tribus})
 
 
 def genus_page(request, genus_id):
     genus = Genus.objects.get(pk=genus_id)
 
-    return render(request, 'lepidoptera/taxonomy/genus.html', {'genus': genus})
+    return render(request, 'lepidoptera/taxonomy/genus.html', {'taxon': genus})
 
 
 def subgenus_page(request, subgenus_id):
     subgenus = Subgenus.objects.get(pk=subgenus_id)
 
-    return render(request, 'lepidoptera/taxonomy/subgenus.html', {'subgenus': subgenus})
+    return render(request, 'lepidoptera/taxonomy/subgenus.html', {'taxon': subgenus})
 
 
 def species_page(request, species_id):
     species = Species.objects.get(pk=species_id)
 
-    return render(request, 'lepidoptera/taxonomy/species.html', {'species': species})
+    return render(request, 'lepidoptera/taxonomy/species.html', {'taxon': species})

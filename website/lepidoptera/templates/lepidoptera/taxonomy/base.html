@@ -1,7 +1,10 @@
 {% extends "lepidoptera/base.html" %}
 
 {% block content %}
-    {% block top-links %}{% endblock %}
+    {% include 'lepidoptera/taxonomy/_next_previous.html' %}
+
+    {% include "lepidoptera/taxonomy/_title.html" %}
+    {% include "lepidoptera/taxonomy/_common_attributes.html" %}
 
     {% block details %}{% endblock details %}
 {% endblock %}
