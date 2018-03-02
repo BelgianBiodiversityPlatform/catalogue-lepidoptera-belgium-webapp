@@ -60,6 +60,7 @@ def autocomplete(request, query_string):
             results.append({
                 'value': taxon_instance.name,
                 'suggest_type': taxon_instance._meta.model_name,
-                'url': taxon_instance.get_absolute_url()})
+                'url': taxon_instance.get_absolute_url()
+            })
 
     return JsonResponse(results, safe=False)

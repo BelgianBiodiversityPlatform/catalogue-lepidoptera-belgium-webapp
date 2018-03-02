@@ -150,6 +150,8 @@ class TaxonomicModel(models.Model):
 
     display_order = models.IntegerField(unique=True)
 
+    last_modified = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.name
 

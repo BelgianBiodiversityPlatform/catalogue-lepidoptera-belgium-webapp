@@ -1,4 +1,5 @@
 {% load various_helpers %}
+{% load i18n %}
 
 <div class="row">
     <div class="col">
@@ -16,6 +17,8 @@
 
             <span class="small badge badge-secondary float-right">{{ taxon|to_class_name }}</span>
         </h1>
+
+        <p class="small text-muted">{% trans "Last modified:" %} {{ taxon.last_modified }}</p>
 
         <hr/>
     </div>
