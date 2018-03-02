@@ -1,6 +1,7 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod
+from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel
 
 
 def home_page(request):
@@ -49,3 +50,16 @@ def species_page(request, species_id):
     species = Species.objects.get(pk=species_id)
 
     return render(request, 'lepidoptera/taxonomy/species.html', {'taxon': species})
+
+
+def autocomplete(request, query_string):
+    results = []
+    for model in TaxonomicModel.__subclasses__():
+        instances = model.objects.filter(name__icontains=query_string)
+        for taxon_instance in instances:
+            results.append({
+                'value': taxon_instance.name,
+                'suggest_type': taxon_instance._meta.model_name,
+                'url': taxon_instance.get_absolute_url()})
+
+    return JsonResponse(results, safe=False)

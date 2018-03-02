@@ -13,6 +13,10 @@
     <div class="row">
         <div class="col">
             <h1>{% trans "Quick search" %}</h1>
+            <form>
+                <label for="multisearch">{% trans "Looking for..." %}</label>
+                <input type="text" class="form-control" id="multisearch">
+            </form>
         </div>
     </div>
 
@@ -24,17 +28,55 @@
 
     {% for family in families %}
         {% if forloop.counter0|divisibleby:4 %}
-        <div class="row">
+            <div class="row">
         {% endif %}
 
-            <div class="col-sm-3">
-                {% include 'lepidoptera/_family_card.html' %}
-            </div>
+    <div class="col-sm-3">
+        {% include 'lepidoptera/_family_card.html' %}
+    </div>
 
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
-            </div>
-        {% endif %}
+    {% if forloop.counter|divisibleby:4 or forloop.last %}
+        </div>
+    {% endif %}
 
     {% endfor %}
 
 {% endblock content %}
+
+{% block bottom-of-body %}
+    <script>
+        $(function () {
+            var compare_suggestion = function (a, b) {
+                if (a.value < b.value)
+                    return -1;
+                if (a.value > b.value)
+                    return 1;
+                return 0;
+            };
+
+            var families = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '{% url 'search_autocomplete' query_string='QUERY' %}',
+                    wildcard: 'QUERY',
+                    transform: function (response) {
+                        // We have to sort here since the 'sorter' option of Bloodhound doesn't work for remote
+                        return response.sort(compare_suggestion);
+                    }
+                }
+            });
+
+            $('#multisearch').typeahead({highlight: true}, {
+                name: 'best-pictures',
+                display: function (suggestion) {
+                    return suggestion.value + '(' + suggestion.suggest_type + ')'
+                },
+                source: families
+            }).bind('typeahead:select', function (ev, suggestion) {
+                window.location.replace(suggestion.url);
+            });
+
+        });
+    </script>
+{% endblock %}
