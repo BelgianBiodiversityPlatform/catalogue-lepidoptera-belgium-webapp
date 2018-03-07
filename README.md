@@ -53,7 +53,7 @@ Meeting 23feb notes:
  - We need to import/show hosts plants from Access
  - Journals/litterature info: only from database, no need to import from website
  - I Copied 6000 pictures, to be linked with species according to Theo's naming logic
- - Display: last updated only for important models (use Django's history), and display in a way that make clear that the model has been updated, not the page  
+ - Display: last updated: done for taxonomic models, what about others
  
 
 Data issues to solve on/before launch
@@ -64,4 +64,15 @@ Data issues to solve on/before launch
 that don't appear in the Access database (list is given my website_import.py script, but as of Feb. 16, it is: Acrolepiidae, 
 Agonoxenidae, Amphisbatidae, Arctiidae, Chimabachidae, Depressariidaeare, Eriocraniidaeare, Ethmiidae, Lemoniidae, Lymantriidae, 
 Nolidaeare, Thaumetopoeidae)
+
+Customize Bootstrap (colors, ...)
+=================================
+
+- Unfortunately Bootstrap 4 final does not allow simple customisation via _custom.scss anymore (needs package managers and so on).
+- We therefore currently use an online tool for this: https://pikock.github.io/bootstrap-magic/
+- To update: 
+    - import custom-variables-bootstrap.scss in Bootstrap Magic
+    - change variables using the editor
+    - download SCSS file and replace custom-variable-bootstrap.scss
+    - download CSS and replace bootstrap.min.css
 
