@@ -34,7 +34,7 @@ INSTALLED_APPS = [
 
     'markdownx',
     'imagekit',
-    'debug_toolbar',
+    #'debug_toolbar',
     'denorm',
 
     'lepidoptera'
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
 
     'denorm.middleware.DenormMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'website.urls'
