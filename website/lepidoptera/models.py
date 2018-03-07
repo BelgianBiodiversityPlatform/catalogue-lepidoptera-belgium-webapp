@@ -1,4 +1,4 @@
-from denorm import denormalized, depend_on_related
+from denorm import denormalized, depend_on_related, CountField
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
@@ -151,6 +151,7 @@ class TaxonomicModel(models.Model):
     display_order = models.IntegerField(unique=True)
 
     last_modified = models.DateTimeField(auto_now=True)
+    denorm_always_skip = ('last_modified',)
 
     def __str__(self):
         return self.name
@@ -197,9 +198,17 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
 
+    @property
     def species_count(self):
-        #return self.all_species.count()
-        return 0
+        count = 0
+
+        for subfamily in self.subfamily_set.all():
+            count = count + subfamily.species_count
+
+        for genus in self.genus_set.all():
+            count = count + genus.species_count
+
+        return count
 
     def get_absolute_url(self):
         return reverse('family_page', kwargs={'family_id': str(self.id)})
@@ -237,6 +246,18 @@ class Subfamily(TaxonomicModel):
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
 
+    @property
+    def species_count(self):
+        count = 0
+
+        for tribus in self.tribus_set.all():
+            count = count + tribus.species_count
+
+        for genus in self.genus_set.all():
+            count = count + genus.species_count
+
+        return count
+
     def get_absolute_url(self):
         return reverse('subfamily_page', kwargs={'subfamily_id': str(self.id)})
 
@@ -272,6 +293,13 @@ class Tribus(TaxonomicModel):
     verbatim_tribus_id = TaxonomicModel.get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
+
+    @property
+    def species_count(self):
+        count = 0
+        for genus in self.genus_set.all():
+            count = count + genus.species_count
+        return count
 
     def get_absolute_url(self):
         return reverse('tribus_page', kwargs={'tribus_id': str(self.id)})
@@ -312,6 +340,15 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     objects = models.Manager()
     accepted_objects = AcceptedGenusManager()
     synonym_objects = SynonymGenusManager()
+
+    direct_species_count = CountField('species_set')
+
+    @property
+    def species_count(self):
+        count = self.direct_species_count
+        for subgenus in self.subgenus_set.all():
+            count = count + subgenus.species_count
+        return count
 
     def get_absolute_url(self):
         return reverse('genus_page', kwargs={'genus_id': str(self.id)})
@@ -376,6 +413,8 @@ class Subgenus(TaxonomicModel):
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
+    species_count = CountField('species_set')
+
     def get_absolute_url(self):
         return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})
 
@@ -406,7 +445,7 @@ def validate_only_numbers_and_uppercase(value):
 
 
 class Species(ParentForAdminListMixin, TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM, Status.UNKNOWN]
+    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
     verbatim_species_number = TaxonomicModel.get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
@@ -436,32 +475,6 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
         for taxon in self.all_parents:
             if taxon.__class__.__name__ == 'Family':
                 return taxon
-
-    # So far, not much faster than the initial (more readable) implementation
-    # @property
-    # def new_binomial_name(self):
-    #     sql = """
-    #     SELECT
-    #       CASE
-    #         WHEN lepidoptera_species.genus_id IS NOT NULL
-    #           THEN g.name
-    #         ELSE
-    #           l.name
-    #         END
-    #       || ' ' || "lepidoptera_species"."name"
-    #
-    #     FROM lepidoptera_species
-    #
-    #     LEFT JOIN lepidoptera_genus g ON lepidoptera_species.genus_id = g.id
-    #     LEFT JOIN lepidoptera_subgenus ls ON lepidoptera_species.subgenus_id = ls.id
-    #     LEFT JOIN lepidoptera_genus l ON ls.genus_id = l.id
-    #
-    #     WHERE "lepidoptera_species".id=%s"""
-    #
-    #     with connection.cursor() as cursor:
-    #         cursor.execute(sql, [self.pk])
-    #         row = cursor.fetchone()
-    #     return row[0]
 
     @property
     def binomial_name(self):

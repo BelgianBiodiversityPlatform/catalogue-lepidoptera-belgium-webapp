@@ -7,4 +7,4 @@ django-settings-export==1.2.1
 git+https://github.com/deschler/django-modeltranslation@b24e4d3
 django-imagekit==4.0.2
 django-debug-toolbar==1.9
-django-denorm==1.0.0
+-e git://github.com/django-denorm/django-denorm@57bd310ad2f97aebb51794f59c60f342ccacab33#egg=denorm
