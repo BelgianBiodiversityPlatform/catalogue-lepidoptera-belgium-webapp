@@ -52,6 +52,10 @@ def species_page(request, species_id):
     return render(request, 'lepidoptera/taxonomy/species.html', {'taxon': species})
 
 
+def about_page(request):
+    return render(request, 'lepidoptera/about.html')
+
+
 def autocomplete(request, query_string):
     results = []
     for model in TaxonomicModel.__subclasses__():
