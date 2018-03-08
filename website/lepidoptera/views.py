@@ -56,13 +56,14 @@ def about_page(request):
     return render(request, 'lepidoptera/about.html')
 
 
+# TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
     for model in TaxonomicModel.__subclasses__():
         instances = model.objects.filter(name__icontains=query_string)
         for taxon_instance in instances:
             results.append({
-                'value': taxon_instance.name,
+                'value': str(taxon_instance),
                 'suggest_type': taxon_instance._meta.model_name,
                 'url': taxon_instance.get_absolute_url()
             })

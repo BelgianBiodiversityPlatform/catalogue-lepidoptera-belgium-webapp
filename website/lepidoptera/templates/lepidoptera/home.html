@@ -15,7 +15,7 @@
             <h1>{% trans "Quick search" %}</h1>
             <form>
                 <label for="multisearch">{% trans "Looking for..." %}</label>
-                <input type="text" class="form-control" id="multisearch">
+                <input type="text" class="form-control" id="multisearch" placeholder="{% trans "Genus, family, species, ..." %}">
             </form>
         </div>
     </div>
@@ -54,7 +54,7 @@
                 return 0;
             };
 
-            var families = new Bloodhound({
+            var multiSource = new Bloodhound({
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
@@ -68,11 +68,14 @@
             });
 
             $('#multisearch').typeahead({highlight: true}, {
-                name: 'best-pictures',
-                display: function (suggestion) {
-                    return suggestion.value + '(' + suggestion.suggest_type + ')'
-                },
-                source: families
+                name: 'multi-search',
+                source: multiSource,
+                limit: 10,
+                templates: {
+                    suggestion: function(data){
+                        return '<p>' + data.value + ' - ' + '<small class="text-muted">' + data.suggest_type + '</small></p>';
+                    },
+                }
             }).bind('typeahead:select', function (ev, suggestion) {
                 window.location.replace(suggestion.url);
             });
