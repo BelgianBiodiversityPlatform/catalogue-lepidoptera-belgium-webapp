@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import Species
+from lepidoptera.models import Species, SpeciesPresence
 
 register = template.Library()
 
@@ -14,9 +14,9 @@ def to_class_name(value):
 
 
 @register.simple_tag
-def species_presence_icons(species_pk, province_code):
-    icon_urls = (p.period.icon.url for p in Species.objects.get(pk=species_pk).speciespresence_set.filter(
-            province__code=province_code))
+def species_presence_icons(species_pk, province_id):
+    presences = SpeciesPresence.objects.filter(species_id=species_pk, province_id=province_id).select_related('period')
+    icon_urls = (presence.period.icon.url for presence in presences)
 
     imgs = ''
     for url in icon_urls:

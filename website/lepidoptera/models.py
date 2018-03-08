@@ -12,6 +12,9 @@ from imagekit.processors import ResizeToFit
 
 # Managers, helpers, ...
 class SpeciesManager(models.Manager):
+    #def get_queryset(self):
+    #    return super(SpeciesManager, self).get_queryset().prefetch_related('speciespresence_set')
+
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
 
@@ -40,7 +43,7 @@ class SpeciesManager(models.Manager):
             return all_matching_species[0]
 
 
-class ValidFamiliesManager(models.Manager):
+class ValidFamiliesManager(SpeciesManager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
 
@@ -60,7 +63,7 @@ class AcceptedSpeciesManager(models.Manager):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
 
 
-class SynonymSpeciesManager(models.Manager):
+class SynonymSpeciesManager(SpeciesManager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
 
@@ -441,7 +444,7 @@ class Subgenus(TaxonomicModel):
 
 def validate_only_numbers_and_uppercase(value):
     if not all(c.isdigit() or c.isupper() for c in value):
-        raise ValidationError("The code can onbly contains numbers and uppercase letters")
+        raise ValidationError("The code can only contains numbers and uppercase letters")
 
 
 class Species(ParentForAdminListMixin, TaxonomicModel):
@@ -562,11 +565,19 @@ class TimePeriod(models.Model):
         return self.name
 
 
+class SpeciesPresenceManager(models.Manager):
+    def get_queryset(self):
+        return super(SpeciesPresenceManager, self).get_queryset().select_related('province', 'period')
+
+
 class SpeciesPresence(models.Model):
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     period = models.ForeignKey(TimePeriod, on_delete=models.CASCADE)
     present = models.BooleanField(default=False)
+
+    # Reactivate (if proven useful) for performance on (big) family page
+    #objects = SpeciesPresenceManager()
 
     class Meta:
         unique_together = ('species', 'province', 'period')
