@@ -1,11 +1,12 @@
 {% load i18n %}
 
-<div id="footer-main" class="row text-white">
+<div id="footer-main" class="row text-white bg-primary py-2">
     <div class="col">COL1</div>
     <div class="col">COL2</div>
     <div class="col">COL3</div>
     <div class="col">
-        <h4 class="text-uppercase">{% trans "Statistics" %}</h4>
+        <h4>{% trans "Statistics" %}</h4>
+        <hr/>
         <ul class="list-unstyled">
             <li><span class="badge badge-pill badge-dark">{{ family_counter }}</span> {% trans "Families" %}</li>
             <li><span class="badge badge-pill badge-warning">{{ subfamily_counter }}</span> {% trans "Subfamilies" %}</li>
@@ -23,9 +24,7 @@
     </div>
 </div>
 <div id="footer-copyright" class="row">
-    <div class="col">
-        <p class="text-center text-white">
-            <span class="align-middle">© 2018 Copyright Flemish Entomological Society</span>
-        </p>
+    <div class="col text-center text-white py-2">
+        <span class="small align-middle">© 2018 <a href="http://www.phegea.org/">Flemish Entomological Society</a></span>
     </div>
 </div>
