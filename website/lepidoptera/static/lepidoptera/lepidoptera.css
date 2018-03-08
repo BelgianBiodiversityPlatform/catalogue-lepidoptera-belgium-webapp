@@ -9,3 +9,12 @@ div#footer-main {
 div#footer-copyright {
     background-color: #416a96;
 }
+
+th.province-title {
+    width: 46px;
+}
+
+img.province-icon {
+    position: absolute;
+    left: 15px;
+}

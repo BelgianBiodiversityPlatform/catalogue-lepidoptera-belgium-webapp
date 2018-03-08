@@ -4,6 +4,15 @@
 <h2>{% trans "Species" %}</h2>
 
 <p class="text-center">
+    {% for province in provinces %}
+        <b>{{ province.code }}</b> = {{ province.name }}
+        {% if not forloop.last %}
+            •
+        {% endif %}
+    {%  endfor %}
+</p>
+
+<p class="text-center">
     {% for period in timeperiods %}
         <img src="{{ period.icon.url }}" /> = {{ period.name }}
         {% if not forloop.last %}
@@ -12,15 +21,15 @@
     {% endfor %}
 </p>
 
-<table class="table table-bordered table-hover table-striped table-sm">
-    <thead class="thead-dark">
+<table class="table table-bordered table-hover table-striped table-sm sticky-header">
+    <thead class="thead-inverse">
         <tr>
             <th scope="col">{% trans 'Name' %}</th>
             <th scope="col">{% trans 'Synonyms' %}</th>
             <th scope="col">{% trans 'Vernacular names' %}</th>
 
             {% for province in provinces %}
-                <th class="text-center" style="width: 60px" scope="col" data-toggle="tooltip" data-placement="top" title="{{ province.name }}">{{ province.code }}</th>
+                <th class="text-center province-title" scope="col" title="{{ province.name }}">{{ province.code }}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -40,6 +49,7 @@
 
                 {% for province in provinces %}
                 <td>
+                    {# If we want to optimize this further, we should try to do a single call instead of one by province #}
                     {% species_presence_icons s.id province.id %}
                 </td>
                 {% endfor %}

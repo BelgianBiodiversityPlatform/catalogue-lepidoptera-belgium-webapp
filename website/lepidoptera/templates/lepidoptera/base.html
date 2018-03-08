@@ -49,12 +49,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
 
 <script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
+
 <script>
     $(function () {
-        // Initialize all tooltips
-        $('[data-toggle="tooltip"]').tooltip()
+        // Initialize (table) sticky headers
+        $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
     });
 </script>
+
 {% block bottom-of-body %}{% endblock %}
 </body>
 </html>

@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import Species, SpeciesPresence
+from lepidoptera.models import SpeciesPresence
 
 register = template.Library()
 
@@ -20,7 +20,7 @@ def species_presence_icons(species_pk, province_id):
 
     imgs = ''
     for url in icon_urls:
-        imgs = imgs + format_html("<img style=\"position: absolute; left: 22px \" src=\"{0}\" />", url)
+        imgs = imgs + format_html("<img class=\"province-icon\" src=\"{0}\" />", url)
 
     return mark_safe('<span style="position: relative;">' + imgs + '</span>')
 
