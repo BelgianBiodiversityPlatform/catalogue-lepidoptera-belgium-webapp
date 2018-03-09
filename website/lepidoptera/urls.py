@@ -13,5 +13,7 @@ urlpatterns = [
     path('subgenus/<int:subgenus_id>/', views.subgenus_page, name='subgenus_page'),
     path('species/<int:species_id>/', views.species_page, name='species_page'),
 
+    path('families/', views.all_families, name='families_page'),
+
     path('search_autocomplete/<str:query_string>', views.autocomplete, name='search_autocomplete')
 ]

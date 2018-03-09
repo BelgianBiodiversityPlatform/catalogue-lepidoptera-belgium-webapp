@@ -8,7 +8,11 @@
         <h4>{% trans "Statistics" %}</h4>
         <hr/>
         <ul class="list-unstyled">
-            <li><span class="badge badge-pill badge-dark">{{ family_counter }}</span> {% trans "Families" %}</li>
+            <li>
+                <span class="badge badge-pill badge-dark">{{ family_counter }}</span>
+                <a class="text-dark" href="{% url 'families_page' %}">{% trans "Families" %}</a>
+            </li>
+
             <li><span class="badge badge-pill badge-warning">{{ subfamily_counter }}</span> {% trans "Subfamilies" %}</li>
             <li><span class="badge badge-pill badge-dark">{{ tribus_counter }}</span> {% trans "Tribus" %}</li>
             <li>

@@ -56,6 +56,12 @@ def about_page(request):
     return render(request, 'lepidoptera/about.html')
 
 
+def all_families(request):
+    families = Family.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/families.html', {'families': families})
+
+
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []

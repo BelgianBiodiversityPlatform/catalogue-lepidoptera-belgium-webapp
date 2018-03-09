@@ -1,0 +1,12 @@
+{% extends 'lepidoptera/base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "Families" %}</h1>
+    <ul>
+        {% for family in families %}
+            <li><a href="{{ family.get_absolute_url }}">{{ family.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
