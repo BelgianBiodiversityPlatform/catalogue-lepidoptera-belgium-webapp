@@ -42,6 +42,12 @@ To discuss with team
 - In website_import, we don't import the Family description if there's already something in the text field. IS it correct? 
 Or maybe we can import in all case if data is better on website than in Access?
 
+Hostplants:
+-----------
+    - Sometimes we find 'sp' in HostPlantSpecies. Does that mean that we only know the Genus of the plant?
+    - Sometimes we find higher level things such as 'coniferous tree', ...
+    - shouldn't we link a Lepidoptera species to either a plantspecies (always link to genus and family), or to a genus or to another entity (coniferous trees, ....)
+
 
 Meeting 23feb notes:
 ====================

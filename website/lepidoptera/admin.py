@@ -6,7 +6,8 @@ from django.utils.translation import gettext as _
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, PageFragment, Status
+from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
+    PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -182,6 +183,31 @@ class TimePeriodAdmin(admin.ModelAdmin):
 
 @admin.register(SpeciesPresence)
 class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Observation)
+class ObservationAdmin(admin.ModelAdmin):
+    list_display = ('species', 'plant_species', 'plant_genus', 'substrate')
+
+
+@admin.register(HostPlantSpecies)
+class HostPlantSpeciesAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(HostPlantGenus)
+class HostPlantGenusAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(HostPlantFamily)
+class HostPlantFamilyAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Substrate)
+class SubstrateAdmin(admin.ModelAdmin):
     pass
 
 

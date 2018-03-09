@@ -12,9 +12,6 @@ from imagekit.processors import ResizeToFit
 
 # Managers, helpers, ...
 class SpeciesManager(models.Manager):
-    #def get_queryset(self):
-    #    return super(SpeciesManager, self).get_queryset().prefetch_related('speciespresence_set')
-
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
 
@@ -127,13 +124,60 @@ class Status(models.Model):
         verbose_name_plural = "statuses"
 
 
-class TaxonomicModel(models.Model):
-    """Common ground between all taxon-related models."""
+class CommonTaxonomicModel(models.Model):
+    """Common ground between all taxon-related models (Lepidoptera, host plants, ...)"""
     @staticmethod
     def get_verbatim_id_field():
         # Blank/NULL allowed for post-import record
         return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
+    name = models.CharField(max_length=255)
+
+    vernacular_name = models.CharField(max_length=255, blank=True)
+
+    last_modified = models.DateTimeField(auto_now=True)
+    denorm_always_skip = ('last_modified',)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+    def html_str(self):
+        return self.__str__()
+
+
+class HostPlantTaxonomicModel(CommonTaxonomicModel):
+    verbatim_id = CommonTaxonomicModel.get_verbatim_id_field()
+
+    class Meta:
+        abstract = True
+
+
+class HostPlantFamily(HostPlantTaxonomicModel):
+    pass
+
+
+class HostPlantGenus(HostPlantTaxonomicModel):
+    family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
+    author = models.CharField(max_length=255, blank=True)
+
+
+class HostPlantSpecies(HostPlantTaxonomicModel):
+    author = models.CharField(max_length=255, blank=True)
+    genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
+
+
+class Substrate(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class TaxonomicModel(CommonTaxonomicModel):
+    """Common ground between all taxon-related models (for Lepidoptera)."""
     @staticmethod
     def get_synonym_of_field():
         return models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='synonyms')
@@ -142,25 +186,13 @@ class TaxonomicModel(models.Model):
         abstract = True
 
     # Common fields
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-
-    name = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
 
-    vernacular_name = models.CharField(max_length=255, blank=True)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     text = MarkdownxField(blank=True)
 
     display_order = models.IntegerField(unique=True)
-
-    last_modified = models.DateTimeField(auto_now=True)
-    denorm_always_skip = ('last_modified',)
-
-    def __str__(self):
-        return self.name
-
-    def html_str(self):
-        return self.__str__()
 
     @property
     def all_parents(self):
@@ -190,7 +222,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     #   - See genus for a full implementation
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY]
 
-    verbatim_family_id = TaxonomicModel.get_verbatim_id_field()
+    verbatim_family_id = CommonTaxonomicModel.get_verbatim_id_field()
 
     representative_picture = models.ImageField(blank=True, null=True, upload_to='family_representative_pictures')
     representative_picture_thumbnail = ImageSpecField(source='representative_picture',
@@ -245,7 +277,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
 class Subfamily(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY]
 
-    verbatim_subfamily_id = TaxonomicModel.get_verbatim_id_field()
+    verbatim_subfamily_id = CommonTaxonomicModel.get_verbatim_id_field()
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
 
@@ -293,7 +325,7 @@ class Subfamily(TaxonomicModel):
 class Tribus(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS]
 
-    verbatim_tribus_id = TaxonomicModel.get_verbatim_id_field()
+    verbatim_tribus_id = CommonTaxonomicModel.get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
 
@@ -329,7 +361,7 @@ class Tribus(TaxonomicModel):
 class Genus(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM, Status.UNKNOWN]
 
-    verbatim_genus_id = TaxonomicModel.get_verbatim_id_field()
+    verbatim_genus_id = CommonTaxonomicModel.get_verbatim_id_field()
 
     # Sometimes a genus appears under a tribu, but sometimes only under a subfamily or a family...
     # One and only one of those can be filled
@@ -412,7 +444,7 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
 class Subgenus(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBGENUS]
 
-    verbatim_subgenus_id = TaxonomicModel.get_verbatim_id_field()
+    verbatim_subgenus_id = CommonTaxonomicModel.get_verbatim_id_field()
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
@@ -450,7 +482,7 @@ def validate_only_numbers_and_uppercase(value):
 class Species(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
-    verbatim_species_number = TaxonomicModel.get_verbatim_id_field()
+    verbatim_species_number = CommonTaxonomicModel.get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
         validate_only_numbers_and_uppercase,
         MinLengthValidator(4)
@@ -535,6 +567,34 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
         verbose_name_plural = "species"
 
 
+class Observation(models.Model):
+    """A (lepidoptera) species has been seen on either a plant species, either a plant genus, or a Substrate"""
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+
+    plant_species = models.ForeignKey(HostPlantSpecies, blank=True, null=True, on_delete=models.CASCADE)
+    plant_genus = models.ForeignKey(HostPlantGenus, blank=True, null=True, on_delete=models.CASCADE)
+    substrate = models.ForeignKey(Substrate, blank=True, null=True, on_delete= models.CASCADE)
+
+    def clean(self):
+        errors = {}  # we aggregate errors for a complete output
+
+        # Should be linked to either a plant species, a plant genus or a substrate
+        fields = [self.plant_species_id, self.plant_genus_id, self.substrate_id]
+        if len([field for field in fields if field is not None]) != 1:
+            msg = 'Choose a plant species OR a genus OR a substrate'
+            errors['plant_species'] = ValidationError(msg, code='invalid')
+            errors['plant_genus'] = ValidationError(msg, code='invalid')
+            errors['substrate'] = ValidationError(msg, code='invalid')
+
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        # Let's make sure model.clean() is called on each save (enable validation also for import script)
+        self.full_clean()
+        return super(Observation, self).save(*args, **kwargs)
+
+
 class Province(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=3, unique=True)
@@ -565,19 +625,11 @@ class TimePeriod(models.Model):
         return self.name
 
 
-class SpeciesPresenceManager(models.Manager):
-    def get_queryset(self):
-        return super(SpeciesPresenceManager, self).get_queryset().select_related('province', 'period')
-
-
 class SpeciesPresence(models.Model):
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     period = models.ForeignKey(TimePeriod, on_delete=models.CASCADE)
     present = models.BooleanField(default=False)
-
-    # Reactivate (if proven useful) for performance on (big) family page
-    #objects = SpeciesPresenceManager()
 
     class Meta:
         unique_together = ('species', 'province', 'period')
