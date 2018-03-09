@@ -156,17 +156,27 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
 
 
 class HostPlantFamily(HostPlantTaxonomicModel):
-    pass
+    class Meta:
+        verbose_name_plural = "Host plant families"
+        ordering = ['name']
 
 
 class HostPlantGenus(HostPlantTaxonomicModel):
     family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
     author = models.CharField(max_length=255, blank=True)
 
+    class Meta:
+        verbose_name_plural = "Host plant genera"
+        ordering = ['name']
+
 
 class HostPlantSpecies(HostPlantTaxonomicModel):
     author = models.CharField(max_length=255, blank=True)
     genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = "Host plant species"
+        ordering = ['name']
 
 
 class Substrate(models.Model):

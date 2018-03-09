@@ -3,16 +3,19 @@ from collections import namedtuple
 from django.core.management.base import CommandError
 from django.db import connection
 
-from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus, Species
+from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, \
+    HostPlantGenus
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, HostPlantGenus]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
 NULL_SPECIES_NUMBER = 999010010
 
+NULL_PLANTGENUS_ID = 5020
+PLANT_GENUS_IDS_TO_SKIP = (NULL_PLANTGENUS_ID, 1770)  # 1770= A weird "carnivorous" entry not referenced by any plant species
 
 def namedtuplefetchall(cursor):
     """Return all rows from a cursor as a namedtuple"""
@@ -244,3 +247,47 @@ class Command(LepidopteraCommand):
                 self.w('.', ending='')
 
             self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing Host plants and substrates')
+            self.w('Importing from tblHostPlantFamilies...', ending='')
+            cursor.execute('SELECT * FROM "tblHostPlantFamilies"')
+            for result in namedtuplefetchall(cursor):
+                HostPlantFamily.objects.create(
+                    verbatim_id=result.HostPlantfamilyID,
+                    name=text_clean(result.HostPlantfamilyName),
+
+                    vernacular_name_nl=text_clean(result.HostPlantfamilyNL),
+                    vernacular_name_en=text_clean(result.HostPlantfamilyEN),
+                    vernacular_name_fr=text_clean(result.HostPlantfamilyFR),
+                    vernacular_name_de=text_clean(result.HostPlantfamilyGE),
+                )
+                self.w('.', ending='')
+
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing from tblHostPlantGenera...', ending='')
+            cursor.execute('SELECT * FROM "tblHostPlantGenera"')
+            for result in namedtuplefetchall(cursor):
+                if int(result.HostPlantGenusID) not in PLANT_GENUS_IDS_TO_SKIP:
+                    HostPlantGenus.objects.create(
+                        verbatim_id=result.HostPlantGenusID,
+                        name=text_clean(result.HostPlantGenusName),
+
+                        vernacular_name_nl=text_clean(result.HostPlantGenusNameNL),
+                        vernacular_name_en=text_clean(result.HostPlantGenusNameEN),
+                        vernacular_name_fr=text_clean(result.HostPlantGenusNameFR),
+                        vernacular_name_de=text_clean(result.HostPlantGenusNameGE),
+
+                        author=text_clean(result.HostPlantGenusAuthor),
+                        family=HostPlantFamily.objects.get(verbatim_id=result.HostPlantFamilyID)
+                    )
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
+            # next:
+            # parse tblhostplants, and for each entry:
+                # - if species has no genus OR has genusID=NULL_PLANTGENUS_ID
+                    # create entry in substrate (and link in observation)
+                # elif species_name == 'sp.'
+                    # observation refers to the genus only
+                # elif: true species, add it then reference in observations

@@ -192,18 +192,18 @@ class ObservationAdmin(admin.ModelAdmin):
 
 
 @admin.register(HostPlantSpecies)
-class HostPlantSpeciesAdmin(admin.ModelAdmin):
-    pass
+class HostPlantSpeciesAdmin(TranslationAdmin):
+    readonly_fields = ('verbatim_id', )
 
 
 @admin.register(HostPlantGenus)
-class HostPlantGenusAdmin(admin.ModelAdmin):
-    pass
+class HostPlantGenusAdmin(TranslationAdmin):
+    readonly_fields = ('verbatim_id',)
 
 
 @admin.register(HostPlantFamily)
-class HostPlantFamilyAdmin(admin.ModelAdmin):
-    pass
+class HostPlantFamilyAdmin(TranslationAdmin):
+    readonly_fields = ('verbatim_id',)
 
 
 @admin.register(Substrate)
