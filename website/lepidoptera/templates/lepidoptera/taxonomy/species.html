@@ -1,1 +1,50 @@
 {% extends "lepidoptera/taxonomy/base.html" %}
+{% load i18n %}
+
+{% block details %}
+
+    <div class="row">
+        <div class="col">
+            <h2>{% trans "Plant/subtrate observations" %}</h2>
+        </div>
+    </div>
+
+    {% if taxon.observation_set.all %}
+        <table class="table table-bordered table-hover table-striped table-sm">
+            <thead class="thead-inverse">
+                <tr>
+                    <th scope="col">{% trans 'Type' %}</th>
+                    <th scope="col">{% trans 'Name' %}</th>
+                </tr>
+            </thead>
+
+        {% for observation in taxon.observation_set.all %}
+            <tr>
+                <td>
+                    {% if observation.plant_species %}
+                        {% trans "Plant species" %}
+                    {% elif observation.plant_genus %}
+                        {% trans "Plant genus" %}
+                    {% elif observation.substrate %}
+                        {% trans "Substrate" %}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if observation.plant_species %}
+                        {{ observation.plant_species.html_str }}
+                    {% elif observation.plant_genus %}
+                        {{ observation.plant_genus.html_str }}
+                    {% elif observation.substrate %}
+                        {{  observation.substrate.name }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        {% trans "No observations yet." %}
+    {% endif %}
+
+
+{% endblock %}
