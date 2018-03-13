@@ -4,11 +4,12 @@ from django.core.management.base import CommandError
 from django.db import connection
 
 from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, \
-    HostPlantGenus
+    HostPlantGenus, Substrate, Observation, HostPlantSpecies
 
 from ._utils import LepidopteraCommand, text_clean
 
-MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, HostPlantGenus]
+MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, HostPlantGenus,
+                      HostPlantSpecies, Substrate, Observation]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
@@ -284,10 +285,38 @@ class Command(LepidopteraCommand):
                 self.w('.', ending='')
             self.w(self.style.SUCCESS('OK'))
 
-            # next:
-            # parse tblhostplants, and for each entry:
-                # - if species has no genus OR has genusID=NULL_PLANTGENUS_ID
-                    # create entry in substrate (and link in observation)
-                # elif species_name == 'sp.'
-                    # observation refers to the genus only
-                # elif: true species, add it then reference in observations
+            self.w('Importing Host plant observations, with related species and substrates...', ending='')
+            cursor.execute('SELECT * FROM "tblHostPlants", "tblHostPlantSpecies" '
+                           'WHERE "HostplantID" = "HostPlantID"')
+            # It's a bit messy because tblHostPlantSpecies contains plant species, but also substrates and
+            # "empty species info but link to a genus" (sp., when the exact species is unknown)
+            for result in namedtuplefetchall(cursor):
+                observation = Observation()
+                observation.species = Species.objects.get(code=text_clean(result.SpeciesCode))
+
+                if (not result.HostPlantGenusID) or (result.HostPlantGenusID == NULL_PLANTGENUS_ID):
+                    # Fake species with no Genus, it's indeed a substrate
+                    observation.substrate = Substrate.objects.create(name=text_clean(result.HostPlantName))
+                elif text_clean(result.HostPlantName) == "sp.":
+                    # We only know the genus
+                    observation.plant_genus = HostPlantGenus.objects.get(verbatim_id=result.HostPlantGenusID)
+                else:
+                    # It's a "true species"
+                    plant_genus = HostPlantGenus.objects.get(verbatim_id=result.HostPlantGenusID)
+
+                    observation.plant_species, created = HostPlantSpecies.objects.get_or_create(
+                        verbatim_id=result.HostPlantID,
+                        name=text_clean(result.HostPlantName),
+                        author=text_clean(result.HostPlantAuthor),
+
+                        vernacular_name_nl=text_clean(result.HostPlantNameNL),
+                        vernacular_name_en=text_clean(result.HostPlantNameEN),
+                        vernacular_name_fr=text_clean(result.HostPlantNameFR),
+                        vernacular_name_de=text_clean(result.HostPlantNameGE),
+
+                        genus=plant_genus
+                    )
+
+                observation.save()
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))

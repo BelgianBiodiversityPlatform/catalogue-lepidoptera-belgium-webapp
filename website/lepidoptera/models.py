@@ -178,6 +178,9 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant species"
         ordering = ['name']
 
+    def __str__(self):
+        return "{} {}".format(self.genus.name, self.name)
+
 
 class Substrate(models.Model):
     name = models.CharField(max_length=255)

@@ -66,6 +66,10 @@ class SpeciesPresenceInline(admin.TabularInline):
     model = SpeciesPresence
 
 
+class ObservationsInline(admin.TabularInline):
+    model = Observation
+
+
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
@@ -168,7 +172,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
               'display_order',
     )
 
-    inlines = [SpeciesPresenceInline, ]
+    inlines = [SpeciesPresenceInline, ObservationsInline]
 
 
 @admin.register(Province)
