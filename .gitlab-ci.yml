@@ -1,0 +1,7 @@
+stages:
+    - deploy
+
+deploy:
+    - stage: deploy
+    - script:
+        - sudo /usr/local/bin/salt-call state.apply webapps.lepidoptera
