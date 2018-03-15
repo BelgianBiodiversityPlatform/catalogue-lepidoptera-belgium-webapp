@@ -1,5 +1,6 @@
 Django==2.0.3
 Pillow==5.0.0
+gunicorn==19.7.1
 psycopg2==2.7.3.2
 pytz==2017.3
 git+https://github.com/neutronX/django-markdownx@715359b
