@@ -29,9 +29,9 @@ def _create_timeperiod(apps, source_file_path, destination_file_name, period_nam
 def populate_timeperiods(apps):
     from ..models import TimePeriod as TPDirect  # Normally we should import with apps.get_model, but constants don't work
 
-    _create_timeperiod(apps, 'populate_data/before_1980.png', 'before_1980.png', TPDirect.BEFORE_1980_NAME)
-    _create_timeperiod(apps, 'populate_data/1980_2004.png', '1980_2004.png', TPDirect.BETWEEN_1980_2004_NAME)
-    _create_timeperiod(apps, 'populate_data/after_2004.png', 'after_2004.png', TPDirect.SINCE_2004_NAME)
+    _create_timeperiod(apps, '../populate_data/before_1980.png', 'before_1980.png', TPDirect.BEFORE_1980_NAME)
+    _create_timeperiod(apps, '../populate_data/1980_2004.png', '1980_2004.png', TPDirect.BETWEEN_1980_2004_NAME)
+    _create_timeperiod(apps, '../populate_data/after_2004.png', 'after_2004.png', TPDirect.SINCE_2004_NAME)
 
 
 def populate_page_fragments(apps, schema_editor):
@@ -42,10 +42,10 @@ def populate_page_fragments(apps, schema_editor):
 Welkom!
 =======
 
-**Lorem ipsum dolor sit amet**, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut 
-labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit 
-esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt 
+**Lorem ipsum dolor sit amet**, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
 in culpa qui officia deserunt mollit anim id est laborum""",
                                 content_fr="""
 Bienvenue !
@@ -56,7 +56,7 @@ Bienvenue !
 Welcome!
 ========
 
-**Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore 
+**Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
 """)
 
 
