@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel
+from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
+    HostPlantSpecies
 
 
 def home_page(request):
@@ -62,16 +63,25 @@ def all_families(request):
     return render(request, 'lepidoptera/taxonomy/families.html', {'families': families})
 
 
+def hostplant_species(request, species_id):
+    species = HostPlantSpecies.objects.get(pk=species_id)
+
+    return render(request, 'lepidoptera/hostplant_species.html', {'species': species})
+
+
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
-    for model in TaxonomicModel.__subclasses__():
+    models = [HostPlantSpecies]
+    models.extend(TaxonomicModel.__subclasses__())
+
+    for model in models:
         instances = model.objects.filter(name__icontains=query_string)
-        for taxon_instance in instances:
+        for instance in instances:
             results.append({
-                'value': str(taxon_instance),
-                'suggest_type': taxon_instance._meta.model_name,
-                'url': taxon_instance.get_absolute_url()
+                'value': str(instance),
+                'suggest_type': instance._meta.model_name,
+                'url': instance.get_absolute_url()
             })
 
     return JsonResponse(results, safe=False)

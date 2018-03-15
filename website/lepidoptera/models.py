@@ -155,33 +155,6 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
         abstract = True
 
 
-class HostPlantFamily(HostPlantTaxonomicModel):
-    class Meta:
-        verbose_name_plural = "Host plant families"
-        ordering = ['name']
-
-
-class HostPlantGenus(HostPlantTaxonomicModel):
-    family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
-    author = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        verbose_name_plural = "Host plant genera"
-        ordering = ['name']
-
-
-class HostPlantSpecies(HostPlantTaxonomicModel):
-    author = models.CharField(max_length=255, blank=True)
-    genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name_plural = "Host plant species"
-        ordering = ['name']
-
-    def __str__(self):
-        return "{} {}".format(self.genus.name, self.name)
-
-
 class Substrate(models.Model):
     name = models.CharField(max_length=255)
 
@@ -578,6 +551,38 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
 
     class Meta:
         verbose_name_plural = "species"
+
+
+class HostPlantFamily(HostPlantTaxonomicModel):
+    class Meta:
+        verbose_name_plural = "Host plant families"
+        ordering = ['name']
+
+
+class HostPlantGenus(HostPlantTaxonomicModel):
+    family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
+    author = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Host plant genera"
+        ordering = ['name']
+
+
+class HostPlantSpecies(HostPlantTaxonomicModel):
+    author = models.CharField(max_length=255, blank=True)
+    genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
+
+    lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    def get_absolute_url(self):
+        return reverse('hostplant_species_page', kwargs={'species_id': str(self.id)})
+
+    class Meta:
+        verbose_name_plural = "Host plant species"
+        ordering = ['name']
+
+    def __str__(self):
+        return "{} {}".format(self.genus.name, self.name)
 
 
 class Observation(models.Model):

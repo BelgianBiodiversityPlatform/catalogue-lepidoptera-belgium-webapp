@@ -15,5 +15,7 @@ urlpatterns = [
 
     path('families/', views.all_families, name='families_page'),
 
+    path('hostplant/species/<int:species_id>/', views.hostplant_species, name='hostplant_species_page'),
+
     path('search_autocomplete/<str:query_string>', views.autocomplete, name='search_autocomplete')
 ]

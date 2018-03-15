@@ -1,4 +1,4 @@
-from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species
+from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantSpecies
 
 
 def stats_processor(request):
@@ -11,5 +11,6 @@ def stats_processor(request):
         'subgenus_counter': Subgenus.objects.count(),
 
         'valid_species_counter': Species.accepted_objects.count(),
-        'species_synonym_counter': Species.synonym_objects.count()
+        'species_synonym_counter': Species.synonym_objects.count(),
+        'hostplant_species_counter': HostPlantSpecies.objects.count()
     }

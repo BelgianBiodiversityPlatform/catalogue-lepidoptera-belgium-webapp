@@ -32,7 +32,7 @@
 
                 <td>
                     {% if observation.plant_species %}
-                        {{ observation.plant_species.html_str }}
+                        <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
                     {% elif observation.plant_genus %}
                         {{ observation.plant_genus.html_str }}
                     {% elif observation.substrate %}
