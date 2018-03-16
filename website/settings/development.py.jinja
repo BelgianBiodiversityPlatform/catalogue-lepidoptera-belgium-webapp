@@ -30,3 +30,12 @@ INTERNAL_IPS = ['127.0.0.1']  # For django-debug-toolbar
 
 {% endblock %}
 
+# To run on a dev machine without Salt:
+# - Copy-paste this file as development.py
+# - Remove the "salt" block
+# - Add missing variables (currently, we have):
+#       - DATABASES
+#       - SECRET_KEY
+#       - DEBUG
+#       - ALLOWED_HOSTS
+
