@@ -22,7 +22,7 @@ def species_presence_icons(species_pk, province_id):
     for url in icon_urls:
         imgs = imgs + format_html("<img class=\"province-icon\" src=\"{0}\" />", url)
 
-    return mark_safe('<span style="position: relative;">' + imgs + '</span>')
+    return mark_safe(imgs)
 
 
 @register.simple_tag

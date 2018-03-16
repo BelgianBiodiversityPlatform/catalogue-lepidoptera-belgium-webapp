@@ -48,7 +48,7 @@
                 </td>
 
                 {% for province in provinces %}
-                <td>
+                <td style="overflow: auto; position: relative;">
                     {# If we want to optimize this further, we should try to do a single call instead of one by province #}
                     {% species_presence_icons s.id province.id %}
                 </td>
