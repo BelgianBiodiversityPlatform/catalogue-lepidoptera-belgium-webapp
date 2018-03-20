@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily
 
 
 def home_page(request):
@@ -72,6 +72,23 @@ def hostplant_species(request, species_id):
     })
 
 
+def hostplant_genus(request, genus_id):
+    genus = HostPlantGenus.objects.get(pk=genus_id)
+
+    return render(request, 'lepidoptera/hostplant_genus.html', {
+        'genus': genus,
+        'lepidoptera_species': genus.lepidoptera_species.all
+    })
+
+
+def hostplant_family(request, family_id):
+    family = HostPlantFamily.objects.get(pk=family_id)
+
+    return render(request, 'lepidoptera/hostplant_family.html', {
+        'family': family
+    })
+
+
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
@@ -83,7 +100,7 @@ def autocomplete(request, query_string):
         for instance in instances:
             results.append({
                 'value': str(instance),
-                'suggest_type': instance._meta.model_name,
+                'suggest_type': instance.suggest_type_label,
                 'url': instance.get_absolute_url()
             })
 

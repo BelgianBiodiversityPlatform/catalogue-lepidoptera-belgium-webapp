@@ -138,6 +138,10 @@ class CommonTaxonomicModel(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     denorm_always_skip = ('last_modified',)
 
+    @property
+    def suggest_type_label(self):
+        return self._meta.model_name
+
     class Meta:
         abstract = True
 
@@ -558,10 +562,18 @@ class HostPlantFamily(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant families"
         ordering = ['name']
 
+    def get_absolute_url(self):
+        return reverse('hostplant_family_page', kwargs={'family_id': str(self.id)})
+
 
 class HostPlantGenus(HostPlantTaxonomicModel):
     family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
     author = models.CharField(max_length=255, blank=True)
+
+    lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    def get_absolute_url(self):
+        return reverse('hostplant_genus_page', kwargs={'genus_id': str(self.id)})
 
     class Meta:
         verbose_name_plural = "Host plant genera"
@@ -573,6 +585,10 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
     genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
 
     lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    @property
+    def suggest_type_label(self):
+        return 'host plant species'
 
     def get_absolute_url(self):
         return reverse('hostplant_species_page', kwargs={'species_id': str(self.id)})

@@ -52,6 +52,8 @@ $ python manage.py denorm_rebuild (after all data populate)
 To discuss with team
 ====================
 
+- Host plant genus page: should we also show lepidoptera species that are inderectly (thru host plant species)?
+
 Meeting 23feb notes:
 ====================
 

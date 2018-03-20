@@ -6,13 +6,16 @@
 <div class="row">
         <div class="col">
             <h1>{% block h1_title %}{% endblock %}</h1>
+            {% block additional_details %}{% endblock %}
 
+            {% if lepidoptera_species %}
             <h2>{% trans "Observed lepidoptera species" %}</h2>
             <ul>
                 {% for sp in lepidoptera_species %}
                     <li><a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a></li>
                 {% endfor %}
             </ul>
+            {% endif %}
         </div>
 </div>
 {%  endblock %}

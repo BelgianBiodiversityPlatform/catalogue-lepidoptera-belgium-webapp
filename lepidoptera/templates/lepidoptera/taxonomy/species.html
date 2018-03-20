@@ -34,7 +34,7 @@
                     {% if observation.plant_species %}
                         <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
                     {% elif observation.plant_genus %}
-                        {{ observation.plant_genus.html_str }}
+                        <a href="{{ observation.plant_genus.get_absolute_url }}">{{ observation.plant_genus.html_str }}</a>
                     {% elif observation.substrate %}
                         {{  observation.substrate.name }}
                     {% endif %}

@@ -5,3 +5,7 @@
     {{ species.html_str }}
     {% include "lepidoptera/_taxon_type_badge.html" with taxon_type_name="Host plant species" %}
 {% endblock %}
+
+{% block additional_details %}
+    <p>{% trans "From genus" %}: <a href="{{ species.genus.get_absolute_url }}">{{ species.genus }}</a></p>
+{% endblock %}
