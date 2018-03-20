@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate
 
 
 def home_page(request):
@@ -89,11 +89,21 @@ def hostplant_family(request, family_id):
     })
 
 
+def substrate_page(request, substrate_id):
+    substrate = Substrate.objects.get(pk=substrate_id)
+
+    return render(request, 'lepidoptera/substrate.html', {
+        'substrate': substrate,
+        'lepidoptera_species': substrate.lepidoptera_species.all
+    })
+
+
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
     models = HostPlantTaxonomicModel.__subclasses__()
     models.extend(TaxonomicModel.__subclasses__())
+    models.extend([Substrate])
 
     for model in models:
         instances = model.objects.filter(name__icontains=query_string)

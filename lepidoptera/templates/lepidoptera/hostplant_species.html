@@ -1,9 +1,9 @@
-{% extends "lepidoptera/hostplant_taxon.html" %}
+{% extends "lepidoptera/hostplant_substrate.html" %}
 {% load i18n %}
 
 {% block h1_title %}
     {{ species.html_str }}
-    {% include "lepidoptera/_taxon_type_badge.html" with taxon_type_name="Host plant species" %}
+    {% include "lepidoptera/_entity_type_badge.html" with taxon_type_name="Host plant species" %}
 {% endblock %}
 
 {% block additional_details %}

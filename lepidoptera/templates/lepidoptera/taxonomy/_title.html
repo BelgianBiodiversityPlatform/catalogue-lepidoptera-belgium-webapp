@@ -16,7 +16,7 @@
             {% if taxon.author %}<span class="font-weight-light text-muted">{{ taxon.author }}</span>{% endif %}
 
             {% with taxon_type_name=taxon|to_class_name %}
-                {% include "lepidoptera/_taxon_type_badge.html" %}
+                {% include "lepidoptera/_entity_type_badge.html" %}
             {% endwith %}
         </h1>
 

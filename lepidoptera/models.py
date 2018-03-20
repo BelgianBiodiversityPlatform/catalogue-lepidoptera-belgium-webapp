@@ -162,8 +162,17 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
 class Substrate(models.Model):
     name = models.CharField(max_length=255)
 
+    lepidoptera_species = models.ManyToManyField('Species', through='Observation')
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('substrate_page', kwargs={'substrate_id': str(self.id)})
+
+    @property
+    def suggest_type_label(self):
+        return "substrate"
 
 
 class TaxonomicModel(CommonTaxonomicModel):
@@ -567,7 +576,7 @@ class HostPlantFamily(HostPlantTaxonomicModel):
 
     @property
     def suggest_type_label(self):
-        return 'host plant family'
+        return 'host plant species'
 
 
 class HostPlantGenus(HostPlantTaxonomicModel):

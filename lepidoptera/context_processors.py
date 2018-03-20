@@ -1,5 +1,5 @@
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantSpecies, HostPlantFamily, \
-    HostPlantGenus
+    HostPlantGenus, Substrate
 
 
 def stats_processor(request):
@@ -16,5 +16,6 @@ def stats_processor(request):
 
         'hostplant_species_counter': HostPlantSpecies.objects.count(),
         'hostplant_genus_counter': HostPlantGenus.objects.count(),
-        'hostplant_family_counter': HostPlantFamily.objects.count()
+        'hostplant_family_counter': HostPlantFamily.objects.count(),
+        'substrate_counter': Substrate.objects.count(),
     }

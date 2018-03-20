@@ -36,7 +36,7 @@
                     {% elif observation.plant_genus %}
                         <a href="{{ observation.plant_genus.get_absolute_url }}">{{ observation.plant_genus.html_str }}</a>
                     {% elif observation.substrate %}
-                        {{  observation.substrate.name }}
+                        <a href="{{ observation.substrate.get_absolute_url }}">{{ observation.substrate }}</a>
                     {% endif %}
                 </td>
             </tr>
