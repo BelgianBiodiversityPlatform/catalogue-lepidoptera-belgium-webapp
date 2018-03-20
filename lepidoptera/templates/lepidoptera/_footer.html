@@ -7,7 +7,7 @@
     <div class="col">
         <h4>{% trans "Statistics" %}</h4>
         <hr/>
-        <ul class="list-unstyled">
+        <ul class="list-unstyled small">
             <li>
                 <span class="badge badge-pill badge-dark">{{ family_counter }}</span>
                 <a class="text-dark" href="{% url 'families_page' %}">{% trans "Families" %}</a>
@@ -16,15 +16,19 @@
             <li><span class="badge badge-pill badge-warning">{{ subfamily_counter }}</span> {% trans "Subfamilies" %}</li>
             <li><span class="badge badge-pill badge-dark">{{ tribus_counter }}</span> {% trans "Tribus" %}</li>
             <li>
-                <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Accepted genera" %}
-                ({% trans "and" %} <span class="badge badge-pill badge-warning">{{ genus_synonym_counter }}</span> {% trans "synonyms" %})
+                <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Accepted genera" %},
+                <span class="badge badge-pill badge-warning">{{ genus_synonym_counter }}</span> {% trans "synonyms" %}
             </li>
             <li><li><span class="badge badge-pill badge-dark">{{ subgenus_counter }}</span> {% trans "Subgenera" %}</li></li>
             <li>
-                <span class="badge badge-pill badge-warning">{{ valid_species_counter }}</span> {% trans "Accepted species" %}
-                ({% trans "and" %} <span class="badge badge-pill badge-warning">{{ species_synonym_counter }}</span> {% trans "synonyms" %})
+                <span class="badge badge-pill badge-warning">{{ valid_species_counter }}</span> {% trans "Accepted species" %},
+                <span class="badge badge-pill badge-warning">{{ species_synonym_counter }}</span> {% trans "synonyms" %}
             </li>
             <li><li><span class="badge badge-pill badge-dark">{{ hostplant_species_counter }}</span> {% trans "Host plant species" %}</li></li>
+
+            <li><li><span class="badge badge-pill badge-warning">{{ hostplant_genus_counter }}</span> {% trans "Host plant genera" %}</li></li>
+
+            <li><li><span class="badge badge-pill badge-dark">{{ hostplant_family_counter }}</span> {% trans "Host plant families" %}</li></li>
         </ul>
     </div>
 </div>

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel
 
 
 def home_page(request):
@@ -92,7 +92,7 @@ def hostplant_family(request, family_id):
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
-    models = [HostPlantSpecies]
+    models = HostPlantTaxonomicModel.__subclasses__()
     models.extend(TaxonomicModel.__subclasses__())
 
     for model in models:

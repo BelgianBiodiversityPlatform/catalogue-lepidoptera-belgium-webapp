@@ -565,6 +565,10 @@ class HostPlantFamily(HostPlantTaxonomicModel):
     def get_absolute_url(self):
         return reverse('hostplant_family_page', kwargs={'family_id': str(self.id)})
 
+    @property
+    def suggest_type_label(self):
+        return 'host plant family'
+
 
 class HostPlantGenus(HostPlantTaxonomicModel):
     family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
@@ -574,6 +578,10 @@ class HostPlantGenus(HostPlantTaxonomicModel):
 
     def get_absolute_url(self):
         return reverse('hostplant_genus_page', kwargs={'genus_id': str(self.id)})
+
+    @property
+    def suggest_type_label(self):
+        return 'host plant genus'
 
     class Meta:
         verbose_name_plural = "Host plant genera"
@@ -599,6 +607,9 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     def __str__(self):
         return "{} {}".format(self.genus.name, self.name)
+
+    def html_str(self):
+        return format_html("<i>{}</i>", self.__str__() )
 
 
 class Observation(models.Model):
