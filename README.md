@@ -1,3 +1,17 @@
+Sandbox deployment/commands/...
+===============================
+
+- On git push, code is automatically deployed to sandbox.bebif.be/lepidoptera
+- (status can be seen in GitLab, in "CI/CD->Jobs")
+- $ ssh nnoe@sandbox.bebif.be
+- Example manage.py:
+    $ source /usr/local/venvs/lepidoptera/bin/activate
+    $ cd /usr/local/www/sites/projects.biodiversity.be/lepidoptera/
+    $ sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py check
+- Use saltstack to redeploy:
+    $ sudo salt-call state.apply webapps.lepidoptera
+
+
 Data sources
 ============
 
@@ -37,17 +51,6 @@ $ python manage.py denorm_rebuild (after all data populate)
     
 To discuss with team
 ====================
-
-- Ask if all taxonomic models should be "orderable" (prev/next)?
-- In website_import, we don't import the Family description if there's already something in the text field. IS it correct? 
-Or maybe we can import in all case if data is better on website than in Access?
-
-Hostplants:
------------
-    - Sometimes we find 'sp' in HostPlantSpecies. Does that mean that we only know the Genus of the plant?
-    - Sometimes we find higher level things such as 'coniferous tree', ...
-    - shouldn't we link a Lepidoptera species to either a plantspecies (always link to genus and family), or to a genus or to another entity (coniferous trees, ....)
-
 
 Meeting 23feb notes:
 ====================
