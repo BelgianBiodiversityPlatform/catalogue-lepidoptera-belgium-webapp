@@ -1,17 +1,7 @@
-{% extends "lepidoptera/base.html" %}
+{% extends "lepidoptera/hostplant_taxon.html" %}
 {% load i18n %}
 
-{% block content %}
-<div class="row">
-        <div class="col">
-            <h1>{{ species.html_str }}</h1>
-
-            <h2>{% trans "Observed lepidptera species" %}</h2>
-            <ul>
-                {% for sp in species.lepidoptera_species.all %}
-                    <li><a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-</div>
-{%  endblock %}
+{% block h1_title %}
+    {{ species.html_str }}
+    {% include "lepidoptera/_taxon_type_badge.html" with taxon_type_name="Host plant species" %}
+{% endblock %}

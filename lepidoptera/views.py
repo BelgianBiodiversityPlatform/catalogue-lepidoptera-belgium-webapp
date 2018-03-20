@@ -66,7 +66,10 @@ def all_families(request):
 def hostplant_species(request, species_id):
     species = HostPlantSpecies.objects.get(pk=species_id)
 
-    return render(request, 'lepidoptera/hostplant_species.html', {'species': species})
+    return render(request, 'lepidoptera/hostplant_species.html', {
+        'species': species,
+        'lepidoptera_species': species.lepidoptera_species.all
+    })
 
 
 # TODO: Implement more fields (vernacular names, ...) and models

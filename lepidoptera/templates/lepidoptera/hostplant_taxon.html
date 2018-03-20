@@ -1,0 +1,18 @@
+{% extends "lepidoptera/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="row">
+        <div class="col">
+            <h1>{% block h1_title %}{% endblock %}</h1>
+
+            <h2>{% trans "Observed lepidoptera species" %}</h2>
+            <ul>
+                {% for sp in lepidoptera_species %}
+                    <li><a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+</div>
+{%  endblock %}
