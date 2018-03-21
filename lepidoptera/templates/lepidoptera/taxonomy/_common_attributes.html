@@ -51,7 +51,7 @@
         <dd class="col-sm-10">
             {% for synonym in taxon.synonyms.all %}
                 <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a>
-                {% if not forloop.last %}, {% endif %}
+                {% include 'lepidoptera/_comma.html' %}
             {% endfor %}
         </dd>
     {% endif %}

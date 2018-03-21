@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation
 
 
 def home_page(request):
@@ -50,7 +50,14 @@ def subgenus_page(request, subgenus_id):
 def species_page(request, species_id):
     species = Species.objects.get(pk=species_id)
 
-    return render(request, 'lepidoptera/taxonomy/species.html', {'taxon': species})
+    context = {
+        'taxon': species,
+        'substrate_observations': Observation.objects.filter(species=species, substrate__isnull=False),
+        'plant_species_observations': Observation.objects.filter(species=species, plant_species__isnull=False),
+        'plant_genus_observations': Observation.objects.filter(species=species, plant_genus__isnull=False)
+    }
+
+    return render(request, 'lepidoptera/taxonomy/species.html', context)
 
 
 def about_page(request):
