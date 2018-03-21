@@ -1,0 +1,13 @@
+{% extends 'lepidoptera/base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <p>{{ taxa.count }} {% trans "found" %}.</p>
+    <ul>
+        {% for entity in taxa %}
+            <li><a href="{{ entity.get_absolute_url }}">{{ entity.html_str }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -57,10 +57,114 @@ def about_page(request):
     return render(request, 'lepidoptera/about.html')
 
 
+# All_xxx pages
+
 def all_families(request):
     families = Family.objects.all().order_by('name')
 
-    return render(request, 'lepidoptera/taxonomy/families.html', {'families': families})
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All families',
+        'taxa': families
+    })
+
+
+def all_subfamilies(request):
+    subfamilies = Subfamily.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All subfamilies',
+        'taxa': subfamilies
+    })
+
+
+def all_tribus(request):
+    tribus = Tribus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All tribus',
+        'taxa': tribus
+    })
+
+
+def all_accepted_genera(request):
+    genera = Genus.accepted_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All accepted genera',
+        'taxa': genera
+    })
+
+
+def all_genera_synonyms(request):
+    genera = Genus.synonym_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All synonyms of genera',
+        'taxa': genera
+    })
+
+
+def all_subgenera(request):
+    subgenera = Subgenus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All subgenera',
+        'taxa': subgenera
+    })
+
+
+def all_accepted_species(request):
+    species = Species.accepted_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All accepted species',
+        'taxa': species
+    })
+
+
+def all_species_synonyms(request):
+    species = Species.synonym_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All species synonym',
+        'taxa': species
+    })
+
+
+def all_hostplant_species(request):
+    species = HostPlantSpecies.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant species',
+        'taxa': species
+    })
+
+
+def all_hostplant_genera(request):
+    genera = HostPlantGenus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant genera',
+        'taxa': genera
+    })
+
+
+def all_hostplant_families(request):
+    families = HostPlantFamily.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant families',
+        'taxa': families
+    })
+
+
+def all_substrates(request):
+    substrates = Substrate.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All substrates',
+        'taxa': substrates
+    })
 
 
 def hostplant_species(request, species_id):

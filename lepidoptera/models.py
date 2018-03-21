@@ -164,6 +164,9 @@ class Substrate(models.Model):
 
     lepidoptera_species = models.ManyToManyField('Species', through='Observation')
 
+    def html_str(self):
+        return self.__str__()
+
     def __str__(self):
         return self.name
 

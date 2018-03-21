@@ -9,28 +9,46 @@
         <hr/>
         <ul class="list-unstyled small">
             <li>
-                <span class="badge badge-pill badge-dark">{{ family_counter }}</span>
-                <a class="text-dark" href="{% url 'families_page' %}">{% trans "Families" %}</a>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=family_counter label="Families" page_name="all_families_page" %}
             </li>
 
-            <li><span class="badge badge-pill badge-warning">{{ subfamily_counter }}</span> {% trans "Subfamilies" %}</li>
-            <li><span class="badge badge-pill badge-dark">{{ tribus_counter }}</span> {% trans "Tribus" %}</li>
             <li>
-                <span class="badge badge-pill badge-warning">{{ valid_genus_counter }}</span> {% trans "Accepted genera" %},
-                <span class="badge badge-pill badge-warning">{{ genus_synonym_counter }}</span> {% trans "synonyms" %}
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=subfamily_counter label="Subfamilies" page_name="all_subfamilies_page" %}
             </li>
-            <li><li><span class="badge badge-pill badge-dark">{{ subgenus_counter }}</span> {% trans "Subgenera" %}</li></li>
+
             <li>
-                <span class="badge badge-pill badge-warning">{{ valid_species_counter }}</span> {% trans "Accepted species" %},
-                <span class="badge badge-pill badge-warning">{{ species_synonym_counter }}</span> {% trans "synonyms" %}
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=tribus_counter label="Tribus" page_name="all_tribus_page" %}
             </li>
-            <li><li><span class="badge badge-pill badge-dark">{{ hostplant_species_counter }}</span> {% trans "Host plant species" %}</li></li>
 
-            <li><li><span class="badge badge-pill badge-warning">{{ hostplant_genus_counter }}</span> {% trans "Host plant genera" %}</li></li>
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_genus_counter label="Accepted_genera" page_name="all_accepted_genera_page" %},
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=genus_synonym_counter  label="synonyms" page_name="all_genera_synonyms_page" %}
+            </li>
 
-            <li><li><span class="badge badge-pill badge-dark">{{ hostplant_family_counter }}</span> {% trans "Host plant families" %}</li></li>
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=subgenus_counter label="Subgenera" page_name="all_subgenera_page" %}
+            </li>
 
-            <li><li><span class="badge badge-pill badge-warning">{{ substrate_counter }}</span> {% trans "Substrates" %}</li></li>
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_species_counter label="Accepted species" page_name="all_accepted_species_page" %}
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=species_synonym_counter label="synonyms" page_name="all_species_synonyms_page" %}
+            </li>
+
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_species_counter label="Host plant species" page_name="all_hostplant_species_page" %}
+            </li>
+
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_genus_counter label="Host plant genera" page_name="all_hostplant_genera_page" %}
+            </li>
+
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_family_counter label="Host plant families" page_name="all_hostplant_families_page" %}
+            </li>
+
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=substrate_counter label="Substrates" page_name="all_substrates_page" %}
+            </li>
         </ul>
     </div>
 </div>
