@@ -138,6 +138,10 @@ class CommonTaxonomicModel(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     denorm_always_skip = ('last_modified',)
 
+    @property
+    def suggest_type_label(self):
+        return self._meta.model_name
+
     class Meta:
         abstract = True
 
@@ -158,8 +162,20 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
 class Substrate(models.Model):
     name = models.CharField(max_length=255)
 
+    lepidoptera_species = models.ManyToManyField('Species', through='Observation')
+
+    def html_str(self):
+        return self.__str__()
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('substrate_page', kwargs={'substrate_id': str(self.id)})
+
+    @property
+    def suggest_type_label(self):
+        return "substrate"
 
 
 class TaxonomicModel(CommonTaxonomicModel):
@@ -558,10 +574,26 @@ class HostPlantFamily(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant families"
         ordering = ['name']
 
+    def get_absolute_url(self):
+        return reverse('hostplant_family_page', kwargs={'family_id': str(self.id)})
+
+    @property
+    def suggest_type_label(self):
+        return 'host plant species'
+
 
 class HostPlantGenus(HostPlantTaxonomicModel):
     family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
     author = models.CharField(max_length=255, blank=True)
+
+    lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    def get_absolute_url(self):
+        return reverse('hostplant_genus_page', kwargs={'genus_id': str(self.id)})
+
+    @property
+    def suggest_type_label(self):
+        return 'host plant genus'
 
     class Meta:
         verbose_name_plural = "Host plant genera"
@@ -574,6 +606,10 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     lepidoptera_species = models.ManyToManyField(Species, through='Observation')
 
+    @property
+    def suggest_type_label(self):
+        return 'host plant species'
+
     def get_absolute_url(self):
         return reverse('hostplant_species_page', kwargs={'species_id': str(self.id)})
 
@@ -583,6 +619,9 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     def __str__(self):
         return "{} {}".format(self.genus.name, self.name)
+
+    def html_str(self):
+        return format_html("<i>{}</i>", self.__str__() )
 
 
 class Observation(models.Model):

@@ -296,7 +296,9 @@ class Command(LepidopteraCommand):
 
                 if (not result.HostPlantGenusID) or (result.HostPlantGenusID == NULL_PLANTGENUS_ID):
                     # Fake species with no Genus, it's indeed a substrate
-                    observation.substrate = Substrate.objects.create(name=text_clean(result.HostPlantName))
+                    observation.substrate, created = Substrate.objects.get_or_create(name=text_clean(
+                        result.HostPlantName)
+                    )
                 elif text_clean(result.HostPlantName) == "sp.":
                     # We only know the genus
                     observation.plant_genus = HostPlantGenus.objects.get(verbatim_id=result.HostPlantGenusID)

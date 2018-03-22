@@ -1,10 +1,15 @@
 import csv
+from difflib import SequenceMatcher
 
 from lepidoptera.models import Family, Species, SpeciesPresence, Province, TimePeriod
 from ._utils import LepidopteraCommand, text_clean
 
 SPECIES_CSV_PROVINCE_COL_NAMES = ['WV', 'OV', 'AN', 'LI', 'BR', 'HA', 'NA', 'LG', 'LX']
 # province Code in CSV and initial data match so it's easier
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 
 def _assign_presence_to_species(species, presence_code, province_code):
@@ -89,7 +94,11 @@ class Command(LepidopteraCommand):
                                 error_in_presence_code_for.append(species_full_name)
 
                 else:
-                    species_no_family_match.append(species_full_name)
+                    family_from_db = species.family.name
+                    family_from_csv = text_clean(species_row['family'])
+                    similarity_score = similar(family_from_db, family_from_csv)
+                    msg = "{} vs {} (similarity: {})".format(family_from_db, family_from_csv, similarity_score)
+                    species_no_family_match.append(species_full_name + "(" + msg + ")")
 
             except Species.DoesNotExist:
                 missing_species.append(species_full_name)

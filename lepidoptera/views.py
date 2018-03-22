@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation
 
 
 def home_page(request):
@@ -50,37 +50,178 @@ def subgenus_page(request, subgenus_id):
 def species_page(request, species_id):
     species = Species.objects.get(pk=species_id)
 
-    return render(request, 'lepidoptera/taxonomy/species.html', {'taxon': species})
+    context = {
+        'taxon': species,
+        'substrate_observations': Observation.objects.filter(species=species, substrate__isnull=False),
+        'plant_species_observations': Observation.objects.filter(species=species, plant_species__isnull=False),
+        'plant_genus_observations': Observation.objects.filter(species=species, plant_genus__isnull=False)
+    }
+
+    return render(request, 'lepidoptera/taxonomy/species.html', context)
 
 
 def about_page(request):
     return render(request, 'lepidoptera/about.html')
 
 
+# All_xxx pages
+
 def all_families(request):
     families = Family.objects.all().order_by('name')
 
-    return render(request, 'lepidoptera/taxonomy/families.html', {'families': families})
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All families',
+        'taxa': families
+    })
+
+
+def all_subfamilies(request):
+    subfamilies = Subfamily.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All subfamilies',
+        'taxa': subfamilies
+    })
+
+
+def all_tribus(request):
+    tribus = Tribus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All tribus',
+        'taxa': tribus
+    })
+
+
+def all_accepted_genera(request):
+    genera = Genus.accepted_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All accepted genera',
+        'taxa': genera
+    })
+
+
+def all_genera_synonyms(request):
+    genera = Genus.synonym_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All synonyms of genera',
+        'taxa': genera
+    })
+
+
+def all_subgenera(request):
+    subgenera = Subgenus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All subgenera',
+        'taxa': subgenera
+    })
+
+
+def all_accepted_species(request):
+    species = Species.accepted_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All accepted species',
+        'taxa': species
+    })
+
+
+def all_species_synonyms(request):
+    species = Species.synonym_objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All species synonym',
+        'taxa': species
+    })
+
+
+def all_hostplant_species(request):
+    species = HostPlantSpecies.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant species',
+        'taxa': species
+    })
+
+
+def all_hostplant_genera(request):
+    genera = HostPlantGenus.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant genera',
+        'taxa': genera
+    })
+
+
+def all_hostplant_families(request):
+    families = HostPlantFamily.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All host plant families',
+        'taxa': families
+    })
+
+
+def all_substrates(request):
+    substrates = Substrate.objects.all().order_by('name')
+
+    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
+        'title': 'All substrates',
+        'taxa': substrates
+    })
 
 
 def hostplant_species(request, species_id):
     species = HostPlantSpecies.objects.get(pk=species_id)
 
-    return render(request, 'lepidoptera/hostplant_species.html', {'species': species})
+    return render(request, 'lepidoptera/hostplant_species.html', {
+        'species': species,
+        'lepidoptera_species': species.lepidoptera_species.all
+    })
+
+
+def hostplant_genus(request, genus_id):
+    genus = HostPlantGenus.objects.get(pk=genus_id)
+
+    return render(request, 'lepidoptera/hostplant_genus.html', {
+        'genus': genus,
+        'lepidoptera_species': genus.lepidoptera_species.all
+    })
+
+
+def hostplant_family(request, family_id):
+    family = HostPlantFamily.objects.get(pk=family_id)
+
+    return render(request, 'lepidoptera/hostplant_family.html', {
+        'family': family
+    })
+
+
+def substrate_page(request, substrate_id):
+    substrate = Substrate.objects.get(pk=substrate_id)
+
+    return render(request, 'lepidoptera/substrate.html', {
+        'substrate': substrate,
+        'lepidoptera_species': substrate.lepidoptera_species.all
+    })
 
 
 # TODO: Implement more fields (vernacular names, ...) and models
 def autocomplete(request, query_string):
     results = []
-    models = [HostPlantSpecies]
+    models = HostPlantTaxonomicModel.__subclasses__()
     models.extend(TaxonomicModel.__subclasses__())
+    models.extend([Substrate])
 
     for model in models:
         instances = model.objects.filter(name__icontains=query_string)
         for instance in instances:
             results.append({
                 'value': str(instance),
-                'suggest_type': instance._meta.model_name,
+                'suggest_type': instance.suggest_type_label,
                 'url': instance.get_absolute_url()
             })
 

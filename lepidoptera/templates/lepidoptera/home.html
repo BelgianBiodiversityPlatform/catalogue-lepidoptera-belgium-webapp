@@ -4,18 +4,18 @@
 {% load i18n %}
 
 {% block content %}
-    <div class="row">
+    <div class="row mb-4">
         <div class="col">
             {% get_page_fragment 'welcome' %}
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mb-4">
         <div class="col">
             <h1>{% trans "Quick search" %}</h1>
             <form>
                 <label for="multisearch">{% trans "Looking for..." %}</label>
-                <input type="text" class="form-control" id="multisearch" placeholder="{% trans "Genus, family, species, host plants, ..." %}">
+                <input type="text" class="form-control" id="multisearch" placeholder="{% trans "Genus, family, species, host plants, substrates, ..." %}">
             </form>
         </div>
     </div>

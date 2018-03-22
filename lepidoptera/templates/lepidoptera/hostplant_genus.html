@@ -1,0 +1,18 @@
+{% extends "lepidoptera/hostplant_substrate.html" %}
+{% load i18n %}
+
+{% block h1_title %}
+    {{ genus.html_str }}
+    {% include "lepidoptera/_entity_type_badge.html" with taxon_type_name="Host plant genus" %}
+{% endblock %}
+
+{% block additional_details %}
+    <p>{% trans "From family" %}: <a href="{{ genus.family.get_absolute_url }}">{{ genus.family }}</a></p>
+    <p>
+    {% trans "Host plant species for this genus" %}:
+    {% for sp in genus.hostplantspecies_set.all %}
+        <a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a>
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    </p>
+{% endblock %}
