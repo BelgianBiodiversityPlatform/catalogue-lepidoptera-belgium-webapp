@@ -9,3 +9,4 @@ git+https://github.com/deschler/django-modeltranslation@b24e4d3
 django-imagekit==4.0.2
 -e git://github.com/django-denorm/django-denorm@57bd310ad2f97aebb51794f59c60f342ccacab33#egg=denorm
 requests==2.18.4
+wikidata==0.6.1

@@ -1,15 +1,40 @@
+from tempfile import NamedTemporaryFile
+from urllib.parse import urlparse
+from urllib.request import urlopen
+
 from django.conf import settings
 from django.contrib import admin
+from django.core.files import File
 from django.db.models import Q
 from django.utils.translation import gettext as _
 
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
+from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
     PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
+
+
+def assign_picture_from_wikidata(modeladmin, request, queryset):
+    for taxon in queryset:
+        if taxon.wikidata_id:
+            img_urls = get_images_url_for_entity(taxon.wikidata_id)
+            if img_urls:
+                img_url = img_urls[0]
+                temp_img = NamedTemporaryFile(delete=True)
+                temp_img.write(urlopen(img_url).read())
+                temp_img.flush()
+                filename_img = urlparse(img_url).path.split('/')[-1]
+                taxon.representative_picture.save(filename_img, File(temp_img))
+                taxon.save()
+
+
+assign_picture_from_wikidata.short_description = (
+    "Assign illustative picture from Wikidata (if available) to selected taxa"
+)
 
 
 class NotNullFilter(admin.SimpleListFilter):
@@ -76,9 +101,11 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin)
 
     readonly_fields = ('verbatim_family_id', )
 
-    list_display = ('display_order', 'name', 'author', 'text')
+    list_display = ('display_order', 'name', 'author', 'text', 'wikidata_id')
 
     list_filter = [RepresentativePictureNotNullFilter]
+
+    actions = [assign_picture_from_wikidata]
 
 
 @admin.register(Subfamily)
