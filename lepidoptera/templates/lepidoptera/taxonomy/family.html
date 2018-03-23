@@ -8,6 +8,6 @@
 
     <hr/>
 
-    {% include "lepidoptera/taxonomy/_species_list.html" with species_list=taxon.all_species provinces=all_provinces timeperiods=all_timeperiods%}
+    {% include "lepidoptera/taxonomy/_species_table.html" with species_list=taxon.all_species provinces=all_provinces timeperiods=all_timeperiods%}
 
 {% endblock %}
