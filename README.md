@@ -86,4 +86,3 @@ Customize Bootstrap (colors, ...)
     - change variables using the editor
     - download SCSS file and replace custom-variable-bootstrap.scss
     - download CSS and replace bootstrap.min.css
-

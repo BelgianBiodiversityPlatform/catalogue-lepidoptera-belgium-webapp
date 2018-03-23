@@ -4,7 +4,7 @@ stages:
 saltstack_deploy:
     stage: deploy
     script:
-        - sudo /usr/local/bin/salt-call state.apply webapps.lepidoptera
+        - sudo /usr/local/bin/salt-call --retcode-passthrough --output-diff state.apply webapps.lepidoptera
     tags:
         - python
         - deploy
