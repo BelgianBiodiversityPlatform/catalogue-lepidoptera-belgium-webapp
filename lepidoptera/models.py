@@ -135,6 +135,8 @@ class CommonTaxonomicModel(models.Model):
 
     vernacular_name = models.CharField(max_length=255, blank=True)
 
+    wikidata_id = models.CharField(max_length=255, blank=True)
+
     last_modified = models.DateTimeField(auto_now=True)
     denorm_always_skip = ('last_modified',)
 
