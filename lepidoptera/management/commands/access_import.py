@@ -68,7 +68,7 @@ class Command(LepidopteraCommand):
                                           vernacular_name_fr=text_clean(result.FamilyNameFR),
                                           vernacular_name_de=text_clean(result.FamilyNameGE),
 
-                                          text=text_clean(result.FamilyText),
+                                          text_en=text_clean(result.FamilyText),
 
                                           status=Status.objects.get(verbatim_status_id=result.StatusID),
 
@@ -93,7 +93,7 @@ class Command(LepidopteraCommand):
                                          vernacular_name_fr=text_clean(result.SubFamilyNameFR),
                                          vernacular_name_de=text_clean(result.SubFamilyNameGE),
 
-                                         text=text_clean(result.SubfamilyText),
+                                         text_en=text_clean(result.SubfamilyText),
 
                                          display_order=result.SubfamilyID)
                 self.w('.', ending='')
@@ -118,7 +118,7 @@ class Command(LepidopteraCommand):
                                       vernacular_name_fr=text_clean(result.TribusNameFR),
                                       vernacular_name_de=text_clean(result.TribusNameGE),
 
-                                      text=text_clean(result.TribusText),
+                                      text_en=text_clean(result.TribusText),
 
                                       display_order=result.TribusID)
                 self.w('.', ending='')
@@ -168,7 +168,7 @@ class Command(LepidopteraCommand):
                                    'vernacular_name_en': text_clean(result.GenusNameEN),
                                    'vernacular_name_fr': text_clean(result.GenusNameFR),
                                    'vernacular_name_de': text_clean(result.GenusNameGE),
-                                   'text': text_clean(result.GenusText),
+                                   'text_en': text_clean(result.GenusText),
                                    'status': Status.objects.get(verbatim_status_id=result.StatusID),
                                    'display_order': genus_id}
                     if result.GenusReferenceToHigherCategory:
@@ -193,7 +193,7 @@ class Command(LepidopteraCommand):
                                         vernacular_name_fr=text_clean(result.SubgenusNameFR),
                                         vernacular_name_de=text_clean(result.SubgenusNameGE),
 
-                                        text=text_clean(result.SubgenusText),
+                                        text_en=text_clean(result.SubgenusText),
 
                                         # Currently all subgenera are only linked to a genus, so that's the only
                                         # taxonomic lin we (can) import
@@ -234,7 +234,7 @@ class Command(LepidopteraCommand):
                                    'vernacular_name_en': text_clean(result.SpeciesNameEN),
                                    'vernacular_name_fr': text_clean(result.SpeciesNameFR),
                                    'vernacular_name_de': text_clean(result.SpeciesNameGE),
-                                   'text': text_clean(result.SpeciesText),
+                                   'text_en': text_clean(result.SpeciesText),
                                    'status': Status.objects.get(verbatim_status_id=result.StatusID),
                                    'display_order': result.SpeciesNumber}
 

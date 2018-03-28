@@ -8,33 +8,37 @@ class TaxonomicTranslatableModel(TranslationOptions):
     fields = ('vernacular_name',)
 
 
+class HasTranslatableTextField(TranslationOptions):
+    fields = ("text", )
+
+
 @register(Family)
-class FamilyTranslationOptions(TaxonomicTranslatableModel):
+class FamilyTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 
 @register(Subfamily)
-class SubfamilyTranslationOptions(TaxonomicTranslatableModel):
+class SubfamilyTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 
 @register(Tribus)
-class TribusTranslationOptions(TaxonomicTranslatableModel):
+class TribusTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 
 @register(Genus)
-class GenusTranslationOptions(TaxonomicTranslatableModel):
+class GenusTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 
 @register(Subgenus)
-class SubgenusTranslationOptions(TaxonomicTranslatableModel):
+class SubgenusTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 
 @register(Species)
-class SpeciesTranslationOptions(TaxonomicTranslatableModel):
+class SpeciesTranslationOptions(TaxonomicTranslatableModel, HasTranslatableTextField):
     pass
 
 

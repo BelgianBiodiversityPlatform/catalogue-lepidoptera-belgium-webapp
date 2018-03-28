@@ -125,7 +125,7 @@ class Command(LepidopteraCommand):
                 if family.text != '':
                     families_with_already_a_description.append(family_name)
 
-                family.text = text_clean(families_row['description'])
+                family.text_en = text_clean(families_row['description'])
                 family.save()
 
             except Family.DoesNotExist:
