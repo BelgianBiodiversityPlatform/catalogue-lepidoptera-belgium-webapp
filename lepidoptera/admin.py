@@ -99,7 +99,7 @@ class ObservationsInline(admin.TabularInline):
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
 
-    readonly_fields = ('verbatim_family_id', )
+    readonly_fields = ('verbatim_family_id', 'wikidata_id')
 
     list_display = ('display_order', 'name', 'author', 'text', 'wikidata_id')
 
