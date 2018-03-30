@@ -13,7 +13,8 @@ from markdownx.admin import MarkdownxModelAdmin
 
 from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
-    PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate
+    PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
+    Publication
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -240,6 +241,19 @@ class HostPlantFamilyAdmin(TranslationAdmin):
 @admin.register(Substrate)
 class SubstrateAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(Journal)
+class JournalAdmin(admin.ModelAdmin):
+    readonly_fields = ('verbatim_id', )
+
+
+@admin.register(Publication)
+class PublicationAdmin(admin.ModelAdmin):
+    readonly_fields = ('verbatim_id',)
+    search_fields = ['title', ]
+
+    list_display = ('title', 'author', 'journal')
 
 
 class PageFragmentAdmin(MarkdownxModelAdmin):

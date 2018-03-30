@@ -4,12 +4,12 @@ from django.core.management.base import CommandError
 from django.db import connection
 
 from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, \
-    HostPlantGenus, Substrate, Observation, HostPlantSpecies
+    HostPlantGenus, Substrate, Observation, HostPlantSpecies, Journal, Publication
 
 from ._utils import LepidopteraCommand, text_clean
 
 MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, HostPlantGenus,
-                      HostPlantSpecies, Substrate, Observation]
+                      HostPlantSpecies, Substrate, Observation, Journal, Publication]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
@@ -320,5 +320,32 @@ class Command(LepidopteraCommand):
                     )
 
                 observation.save()
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing journals...')
+            cursor.execute('SELECT * FROM "tblJournals"')
+            for result in namedtuplefetchall(cursor):
+                Journal.objects.create(
+                    verbatim_id=result.JournalID,
+                    title = text_clean(result.JournalTitle)
+                )
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing publications...')
+            cursor.execute('SELECT * FROM "tblPublications"')
+            for result in namedtuplefetchall(cursor):
+                Publication.objects.create(
+                    verbatim_id=result.PublicationID,
+                    author=text_clean(result.PublicationAuthor),
+                    title=text_clean(result.PublicationTitle),
+                    journal=Journal.objects.get(verbatim_id=result.JournalID),
+                    publisher=text_clean(result.PublicationPublisher),
+                    year=text_clean(result.PublicationYear),
+                    volume=text_clean(result.PublicationVolume),
+                    issue=text_clean(result.PublicationVolume),
+                    page_numbers=text_clean(result.PublicationPageNumbers)
+                )
                 self.w('.', ending='')
             self.w(self.style.SUCCESS('OK'))

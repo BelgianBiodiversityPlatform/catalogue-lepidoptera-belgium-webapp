@@ -11,6 +11,10 @@ from imagekit.processors import ResizeToFit
 
 
 # Managers, helpers, ...
+def get_verbatim_id_field():
+    # Blank/NULL allowed for post-import record
+    return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
+
 class SpeciesManager(models.Manager):
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
@@ -126,11 +130,6 @@ class Status(models.Model):
 
 class CommonTaxonomicModel(models.Model):
     """Common ground between all taxon-related models (Lepidoptera, host plants, ...)"""
-    @staticmethod
-    def get_verbatim_id_field():
-        # Blank/NULL allowed for post-import record
-        return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
-
     name = models.CharField(max_length=255)
 
     vernacular_name = models.CharField(max_length=255, blank=True)
@@ -155,7 +154,7 @@ class CommonTaxonomicModel(models.Model):
 
 
 class HostPlantTaxonomicModel(CommonTaxonomicModel):
-    verbatim_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_id = get_verbatim_id_field()
 
     class Meta:
         abstract = True
@@ -226,7 +225,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     #   - See genus for a full implementation
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY]
 
-    verbatim_family_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_family_id = get_verbatim_id_field()
 
     representative_picture = models.ImageField(blank=True, null=True, upload_to='family_representative_pictures')
     representative_picture_thumbnail = ImageSpecField(source='representative_picture',
@@ -281,7 +280,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
 class Subfamily(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY]
 
-    verbatim_subfamily_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_subfamily_id = get_verbatim_id_field()
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
 
@@ -329,7 +328,7 @@ class Subfamily(TaxonomicModel):
 class Tribus(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS]
 
-    verbatim_tribus_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_tribus_id = get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
 
@@ -365,7 +364,7 @@ class Tribus(TaxonomicModel):
 class Genus(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM, Status.UNKNOWN]
 
-    verbatim_genus_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_genus_id = get_verbatim_id_field()
 
     # Sometimes a genus appears under a tribu, but sometimes only under a subfamily or a family...
     # One and only one of those can be filled
@@ -448,7 +447,7 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
 class Subgenus(TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBGENUS]
 
-    verbatim_subgenus_id = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_subgenus_id = get_verbatim_id_field()
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
@@ -486,7 +485,7 @@ def validate_only_numbers_and_uppercase(value):
 class Species(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
-    verbatim_species_number = CommonTaxonomicModel.get_verbatim_id_field()
+    verbatim_species_number = get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
         validate_only_numbers_and_uppercase,
         MinLengthValidator(4)
@@ -692,6 +691,31 @@ class SpeciesPresence(models.Model):
 
     class Meta:
         unique_together = ('species', 'province', 'period')
+
+
+class Journal(models.Model):
+    verbatim_id = get_verbatim_id_field()
+    title = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.title
+
+
+class Publication(models.Model):
+    verbatim_id = get_verbatim_id_field()
+    author = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+
+    journal = models.ForeignKey(Journal, on_delete=models.CASCADE)
+
+    publisher = models.CharField(max_length=255, blank=True)
+    year = models.CharField(max_length=20)
+    volume = models.CharField(max_length=20)
+    issue = models.CharField(max_length=20, blank=True)
+    page_numbers = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.title
 
 
 class PageFragment(models.Model):
