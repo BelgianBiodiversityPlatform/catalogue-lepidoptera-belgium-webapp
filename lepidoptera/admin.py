@@ -254,6 +254,18 @@ class PublicationAdmin(admin.ModelAdmin):
     search_fields = ['title', ]
 
     list_display = ('title', 'author', 'journal')
+    fields = (
+        'author',
+        'year',
+        'title',
+        'journal',
+        'publisher',
+        'volume',
+        'issue',
+        'page_numbers',
+
+        'verbatim_id'
+    )
 
 
 class PageFragmentAdmin(MarkdownxModelAdmin):
