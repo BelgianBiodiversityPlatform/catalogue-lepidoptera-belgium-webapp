@@ -49,14 +49,15 @@ A. Configuration
 B. data populate
 ----------------
     
-1) Import (converted) Access DB:
+1) Import (converted) Access DB into application DB:
 
     $ psql -d <DATABASE_NAME> -f initial_data/access/converted/CatLepBelgium_be.sql
-    
-$ python manage.py access_import
-$ python manage.py website_import initial_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv initial_data/website_extract_andre/LepidopteraAtlas/LASpecies.csv
 
-$ python manage.py denorm_rebuild (after all data populate)
+2) Run Django command to (re)import everything:
+
+    $ python manage.py reimport_everything LAFamilies.csv LASpecies.csv
+
+    (see reimport_everything.py code if you need the individual import commands)
     
 To discuss with team
 ====================
