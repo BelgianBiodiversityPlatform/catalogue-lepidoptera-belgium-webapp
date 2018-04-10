@@ -344,7 +344,7 @@ class Command(LepidopteraCommand):
                     publisher=text_clean(result.PublicationPublisher),
                     year=text_clean(result.PublicationYear),
                     volume=text_clean(result.PublicationVolume),
-                    issue=text_clean(result.PublicationVolume),
+                    issue=text_clean(result.PublicationIssue),
                     page_numbers=text_clean(result.PublicationPageNumbers)
                 )
                 self.w('.', ending='')
