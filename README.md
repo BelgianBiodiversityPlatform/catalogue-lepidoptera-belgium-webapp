@@ -11,6 +11,23 @@ Sandbox deployment/commands/...
 - Use saltstack to redeploy:
     $ sudo salt-call state.apply webapps.lepidoptera
 
+Full redeploy sur sandbox:
+==========================
+
+1) Ask Julien to drop and recreate the DB
+2) git clone https://git.bebif.be/bbpf/belgium_lepidoptera_data.git  (use "pull" next time?)
+3) (chmod -R 0777 ~/belgium_lepidoptera_data) probably not necessary
+4) psql -h dev.lan -d lepidoptera -f belgium_lepidoptera_data/access/converted/CatLepBelgium_be.sql
+5) psql -h dev.lan -d lepidoptera, puis
+    > grant all on all tables in schema public to dev_rw;
+    > grant all on all sequences in schema public to dev_rw;
+6) source /usr/local/venvs/lepidoptera/bin/activate
+7) cd /usr/local/www/sites/projects.biodiversity.be/lepidoptera/
+8) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py migrate
+9) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py denorm_init
+10) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py createsuperuser (admin / lepidobbpf)
+11) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py reimport_everything ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LASpecies.csv ~/belgium_lepidoptera_data/CatLepBelgium_Images
+
 Sparql to get Wikidata info on a family:
 ========================================
 
@@ -56,7 +73,7 @@ B. data populate
 
 2) Run Django command to (re)import everything:
 
-    $ python manage.py reimport_everything LAFamilies.csv LASpecies.csv
+    $ python manage.py reimport_everything LAFamilies.csv LASpecies.csv pictures_directory
 
     (see reimport_everything.py code if you need the individual import commands)
     
