@@ -18,6 +18,7 @@ NULL_SPECIES_NUMBER = 999010010
 NULL_PLANTGENUS_ID = 5020
 PLANT_GENUS_IDS_TO_SKIP = (NULL_PLANTGENUS_ID, 1770)  # 1770= A weird "carnivorous" entry not referenced by any plant species
 
+
 def namedtuplefetchall(cursor):
     """Return all rows from a cursor as a namedtuple"""
     desc = cursor.description

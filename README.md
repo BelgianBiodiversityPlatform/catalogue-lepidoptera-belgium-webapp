@@ -12,6 +12,7 @@ Sandbox deployment/commands/...
     $ sudo salt-call state.apply webapps.lepidoptera
 
 Sparql to get Wikidata info on a family:
+========================================
 
 SELECT ?item ?itemLabel WHERE {
   ?item rdfs:label "Eriocraniidae"@en.
@@ -24,11 +25,11 @@ SELECT ?item ?itemLabel WHERE {
 Data sources
 ============
 
-- Taxonomic data comes from the access database
-- Other data (distribution, ...) should be extracted from http://www.phegea.org/Checklists/Lepidoptera/Lepmain.htm
-(an extracted version is in initial_data/previous_website_12jan2018, but it's better to use the data online, in case of 
-updates)
-- Finally, other data (pictures, ...) may be provided by the curators.
+- Taxonomic data comes from the access database.
+- Other data (distribution, ...) is extracted from http://www.phegea.org/Checklists/Lepidoptera/Lepmain.htm
+  (Extraction done by André in Go, resulting in CSV data files).
+- During the import process, the Wikidata identifiers are added for families (experimental feature, for possible future use)
+- Also, pictures provided by the curators. They are attached to the corresponding species thanks to the Species code in filename.
 
 
 Deployment / Installation
@@ -63,6 +64,12 @@ To discuss with team
 ====================
 
 - Role of tblCatalogue?
+    - Hold imagoText/CaterpillarText/... => I'll manage on my own
+    - Link pictures to those sections? => I'll manage on my own.
+- What are the ProvinceID, ProvinceText, PublicationID, FlighPeriodSymbolID fields for?
+
+- Copyright info for specimen pictures? No current place in DB for this...
+
 - Publications: what is pagenumbers (or issue for example) used for?
 - Host plant genus page: should we also show lepidoptera species that are inderectly (thru host plant species)?
 
@@ -72,10 +79,8 @@ Meeting 23feb notes:
 - What's new on home page. We only need:
     - Some automated counter for new entities (X new photographs and Y new species last month)
     - A free block of text to enter a narrative
- - Imago: it's on species page, there's no need for  global image gallery
- - We need to import/show hosts plants from Access
+
  - Journals/litterature info: only from database, no need to import from website
- - I Copied 6000 pictures, to be linked with species according to Theo's naming logic
  - Display: last updated: done for taxonomic models, what about others
  
 

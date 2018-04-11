@@ -749,3 +749,78 @@ class PageFragment(models.Model):
             raise ValidationError("Content is mandatory for the fallback language ({})".format(fallback_language_code))
 
 
+class SpeciesPicture(models.Model):
+    # See "Picture naming conventions.pdf" in source data Git repository.
+
+    # Picture subject
+    MUSEUM_SPECIMEN = 'MUSEUM_SPECIMEN'
+    IN_VIVO_SPECIMEN = 'IN_VIVO_SPECIMEN'
+    PRE_ADULT_STAGE = 'PRE_ADULT_STAGE'
+    HOST_PLANT = 'HOST_PLANT'
+    BIONOMICS = 'BIONOMICS'
+    HABITAT = 'HABITAT'
+
+    SUBJECT_CHOICES = (
+        (MUSEUM_SPECIMEN, 'Museum specimen'),
+        (IN_VIVO_SPECIMEN, 'In Vivo Specimen'),
+        (PRE_ADULT_STAGE, 'Pre-adult stage'),
+        (HOST_PLANT, 'Host plant'),
+        (BIONOMICS, 'Bionomics'),
+        (HABITAT, 'Habitat')
+    )
+
+    # Specimen stages
+    IMAGO = 'i'  # Meaning adult, with wings
+
+    # Pre-adult stages
+    EGG = 'e'
+    LARVA = 'l'
+    CASE = 'c'
+    BAG = 'b'
+    MINE = 'm'
+    PUPA = 'p'
+
+    STAGES_CHOICES = (
+        (IMAGO, 'Imago'),
+        (EGG, 'Egg'),
+        (LARVA, 'Larva'),
+        (CASE, 'Case'),
+        (BAG, 'Bag'),
+        (MINE, 'Mine'),
+        (PUPA, 'Pupa/Cocoon')
+    )
+
+    # Specimen Sex
+    MALE = 'M'
+    FEMALE = 'F'
+    ADULT = 'A'  # Unsure M or F
+
+    SEX_CHOICES = (
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),
+        (ADULT, 'Adult')
+    )
+
+    # Picture orientation/side
+    UPPER = 'UPPER'
+    UNDER = 'UNDER'
+
+    ORIENTATION_CHOICES = (
+        (UPPER, 'Upper'),
+        (UNDER, 'Under')
+    )
+
+    # Fields
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
+    image_thumbnail = ImageSpecField(source='image',
+                                     processors=[ResizeToFit(640, 480)],
+                                     format='JPEG',
+                                     options={'quality': 95})
+
+    image_subject = models.CharField(blank=False, max_length=20, choices=SUBJECT_CHOICES)
+
+    verbatim_image_filename = models.CharField(max_length=255)
+    specimen_stage = models.CharField(max_length=1, blank=True, choices=STAGES_CHOICES)
+    specimen_sex = models.CharField(max_length=1, blank=True, choices=SEX_CHOICES)
+    side = models.CharField(max_length=5, blank=True, choices=ORIENTATION_CHOICES)
