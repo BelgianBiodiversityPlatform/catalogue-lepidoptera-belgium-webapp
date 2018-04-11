@@ -94,7 +94,7 @@ class Command(LepidopteraCommand):
                     opts = {'image_subject': SpeciesPicture.HABITAT}
 
                 if opts:  # picture info has been understood, we can create the object
-                    with open(pic_absolute_path, 'rb') as f:
+                    with open(str(pic_absolute_path), 'rb') as f:
                         sp = SpeciesPicture()
 
                         img_data = File(f)
