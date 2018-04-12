@@ -49,6 +49,13 @@
             <li>
                 {% include "lepidoptera/_footer_stat_entry.html" with counter=substrate_counter label="Substrates" page_name="all_substrates_page" %}
             </li>
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=publications_counter label="Publications" %} in
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=journals_counter label="Journals" %}
+            </li>
+            <li>
+                {% include "lepidoptera/_footer_stat_entry.html" with counter=species_pictures_counter label="Species pictures" %}
+            </li>
         </ul>
     </div>
 </div>

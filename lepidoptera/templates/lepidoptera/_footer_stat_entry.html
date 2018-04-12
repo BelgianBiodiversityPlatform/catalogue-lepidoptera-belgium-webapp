@@ -1,2 +1,7 @@
 <span class="badge badge-pill badge-dark">{{ counter }}</span>
-<a class="text-dark" href="{% url page_name %}">{{ label }}</a>
+
+{% if page_name %}
+    <a class="text-dark" href="{% url page_name %}">{{ label }}</a>
+{% else %}
+    {{ label }}
+{% endif %}
