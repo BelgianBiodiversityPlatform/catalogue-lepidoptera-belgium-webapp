@@ -505,6 +505,11 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     accepted_objects = AcceptedSpeciesManager()
     synonym_objects = SynonymSpeciesManager()
 
+    # Publication where the species was first described in Belgium
+    first_mention_publication = models.ForeignKey('Publication', null=True, blank=True, on_delete=models.CASCADE, verbose_name='publication')
+    first_mention_page = models.CharField(max_length=100, blank=True, verbose_name='page')
+    first_mention_link = models.URLField(blank=True, verbose_name='hyperlink')
+
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
 
@@ -716,6 +721,9 @@ class Publication(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        ordering = ['title']
 
 
 class PageFragment(models.Model):

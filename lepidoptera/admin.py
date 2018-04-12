@@ -190,14 +190,20 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
             kwargs["queryset"] = Subgenus.objects.order_by('name')
         return super(SpeciesAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
-    fields = ('verbatim_species_number',
-              'code',
-              ('name', 'author', 'binomial_name'),
-              ('status', 'synonym_of'),
-              ('subgenus', 'genus'),
-              'vernacular_name',
-              'text',
-              'display_order',
+    fieldsets = (
+        (None, {
+            'fields': ('verbatim_species_number',
+                       'code',
+                       ('name', 'author', 'binomial_name'),
+                       ('status', 'synonym_of'),
+                       ('subgenus', 'genus'),
+                       'vernacular_name',
+                       'text',
+                       'display_order')
+        }),
+        ('First mention in Belgium', {
+            'fields': ('first_mention_publication', 'first_mention_page', 'first_mention_link')
+        })
     )
 
     inlines = [SpeciesPresenceInline, ObservationsInline]

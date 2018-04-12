@@ -62,5 +62,17 @@
             {{ taxon.all_species.count }}
         </dd>
     {% endif %}
+
+    {% if taxon|to_class_name == 'Species' %}
+        {% if taxon.first_mention_publication %}
+            <dt class="col-sm-2">{% trans "First mention in Belgium" %}</dt>
+            <dd class="col-sm-10">
+                {{ taxon.first_mention_publication.title }}, page {{ taxon.first_mention_page }}
+                {% if taxon.first_mention_link %}
+                    <a href="{{ taxon.first_mention_link }}">(view page)</a>
+                {% endif %}
+            </dd>
+        {% endif %}
+    {% endif %}
 </dl>
 <hr />

@@ -54,6 +54,33 @@ class Command(LepidopteraCommand):
 
             self.w(self.style.SUCCESS('OK'))
 
+            self.w('Importing from tblJournals...')
+            cursor.execute('SELECT * FROM "tblJournals"')
+            for result in namedtuplefetchall(cursor):
+                Journal.objects.create(
+                    verbatim_id=result.JournalID,
+                    title=text_clean(result.JournalTitle)
+                )
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing from tblPublications...')
+            cursor.execute('SELECT * FROM "tblPublications"')
+            for result in namedtuplefetchall(cursor):
+                Publication.objects.create(
+                    verbatim_id=result.PublicationID,
+                    author=text_clean(result.PublicationAuthor),
+                    title=text_clean(result.PublicationTitle),
+                    journal=Journal.objects.get(verbatim_id=result.JournalID),
+                    publisher=text_clean(result.PublicationPublisher),
+                    year=text_clean(result.PublicationYear),
+                    volume=text_clean(result.PublicationVolume),
+                    issue=text_clean(result.PublicationIssue),
+                    page_numbers=text_clean(result.PublicationPageNumbers)
+                )
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
             self.w('Importing from tblFamilies...', ending='')
             cursor.execute('SELECT * FROM "tblFamilies"')
             for result in namedtuplefetchall(cursor):
@@ -244,12 +271,20 @@ class Command(LepidopteraCommand):
                                    'text_en': text_clean(result.SpeciesTextEN),
                                    'text_nl': text_clean(result.SpeciesTextNL),
 
+                                   'first_mention_page': text_clean(result.PublicationPage),
+                                   'first_mention_link': text_clean(result.PublicationReference),
+
                                    'status': Status.objects.get(verbatim_status_id=result.StatusID),
                                    'display_order': result.SpeciesNumber}
 
                     if result.ReferenceToHigherCategory:
                         create_opts['synonym_of'] = Species.objects.get(
                             verbatim_species_number=result.ReferenceToHigherCategory)
+
+                    if result.PublicationID:
+                        create_opts['first_mention_publication'] = Publication.objects.get(
+                            verbatim_id=result.PublicationID
+                        )
 
                     create_opts.update(parent_link)
 
@@ -329,32 +364,5 @@ class Command(LepidopteraCommand):
                     )
 
                 observation.save()
-                self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
-
-            self.w('Importing journals...')
-            cursor.execute('SELECT * FROM "tblJournals"')
-            for result in namedtuplefetchall(cursor):
-                Journal.objects.create(
-                    verbatim_id=result.JournalID,
-                    title = text_clean(result.JournalTitle)
-                )
-                self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
-
-            self.w('Importing publications...')
-            cursor.execute('SELECT * FROM "tblPublications"')
-            for result in namedtuplefetchall(cursor):
-                Publication.objects.create(
-                    verbatim_id=result.PublicationID,
-                    author=text_clean(result.PublicationAuthor),
-                    title=text_clean(result.PublicationTitle),
-                    journal=Journal.objects.get(verbatim_id=result.JournalID),
-                    publisher=text_clean(result.PublicationPublisher),
-                    year=text_clean(result.PublicationYear),
-                    volume=text_clean(result.PublicationVolume),
-                    issue=text_clean(result.PublicationIssue),
-                    page_numbers=text_clean(result.PublicationPageNumbers)
-                )
                 self.w('.', ending='')
             self.w(self.style.SUCCESS('OK'))
