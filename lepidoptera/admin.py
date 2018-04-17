@@ -96,6 +96,10 @@ class ObservationsInline(admin.TabularInline):
     model = Observation
 
 
+class SpeciesPicturesInline(admin.TabularInline):
+    model = SpeciesPicture
+
+
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
     search_fields = ['name']
@@ -199,6 +203,8 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
                        ('subgenus', 'genus'),
                        'vernacular_name',
                        'text',
+
+                       'larva_section_text',
                        'display_order')
         }),
         ('First mention in Belgium', {
@@ -206,7 +212,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
         })
     )
 
-    inlines = [SpeciesPresenceInline, ObservationsInline]
+    inlines = [SpeciesPresenceInline, ObservationsInline, SpeciesPicturesInline]
 
 
 @admin.register(Province)

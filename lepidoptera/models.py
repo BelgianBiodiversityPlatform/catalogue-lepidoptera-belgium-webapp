@@ -482,6 +482,92 @@ def validate_only_numbers_and_uppercase(value):
         raise ValidationError("The code can only contains numbers and uppercase letters")
 
 
+class SpeciesPicture(models.Model):
+    # See "Picture naming conventions.pdf" in source data Git repository.
+
+    # Picture subject
+    MUSEUM_SPECIMEN = 'MUSEUM_SPECIMEN'
+    IN_VIVO_SPECIMEN = 'IN_VIVO_SPECIMEN'
+    PRE_ADULT_STAGE = 'PRE_ADULT_STAGE'
+    HOST_PLANT = 'HOST_PLANT'
+    BIONOMICS = 'BIONOMICS'
+    HABITAT = 'HABITAT'
+
+    SUBJECT_CHOICES = (
+        (MUSEUM_SPECIMEN, 'Museum specimen'),
+        (IN_VIVO_SPECIMEN, 'In Vivo Specimen'),
+        (PRE_ADULT_STAGE, 'Pre-adult stage'),
+        (HOST_PLANT, 'Host plant'),
+        (BIONOMICS, 'Bionomics'),
+        (HABITAT, 'Habitat')
+    )
+
+    # Specimen stages
+    IMAGO = 'i'  # Meaning adult, with wings
+
+    # Pre-adult stages
+    EGG = 'e'
+    LARVA = 'l'
+    CASE = 'c'
+    BAG = 'b'
+    MINE = 'm'
+    PUPA = 'p'
+
+    STAGES_CHOICES = (
+        (IMAGO, 'Imago'),
+        (EGG, 'Egg'),
+        (LARVA, 'Larva'),
+        (CASE, 'Case'),
+        (BAG, 'Bag'),
+        (MINE, 'Mine'),
+        (PUPA, 'Pupa/Cocoon')
+    )
+
+    # Specimen Sex
+    MALE = 'M'
+    FEMALE = 'F'
+    ADULT = 'A'  # Unsure M or F
+
+    SEX_CHOICES = (
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),
+        (ADULT, 'Adult')
+    )
+
+    # Picture orientation/side
+    UPPER = 'UPPER'
+    UNDER = 'UNDER'
+
+    ORIENTATION_CHOICES = (
+        (UPPER, 'Upper'),
+        (UNDER, 'Under')
+    )
+
+    # Fields
+    species = models.ForeignKey('Species', on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
+    image_thumbnail = ImageSpecField(source='image',
+                                     processors=[ResizeToFit(640, 480)],
+                                     format='JPEG',
+                                     options={'quality': 95})
+
+    image_subject = models.CharField(blank=False, max_length=20, choices=SUBJECT_CHOICES)
+
+    verbatim_image_filename = models.CharField(max_length=255)
+    specimen_stage = models.CharField(max_length=1, blank=True, choices=STAGES_CHOICES)
+    specimen_sex = models.CharField(max_length=1, blank=True, choices=SEX_CHOICES)
+    side = models.CharField(max_length=5, blank=True, choices=ORIENTATION_CHOICES)
+
+
+SPECIES_PAGE_SECTIONS = {
+        'larva': {
+            'display_name': 'Caterpillar',
+            'text_field_name': 'larva_section_text',
+            'picture_filters': {'specimen_stage':SpeciesPicture.LARVA}
+        }
+    }
+
+
 class Species(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
@@ -506,9 +592,30 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     synonym_objects = SynonymSpeciesManager()
 
     # Publication where the species was first described in Belgium
-    first_mention_publication = models.ForeignKey('Publication', null=True, blank=True, on_delete=models.CASCADE, verbose_name='publication')
+    first_mention_publication = models.ForeignKey('Publication', null=True, blank=True, on_delete=models.CASCADE,
+                                                  verbose_name='publication')
     first_mention_page = models.CharField(max_length=100, blank=True, verbose_name='page')
     first_mention_link = models.URLField(blank=True, verbose_name='hyperlink')
+
+    larva_section_text = MarkdownxField(blank=True)
+
+    def has_content_for_section(self, section_name):
+        if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
+
+            # We have a section for a species if we have either text or pictures for it
+            if (self.get_text_for_section(section_name) != '') or (self.get_pictures_for_section(section_name).count() > 0):
+                return True
+
+        return False
+
+    def get_text_for_section(self, section_name):
+        return getattr(self, SPECIES_PAGE_SECTIONS[section_name]['text_field_name'])
+
+    def get_pictures_for_section(self, section_name):
+        qs = SpeciesPicture.objects.filter(species=self)
+        qs = qs.filter(**SPECIES_PAGE_SECTIONS[section_name]['picture_filters'])
+
+        return qs
 
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
@@ -755,80 +862,3 @@ class PageFragment(models.Model):
 
         if getattr(self, PageFragment._get_content_field_name(fallback_language_code)) == '':
             raise ValidationError("Content is mandatory for the fallback language ({})".format(fallback_language_code))
-
-
-class SpeciesPicture(models.Model):
-    # See "Picture naming conventions.pdf" in source data Git repository.
-
-    # Picture subject
-    MUSEUM_SPECIMEN = 'MUSEUM_SPECIMEN'
-    IN_VIVO_SPECIMEN = 'IN_VIVO_SPECIMEN'
-    PRE_ADULT_STAGE = 'PRE_ADULT_STAGE'
-    HOST_PLANT = 'HOST_PLANT'
-    BIONOMICS = 'BIONOMICS'
-    HABITAT = 'HABITAT'
-
-    SUBJECT_CHOICES = (
-        (MUSEUM_SPECIMEN, 'Museum specimen'),
-        (IN_VIVO_SPECIMEN, 'In Vivo Specimen'),
-        (PRE_ADULT_STAGE, 'Pre-adult stage'),
-        (HOST_PLANT, 'Host plant'),
-        (BIONOMICS, 'Bionomics'),
-        (HABITAT, 'Habitat')
-    )
-
-    # Specimen stages
-    IMAGO = 'i'  # Meaning adult, with wings
-
-    # Pre-adult stages
-    EGG = 'e'
-    LARVA = 'l'
-    CASE = 'c'
-    BAG = 'b'
-    MINE = 'm'
-    PUPA = 'p'
-
-    STAGES_CHOICES = (
-        (IMAGO, 'Imago'),
-        (EGG, 'Egg'),
-        (LARVA, 'Larva'),
-        (CASE, 'Case'),
-        (BAG, 'Bag'),
-        (MINE, 'Mine'),
-        (PUPA, 'Pupa/Cocoon')
-    )
-
-    # Specimen Sex
-    MALE = 'M'
-    FEMALE = 'F'
-    ADULT = 'A'  # Unsure M or F
-
-    SEX_CHOICES = (
-        (MALE, 'Male'),
-        (FEMALE, 'Female'),
-        (ADULT, 'Adult')
-    )
-
-    # Picture orientation/side
-    UPPER = 'UPPER'
-    UNDER = 'UNDER'
-
-    ORIENTATION_CHOICES = (
-        (UPPER, 'Upper'),
-        (UNDER, 'Under')
-    )
-
-    # Fields
-    species = models.ForeignKey(Species, on_delete=models.CASCADE)
-    image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
-    image_thumbnail = ImageSpecField(source='image',
-                                     processors=[ResizeToFit(640, 480)],
-                                     format='JPEG',
-                                     options={'quality': 95})
-
-    image_subject = models.CharField(blank=False, max_length=20, choices=SUBJECT_CHOICES)
-
-    verbatim_image_filename = models.CharField(max_length=255)
-    specimen_stage = models.CharField(max_length=1, blank=True, choices=STAGES_CHOICES)
-    specimen_sex = models.CharField(max_length=1, blank=True, choices=SEX_CHOICES)
-    side = models.CharField(max_length=5, blank=True, choices=ORIENTATION_CHOICES)

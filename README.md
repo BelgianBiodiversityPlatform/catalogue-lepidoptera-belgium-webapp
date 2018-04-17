@@ -17,8 +17,8 @@ Full redeploy sur sandbox:
 1) Ask Julien to drop and recreate the DB
 2) git clone https://git.bebif.be/bbpf/belgium_lepidoptera_data.git  (use "pull" next time?)
 3) (chmod -R 0777 ~/belgium_lepidoptera_data) probably not necessary
-4) psql -h dev.lan -d lepidoptera -f belgium_lepidoptera_data/access/converted/CatLepBelgium_be.sql
-5) psql -h dev.lan -d lepidoptera, puis
+4) psql -h dev.lan -d lepidoptera -f ~~belgium_lepidoptera_data/access/converted/CatLepBelgium_be.sql
+5) psql -h dev.lan -d lepidoptera, then
     > grant all on all tables in schema public to dev_rw;
     > grant all on all sequences in schema public to dev_rw;
 6) source /usr/local/venvs/lepidoptera/bin/activate

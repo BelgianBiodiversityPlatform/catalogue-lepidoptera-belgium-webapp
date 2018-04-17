@@ -1,9 +1,10 @@
 from django import template
+from django.template import TemplateSyntaxError
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import SpeciesPresence
+from lepidoptera.models import SpeciesPresence, Species
 
 register = template.Library()
 
@@ -44,6 +45,48 @@ def field_in_all_available_languages(languages, model, field_name):
     return s[:-2]  # Drop the remaining ' ,'
 
 
-@register.filter()
+@register.filter
 def markdown(value, arg=None):
     return mark_safe(markdownify(value))
+
+
+@register.filter
+def has_content_for_section(species, section_name):
+    return species.has_content_for_section(section_name)
+
+
+@register.filter
+def get_text_for_section(species, section_name):
+    return species.get_text_for_section(section_name)
+
+
+class SectionPicsNode(template.Node):
+    def __init__(self, species, section_name, var_name='pics'):
+        self.species = template.Variable(species)
+        self.section_name = template.Variable(section_name)
+        self.var_name = var_name
+
+    def render(self, context):
+        species = self.species.resolve(context)
+        section_name = self.section_name.resolve(context)
+
+        context[self.var_name] = species.get_pictures_for_section(section_name)
+        return ''
+
+
+@register.tag(name='section_pics')
+def do_section_pics(parser, token):
+    error = False
+    try:
+        tag_name, species, section_name, _as, var_name = token.split_contents()
+        if _as != 'as':
+            error = True
+    except:
+        error = True
+
+    if error:
+        raise(TemplateSyntaxError,
+              'section_pics must be of the form, "section_pics <species> <section_name> as <var_name>"')
+    else:
+        return SectionPicsNode(species, section_name, var_name)
+
