@@ -547,7 +547,7 @@ class SpeciesPicture(models.Model):
     species = models.ForeignKey('Species', on_delete=models.CASCADE)
     image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
     image_thumbnail = ImageSpecField(source='image',
-                                     processors=[ResizeToFit(640, 480)],
+                                     processors=[ResizeToFit(320, 240)],
                                      format='JPEG',
                                      options={'quality': 95})
 
