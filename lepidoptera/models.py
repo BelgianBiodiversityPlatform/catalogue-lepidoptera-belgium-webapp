@@ -560,6 +560,12 @@ class SpeciesPicture(models.Model):
 
 
 SPECIES_PAGE_SECTIONS = {
+        'egg': {
+            'display_name': 'Egg',
+            'text_field_name': 'egg_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.EGG}
+        },
+
         'larva': {
             'display_name': 'Caterpillar',
             'text_field_name': 'larva_section_text',
@@ -598,6 +604,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     first_mention_link = models.URLField(blank=True, verbose_name='hyperlink')
 
     larva_section_text = MarkdownxField(blank=True)
+    egg_section_text = MarkdownxField(blank=True)
 
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.

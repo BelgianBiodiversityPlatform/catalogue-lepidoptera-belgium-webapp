@@ -46,6 +46,10 @@
 
     <div class="row">
         <div class="col">
+            {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='egg' %}
+        </div>
+
+        <div class="col">
             {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='larva' %}
         </div>
     </div>

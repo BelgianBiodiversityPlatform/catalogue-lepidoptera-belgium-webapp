@@ -204,6 +204,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
                        'vernacular_name',
                        'text',
 
+                       'egg_section_text',
                        'larva_section_text',
                        'display_order')
         }),
