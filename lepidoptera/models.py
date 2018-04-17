@@ -570,7 +570,44 @@ SPECIES_PAGE_SECTIONS = {
             'display_name': 'Caterpillar',
             'text_field_name': 'larva_section_text',
             'picture_filters': {'specimen_stage': SpeciesPicture.LARVA}
-        }
+        },
+
+        'case': {
+            'display_name': 'Case',
+            'text_field_name': 'case_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.CASE}
+        },
+
+        'bag': {
+            'display_name': 'Bag',
+            'text_field_name': 'bag_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.BAG}
+        },
+
+        'mine': {
+            'display_name': 'Mine',
+            'text_field_name': 'mine_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.MINE}
+        },
+
+        'cocoon': {
+            'display_name': 'Cocoon/pupa',
+            'text_field_name': 'cocoon_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.PUPA}
+        },
+
+        'bionomics': {
+            'display_name': 'Bionomics',
+            'text_field_name': 'bionomics_section_text',
+            'picture_filters': {'image_subject': SpeciesPicture.BIONOMICS}
+        },
+
+        'habitat': {
+            'display_name': 'Habitat',
+            'text_field_name': 'habitat_section_text',
+            'picture_filters': {'image_subject': SpeciesPicture.HABITAT}
+        },
+
     }
 
 
@@ -605,6 +642,12 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
 
     larva_section_text = MarkdownxField(blank=True)
     egg_section_text = MarkdownxField(blank=True)
+    case_section_text = MarkdownxField(blank=True)
+    bag_section_text = MarkdownxField(blank=True)
+    mine_section_text = MarkdownxField(blank=True)
+    cocoon_section_text = MarkdownxField(blank=True)
+    bionomics_section_text = MarkdownxField(blank=True)
+    habitat_section_text = MarkdownxField(blank=True)
 
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.

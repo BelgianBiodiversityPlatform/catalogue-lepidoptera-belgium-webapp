@@ -206,6 +206,13 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
 
                        'egg_section_text',
                        'larva_section_text',
+                       'case_section_text',
+                       'bag_section_text',
+                       'mine_section_text',
+                       'cocoon_section_text',
+                       'bionomics_section_text',
+                       'habitat_section_text',
+                       
                        'display_order')
         }),
         ('First mention in Belgium', {
