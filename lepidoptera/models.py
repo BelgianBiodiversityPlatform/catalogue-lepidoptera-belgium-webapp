@@ -569,7 +569,7 @@ SPECIES_PAGE_SECTIONS = {
         'larva': {
             'display_name': 'Caterpillar',
             'text_field_name': 'larva_section_text',
-            'picture_filters': {'specimen_stage':SpeciesPicture.LARVA}
+            'picture_filters': {'specimen_stage': SpeciesPicture.LARVA}
         }
     }
 

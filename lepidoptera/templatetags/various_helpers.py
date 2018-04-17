@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import SpeciesPresence, Species
+from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS
 
 register = template.Library()
 
@@ -90,3 +90,7 @@ def do_section_pics(parser, token):
     else:
         return SectionPicsNode(species, section_name, var_name)
 
+
+@register.simple_tag
+def section_display_name(section_name):
+    return mark_safe(SPECIES_PAGE_SECTIONS[section_name]['display_name'])
