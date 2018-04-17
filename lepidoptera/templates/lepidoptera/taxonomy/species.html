@@ -20,7 +20,7 @@
             <dt class="col-sm-3">{% trans "Host plant (species)" %}: </dt>
             <dd class="col-sm-9">
                 {% for observation in plant_species_observations %}
-                    <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species }}</a>{% include 'lepidoptera/_comma.html' %}
+                    <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>{% include 'lepidoptera/_comma.html' %}
                 {% endfor %}
             </dd>
         {% endif %}
