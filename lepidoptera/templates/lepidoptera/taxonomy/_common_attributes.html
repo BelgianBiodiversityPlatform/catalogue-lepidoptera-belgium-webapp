@@ -67,9 +67,12 @@
         {% if taxon.first_mention_publication %}
             <dt class="col-sm-2">{% trans "First mention in Belgium" %}</dt>
             <dd class="col-sm-10">
-                {{ taxon.first_mention_publication.title }}, page {{ taxon.first_mention_page }}
+                {{ taxon.first_mention_publication.author }} {{ taxon.first_mention_publication.year }}.
+                {{ taxon.first_mention_publication.title }} — {{ taxon.first_mention_publication.journal.title }}
+                {{ taxon.first_mention_publication.volume }}{% if taxon.first_mention_publication.issue %}({{ taxon.first_mention_publication.issue }}){% endif %}: {{ taxon.first_mention_page }}
+
                 {% if taxon.first_mention_link %}
-                    <a href="{{ taxon.first_mention_link }}">(view page)</a>
+                    <a target="_blank" href="{{ taxon.first_mention_link }}">view page</a>
                 {% endif %}
             </dd>
         {% endif %}

@@ -889,7 +889,7 @@ class Publication(models.Model):
     page_numbers = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.title
+        return '{}, {}, {}'.format(self.title, self.author, self.year)
 
     class Meta:
         ordering = ['title']
