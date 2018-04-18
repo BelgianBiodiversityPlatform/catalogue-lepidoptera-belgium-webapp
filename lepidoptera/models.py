@@ -558,6 +558,18 @@ class SpeciesPicture(models.Model):
     specimen_sex = models.CharField(max_length=1, blank=True, choices=SEX_CHOICES)
     side = models.CharField(max_length=5, blank=True, choices=ORIENTATION_CHOICES)
 
+    def html_metadata(self):
+        entries = []
+        if self.image_subject:
+            entries.append("<b>Subject</b>: {}".format(self.get_image_subject_display()))
+        if self.specimen_stage:
+            entries.append("<b>Stage</b>: {}".format(self.get_specimen_stage_display()))
+        if self.specimen_sex:
+            entries.append("<b>Sex</b>: {}".format(self.get_specimen_sex_display()))
+        if self.side:
+            entries.append("<b>Side</b>: {}".format(self.get_side_display()))
+
+        return ','.join(entries)
 
 SPECIES_PAGE_SECTIONS = {
         'egg': {

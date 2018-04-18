@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />
     <link rel="stylesheet" href="{% static 'lepidoptera/lepidoptera.css' %}" />
     <link rel="stylesheet" href="{% static 'lepidoptera/typeaheadjs.css' %}" />
+    <link rel="stylesheet" href="{% static 'lepidoptera/ekko-lightbox.css' %}" />
 
     <title>{% block title %}{{ settings.WEBSITE_NAME }}{% endblock %}</title>
 </head>
@@ -47,14 +48,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="{% static 'lepidoptera/bootstrap.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
-
 <script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
+<script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
 
 <script>
     $(function () {
         // Initialize (table) sticky headers
         $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
+    });
+
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
     });
 </script>
 
