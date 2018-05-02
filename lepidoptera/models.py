@@ -558,6 +558,8 @@ class SpeciesPicture(models.Model):
     specimen_sex = models.CharField(max_length=1, blank=True, choices=SEX_CHOICES)
     side = models.CharField(max_length=5, blank=True, choices=ORIENTATION_CHOICES)
 
+    gallery_order = models.IntegerField(help_text="Order in various galleries. Smaller numbers comes first!")
+
     def html_metadata(self):
         entries = []
         if self.image_subject:
@@ -570,6 +572,7 @@ class SpeciesPicture(models.Model):
             entries.append("<b>Side</b>: {}".format(self.get_side_display()))
 
         return ','.join(entries)
+
 
 SPECIES_PAGE_SECTIONS = {
         'egg': {
@@ -674,7 +677,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
         return getattr(self, SPECIES_PAGE_SECTIONS[section_name]['text_field_name'])
 
     def get_pictures_for_section(self, section_name):
-        qs = SpeciesPicture.objects.filter(species=self)
+        qs = SpeciesPicture.objects.filter(species=self).order_by('gallery_order')
         qs = qs.filter(**SPECIES_PAGE_SECTIONS[section_name]['picture_filters'])
 
         return qs

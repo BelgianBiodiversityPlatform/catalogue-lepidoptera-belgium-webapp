@@ -20,7 +20,7 @@ class Command(LepidopteraCommand):
 
         parser.add_argument('source_picture_directory')  # May contains subfolders
 
-    def create_specimenpicture_from_path(self, pic_absolute_path):
+    def create_specimenpicture_from_path(self, pic_absolute_path, gallery_order):
         filename = pic_absolute_path.name
         try:
             species_code, picture_info, picture_number = filename.split('_')
@@ -101,6 +101,7 @@ class Command(LepidopteraCommand):
 
                         sp.species = found_species
                         sp.verbatim_image_filename = filename
+                        sp.gallery_order = gallery_order
 
                         for key, value in opts.items():
                             setattr(sp, key, value)
@@ -140,9 +141,9 @@ class Command(LepidopteraCommand):
 
         root_directory = Path(options['source_picture_directory'])
         file_list = [f for f in root_directory.resolve().glob('**/*') if f.is_file()]
-        for pic in file_list:
+        for i, pic in enumerate(file_list):
             if pic.name.startswith('.'):
                 self.w(self.style.WARNING('Skipping hidden file {}...'.format(pic)))
             else:
-                self.create_specimenpicture_from_path(pic)
+                self.create_specimenpicture_from_path(pic, i)
                 self.w('.', ending='')
