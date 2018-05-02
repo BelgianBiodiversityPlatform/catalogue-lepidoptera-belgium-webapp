@@ -579,6 +579,12 @@ class SpeciesPicture(models.Model):
 
 
 SPECIES_PAGE_SECTIONS = {
+        'imago': {
+            'display_name': 'Imago',
+            'text_field_name': 'imago_section_text',
+            'picture_filters': {'specimen_stage': SpeciesPicture.IMAGO}
+        },
+
         'egg': {
             'display_name': 'Egg',
             'text_field_name': 'egg_section_text',
@@ -659,6 +665,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     first_mention_page = models.CharField(max_length=100, blank=True, verbose_name='page')
     first_mention_link = models.URLField(blank=True, verbose_name='hyperlink')
 
+    imago_section_text = MarkdownxField(blank=True)
     larva_section_text = MarkdownxField(blank=True)
     egg_section_text = MarkdownxField(blank=True)
     case_section_text = MarkdownxField(blank=True)

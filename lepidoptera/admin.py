@@ -207,6 +207,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
                        'vernacular_name',
                        'text',
 
+                       'imago_section_text',
                        'egg_section_text',
                        'larva_section_text',
                        'case_section_text',
@@ -310,4 +311,4 @@ class SpeciesPictureAdmin(admin.ModelAdmin):
 
     readonly_fields = ('verbatim_image_filename',)
 
-    list_filter = ['image_subject']
+    list_filter = ['image_subject', 'specimen_stage']
