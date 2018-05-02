@@ -6,7 +6,10 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.files import File
 from django.db.models import Q
+from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.translation import gettext as _
+from imagekit.admin import AdminThumbnail
 
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
@@ -295,7 +298,15 @@ class PageFragmentAdmin(MarkdownxModelAdmin):
 
 @admin.register(SpeciesPicture)
 class SpeciesPictureAdmin(admin.ModelAdmin):
-    list_display = ('species', 'image_subject', 'specimen_stage', 'specimen_sex', 'side')
+    list_display = ('gallery_order', 'thumbnail', 'link_to_species', 'image_subject', 'specimen_stage', 'specimen_sex', 'side')
+
+    def link_to_species(self, obj):
+        link = reverse("admin:lepidoptera_species_change", args=[obj.species.id])
+        return format_html('<a href="{}">{} (edit)</a>', link, obj.species.html_str())
+
+    link_to_species.short_description = 'Species'
+
+    thumbnail = AdminThumbnail(image_field='image_admin_thumbnail')
 
     readonly_fields = ('verbatim_image_filename',)
 

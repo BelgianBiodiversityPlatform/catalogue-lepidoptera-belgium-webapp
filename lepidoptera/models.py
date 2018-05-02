@@ -550,6 +550,10 @@ class SpeciesPicture(models.Model):
                                      processors=[ResizeToFit(320, 240)],
                                      format='JPEG',
                                      options={'quality': 95})
+    image_admin_thumbnail = ImageSpecField(source='image',
+                                     processors=[ResizeToFit(100, 75)],
+                                     format='JPEG',
+                                     options={'quality': 90})
 
     image_subject = models.CharField(blank=False, max_length=20, choices=SUBJECT_CHOICES)
 
