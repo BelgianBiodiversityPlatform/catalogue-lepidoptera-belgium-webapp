@@ -15,6 +15,7 @@ def get_verbatim_id_field():
     # Blank/NULL allowed for post-import record
     return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
+
 class SpeciesManager(models.Manager):
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
@@ -482,6 +483,18 @@ def validate_only_numbers_and_uppercase(value):
         raise ValidationError("The code can only contains numbers and uppercase letters")
 
 
+class Photographer(models.Model):
+    full_name = models.CharField(max_length=100)
+
+    verbatim_photographer_id = get_verbatim_id_field()
+
+    def __str__(self):
+        return self.full_name
+
+    class Meta:
+        ordering = ('full_name', )
+
+
 class SpeciesPicture(models.Model):
     # See "Picture naming conventions.pdf" in source data Git repository.
 
@@ -545,6 +558,7 @@ class SpeciesPicture(models.Model):
 
     # Fields
     species = models.ForeignKey('Species', on_delete=models.CASCADE)
+    photographer = models.ForeignKey('Photographer', null=True, blank=True, on_delete=models.SET_NULL)
     image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
     image_thumbnail = ImageSpecField(source='image',
                                      processors=[ResizeToFit(320, 240)],
@@ -575,8 +589,12 @@ class SpeciesPicture(models.Model):
         if self.side:
             entries.append("<b>Side</b>: {}".format(self.get_side_display()))
 
-        return ','.join(entries)
+        s = ','.join(entries)
 
+        if self.photographer:
+            s = "<b>© {}</b><br/>".format(self.photographer.full_name) + s
+
+        return s
 
 SPECIES_PAGE_SECTIONS = {
         'imago': {

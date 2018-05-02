@@ -4,12 +4,12 @@ from django.core.management.base import CommandError
 from django.db import connection
 
 from lepidoptera.models import Family, Status, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, \
-    HostPlantGenus, Substrate, Observation, HostPlantSpecies, Journal, Publication
+    HostPlantGenus, Substrate, Observation, HostPlantSpecies, Journal, Publication, Photographer
 
 from ._utils import LepidopteraCommand, text_clean
 
 MODELS_TO_TRUNCATE = [Status, Family, Subfamily, Tribus, Genus, Subgenus, Species, HostPlantFamily, HostPlantGenus,
-                      HostPlantSpecies, Substrate, Observation, Journal, Publication]
+                      HostPlantSpecies, Substrate, Observation, Journal, Publication, Photographer]
 
 NULL_FAMILY_ID = 999  # A dummy family with no info, to simulate NULL values. We don't import that.
 NULL_GENUS_ID = 999010
@@ -364,5 +364,15 @@ class Command(LepidopteraCommand):
                     )
 
                 observation.save()
+                self.w('.', ending='')
+            self.w(self.style.SUCCESS('OK'))
+
+            self.w('Importing from tblPhotographers..', ending='')
+            cursor.execute('SELECT * FROM "tblPhotographers"')
+            for result in namedtuplefetchall(cursor):
+                photographer = Photographer()
+                photographer.full_name = text_clean(result.PhotographerName)
+                photographer.verbatim_photographer_id = result.PhotographerID
+                photographer.save()
                 self.w('.', ending='')
             self.w(self.style.SUCCESS('OK'))

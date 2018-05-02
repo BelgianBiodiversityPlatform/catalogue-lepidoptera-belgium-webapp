@@ -17,7 +17,7 @@ from markdownx.admin import MarkdownxModelAdmin
 from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
     PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
-    Publication, SpeciesPicture
+    Publication, SpeciesPicture, Photographer
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -299,7 +299,8 @@ class PageFragmentAdmin(MarkdownxModelAdmin):
 
 @admin.register(SpeciesPicture)
 class SpeciesPictureAdmin(admin.ModelAdmin):
-    list_display = ('gallery_order', 'thumbnail', 'link_to_species', 'image_subject', 'specimen_stage', 'specimen_sex', 'side')
+    list_display = ('gallery_order', 'thumbnail', 'link_to_species', 'image_subject', 'specimen_stage', 'specimen_sex',
+                    'side')
 
     def link_to_species(self, obj):
         link = reverse("admin:lepidoptera_species_change", args=[obj.species.id])
@@ -312,3 +313,8 @@ class SpeciesPictureAdmin(admin.ModelAdmin):
     readonly_fields = ('verbatim_image_filename',)
 
     list_filter = ['image_subject', 'specimen_stage']
+
+
+@admin.register(Photographer)
+class PhotographerAdmin(admin.ModelAdmin):
+    readonly_fields = ('verbatim_photographer_id',)
