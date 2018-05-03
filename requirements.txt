@@ -1,11 +1,11 @@
-Django==2.0.3
+Django==2.0.5
 Pillow==5.0.0
 gunicorn==19.7.1
 psycopg2==2.7.3.2
 pytz==2017.3
-git+https://github.com/neutronX/django-markdownx@715359b
+django-markdownx==2.0.23
 django-settings-export==1.2.1
-git+https://github.com/deschler/django-modeltranslation@b24e4d3
+django-modeltranslation==0.13b1
 django-imagekit==4.0.2
 -e git://github.com/django-denorm/django-denorm@57bd310ad2f97aebb51794f59c60f342ccacab33#egg=denorm
 requests==2.18.4
