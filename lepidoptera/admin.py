@@ -101,6 +101,7 @@ class ObservationsInline(admin.TabularInline):
 
 class SpeciesPicturesInline(admin.TabularInline):
     model = SpeciesPicture
+    readonly_fields = ('verbatim_image_filename',)
 
 
 @admin.register(Family)
