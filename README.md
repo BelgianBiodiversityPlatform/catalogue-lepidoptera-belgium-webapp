@@ -86,11 +86,6 @@ B. data populate
 To discuss with team
 ====================
 
-- Show new features:
-    - Imago displayed
-    - Pictures orderable, better admin
-    - Photographers imported, link to be created manually
-
 - Role of tblCatalogue?
     - Hold imagoText/CaterpillarText/... => I'll manage on my own
     - Link pictures to those sections? => I'll manage on my own.

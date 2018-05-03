@@ -22,25 +22,6 @@ from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Provinc
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
 
-def assign_picture_from_wikidata(modeladmin, request, queryset):
-    for taxon in queryset:
-        if taxon.wikidata_id:
-            img_urls = get_images_url_for_entity(taxon.wikidata_id)
-            if img_urls:
-                img_url = img_urls[0]
-                temp_img = NamedTemporaryFile(delete=True)
-                temp_img.write(urlopen(img_url).read())
-                temp_img.flush()
-                filename_img = urlparse(img_url).path.split('/')[-1]
-                taxon.representative_picture.save(filename_img, File(temp_img))
-                taxon.save()
-
-
-assign_picture_from_wikidata.short_description = (
-    "Assign illustative picture from Wikidata (if available) to selected taxa"
-)
-
-
 class NotNullFilter(admin.SimpleListFilter):
     title = _('Filter title not set')
 
@@ -114,7 +95,27 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin)
 
     list_filter = [RepresentativePictureNotNullFilter]
 
-    actions = [assign_picture_from_wikidata]
+    actions = ['assign_picture_from_wikidata']
+
+    def assign_picture_from_wikidata(self, request, queryset):
+        i = 0
+        for taxon in queryset:
+            if taxon.wikidata_id:
+                img_urls = get_images_url_for_entity(taxon.wikidata_id)
+                if img_urls:
+                    img_url = img_urls[0]
+                    temp_img = NamedTemporaryFile(delete=True)
+                    temp_img.write(urlopen(img_url).read())
+                    temp_img.flush()
+                    filename_img = urlparse(img_url).path.split('/')[-1]
+                    taxon.representative_picture.save(filename_img, File(temp_img))
+                    taxon.save()
+                    i = i + 1
+        self.message_user(request, "Successfully assigned pictures to %s families" % i)
+
+    assign_picture_from_wikidata.short_description = (
+        "Assign illustative picture from Wikidata (if available) to selected taxa"
+    )
 
 
 @admin.register(Subfamily)
