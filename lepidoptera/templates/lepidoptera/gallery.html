@@ -47,17 +47,17 @@
                 },
                 methods: {
                     infiniteHandler($state) {
-                        console.log("passe");
                         var that = this;
                         $.getJSON(galleryConf.picsJSONUrl, {page: this.pictures.length / galleryConf.picsPerPage + 1,})
                             .done(function (json) {
-                                if (json.length) {
-                                    that.pictures = that.pictures.concat(json);
-                                    $state.loaded();
-                                } else {
-                                    $state.complete();
-                                }
+                                var results = json.results;
+                                var hasMoreResults = json.hasMoreResults;
 
+                                that.pictures = that.pictures.concat(results);
+                                $state.loaded();
+                                if (!hasMoreResults) {
+                                    $state.complete()
+                                }
                             })
                             .fail(function (jqxhr, textStatus, error) {
                                 alert("error");
