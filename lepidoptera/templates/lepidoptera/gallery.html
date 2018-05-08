@@ -1,0 +1,72 @@
+{% extends "lepidoptera/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+    <h1>{% trans "Gallery" %}</h1>
+
+    <div id="gallery-container" v-cloak>
+        <input v-model="term" type="search">
+
+        <span v-for="picture in pictures" class="result">
+            <img :src="picture.thumbnaillUrl" class="img-fluid img-thumbnail">
+        </span>
+
+        <infinite-loading @infinite="infiniteHandler">
+            <span slot="no-more">
+                No more pictures :(
+            </span>
+        </infinite-loading>
+    </div>
+
+{% endblock %}
+
+{% block extra-head %}
+    <style>[v-cloak] {
+        display: none
+    }</style>
+{% endblock %}
+
+{% block bottom-of-body %}
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-infinite-loading@2.3.1/dist/vue-infinite-loading.min.js"></script>
+
+    <script>
+        $(function () {
+            var galleryConf = {
+                picsJSONUrl: "{% url 'pictures_json' %}",
+                picsPerPage: {{ settings.GALLERY_PAGE_SIZE }}
+            };
+
+            var vm = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#gallery-container',
+                data: {
+                    term: '',
+                    pictures: [],
+                },
+                methods: {
+                    infiniteHandler($state) {
+                        console.log("passe");
+                        var that = this;
+                        $.getJSON(galleryConf.picsJSONUrl, {page: this.pictures.length / galleryConf.picsPerPage + 1,})
+                            .done(function (json) {
+                                if (json.length) {
+                                    that.pictures = that.pictures.concat(json);
+                                    $state.loaded();
+                                } else {
+                                    $state.complete();
+                                }
+
+                            })
+                            .fail(function (jqxhr, textStatus, error) {
+                                alert("error");
+                            })
+
+                    },
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

@@ -1,8 +1,10 @@
+from django.conf import settings
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture
 
 
 def home_page(request):
@@ -226,3 +228,17 @@ def autocomplete(request, query_string):
             })
 
     return JsonResponse(results, safe=False)
+
+
+def gallery_page(request):
+    return render(request, 'lepidoptera/gallery.html')
+
+
+def pictures_json(request):
+    all_pictures = SpeciesPicture.objects.all()
+
+    paginator = Paginator(all_pictures, settings.GALLERY_PAGE_SIZE)
+    page = request.GET.get('page')
+
+    pictures_data = [{'thumbnaillUrl': picture.image_thumbnail.url} for picture in paginator.get_page(page)]
+    return JsonResponse(pictures_data, safe=False)

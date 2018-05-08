@@ -6,6 +6,9 @@ urlpatterns = [
     path('', views.home_page, name='home'),
     path('about/', views.about_page, name='about'),
 
+    path('gallery/', views.gallery_page, name='gallery'),
+    path('pictures_json', views.pictures_json, name='pictures_json'),
+
     path('family/<int:family_id>/', views.family_page, name='family_page'),
     path('subfamily/<int:subfamily_id>/', views.subfamily_page, name='subfamily_page'),
     path('tribus/<int:tribus_id>/', views.tribus_page, name='tribus_page'),
