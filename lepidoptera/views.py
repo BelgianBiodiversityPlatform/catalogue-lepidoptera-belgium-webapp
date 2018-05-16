@@ -235,7 +235,7 @@ def gallery_page(request):
 
 
 def pictures_json(request):
-    all_pictures = SpeciesPicture.objects.all()
+    all_pictures = SpeciesPicture.objects.all().filter(specimen_stage=request.GET.get('filters_stage'))
 
     paginator = Paginator(all_pictures, settings.GALLERY_PAGE_SIZE)
     page_number = request.GET.get('page')
