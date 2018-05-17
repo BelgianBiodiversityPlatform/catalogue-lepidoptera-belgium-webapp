@@ -119,10 +119,5 @@ Nolidaeare, Thaumetopoeidae)
 Customize Bootstrap (colors, ...)
 =================================
 
-- Unfortunately Bootstrap 4 final does not allow simple customisation via _custom.scss anymore (needs package managers and so on).
-- We therefore currently use an online tool for this: https://pikock.github.io/bootstrap-magic/
-- To update: 
-    - import custom-variables-bootstrap.scss in Bootstrap Magic
-    - change variables using the editor
-    - download SCSS file and replace custom-variable-bootstrap.scss
-    - download CSS and replace bootstrap.min.css
+- Customize variables in static/lepidoptera/bootstrap-custom/scss/custom.scss (requires an installed version of Bootstrap 4.1)
+- Compile it to static/lepidoptera/bootstrap-custom/scss/custom.css
