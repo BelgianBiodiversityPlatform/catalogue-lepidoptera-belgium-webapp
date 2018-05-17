@@ -58,6 +58,21 @@ Welcome!
 **Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
 """)
 
+    about_page_text = """
+History of site/catalogue
+=========================
+
+Disclaimer
+==========
+
+How to cite
+===========
+"""
+    PageFragment.objects.create(identifier='about_page_content',
+                                content_nl=about_page_text,
+                                content_fr=about_page_text,
+                                content_en=about_page_text,
+                                content_de=about_page_text)
 
 def populate_provinces(apps, schema_editor):
     Province = apps.get_model('lepidoptera', 'Province')

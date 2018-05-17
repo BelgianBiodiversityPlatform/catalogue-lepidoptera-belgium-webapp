@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<nav id="main-navigation" class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <a class="navbar-brand font-weight-light" href="{% url 'home' %}"><span class="oi oi-cloudy"></span> {{ settings.WEBSITE_NAME }}</a>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        {% url 'home' as home_url %}
+        {% url 'about' as about_url %}
+
+        <ul class="navbar-nav mr-auto">
+            {% if request.path == home_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Home" href=home_url %}
+            {% else %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Home" href=home_url %}
+            {% endif %}
+
+
+            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href="#" %}
+
+            {% if request.path == about_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="About" href=about_url %}
+            {% else %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="About" href=about_url %}
+            {% endif %}
+        </ul>
+
+        {% include 'lepidoptera/_language_selector.html' %}
+
+        <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><span class="oi oi-lock-locked" title="admin interface"></span></a></li>
+        </ul>
+    </div>
+</nav>

@@ -1,10 +1,14 @@
 {% extends "lepidoptera/base.html" %}
 
 {% load i18n %}
+{% load page_fragments %}
+
 {% block content %}
+
 <div class="row">
     <div class="col">
-        <h1>{% trans "About" %}</h1>
+        {% get_page_fragment 'about_page_content' %}
     </div>
 </div>
+
 {% endblock content %}
