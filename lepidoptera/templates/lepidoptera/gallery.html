@@ -7,10 +7,8 @@
 
     <script type="text/x-template" id="search-form-template">
         <div id="search-options">
-            <select v-model="stage" @change="changeFilter()">
-                <option value="i">Imago</option>
-                <option value="e">Egg</option>
-                <option value="l">Larva</option>
+            <select v-model="selected_stage" @change="changeFilter()">
+                <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
             </select>
         </div>
     </script>
@@ -51,10 +49,16 @@
             };
 
             Vue.component('search-form', {
+                delimiters: ['[[', ']]'],
                 template: '#search-form-template',
                 data: function() {
                     return {
-                        stage: '',
+                        stages: [
+                            {'value': 'i', 'text': 'Imago'},
+                            {'value': 'e', 'text': 'Egg'},
+                            {'value': 'l', 'text': 'Larva'}
+                        ],
+                        selected_stage: '',
                     }
                 },
 
@@ -67,7 +71,7 @@
 
                 methods: {
                     changeFilter: function() {
-                        this.$parent.changeFilter(this.stage);
+                        this.$parent.changeFilter(this.selected_stage);
                     },
                 }
             })
