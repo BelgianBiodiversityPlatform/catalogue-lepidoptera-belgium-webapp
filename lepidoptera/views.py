@@ -66,6 +66,9 @@ def about_page(request):
     return render(request, 'lepidoptera/about.html')
 
 
+def browse_page(request):
+    return render(request, 'lepidoptera/browse.html')
+
 # All_xxx pages
 
 def all_families(request):

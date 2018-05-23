@@ -1,0 +1,47 @@
+{% extends "lepidoptera/base.html" %}
+
+{% block content %}
+    <h1>Browse data</h1>
+
+    <div class="row">
+        <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="list-lepidoptera-list" data-toggle="list"
+                   href="#list-lepidoptera" role="tab" aria-controls="lepidoptera">Taxonomy (Lepidoptera)</a>
+
+                <a class="list-group-item list-group-item-action" id="list-vernacularnames-list" data-toggle="list"
+                   href="#list-vernacularnames" role="tab" aria-controls="vernacularnames">Vernacular names</a>
+
+
+                <a class="list-group-item list-group-item-action" id="list-hostplants-list" data-toggle="list"
+                   href="#list-hostplants" role="tab" aria-controls="hostplants">Host plants & substrates</a>
+
+                <a class="list-group-item list-group-item-action" id="list-publications-list" data-toggle="list"
+                   href="#list-publications" role="tab" aria-controls="publications">Publications</a>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-lepidoptera" role="tabpanel"
+                     aria-labelledby="list-lepidoptera-list">
+                    <h2>Families</h2>
+
+                    <h2>Genera</h2>
+                </div>
+
+                <div class="tab-pane fade show active" id="list-vernacularnames" role="tabpanel"
+                     aria-labelledby="list-vernacularnames-list">
+                    Vernacular names
+                </div>
+
+                <div class="tab-pane fade" id="list-hostplants" role="tabpanel" aria-labelledby="list-hostplants-list">
+                    Hostplants
+                </div>
+
+                <div class="tab-pane fade" id="list-publications" role="tabpanel" aria-labelledby="list-publications-list">
+                    Publications
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

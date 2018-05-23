@@ -10,6 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         {% url 'home' as home_url %}
         {% url 'about' as about_url %}
+        {% url 'browse' as browse_url%}
 
         <ul class="navbar-nav mr-auto">
             {% if request.path == home_url %}
@@ -19,7 +20,7 @@
             {% endif %}
 
 
-            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href="#" %}
+            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href=browse_url %}
 
             {% if request.path == about_url %}
                 {% include 'lepidoptera/_nav_entry.html' with active_link=True label="About" href=about_url %}
