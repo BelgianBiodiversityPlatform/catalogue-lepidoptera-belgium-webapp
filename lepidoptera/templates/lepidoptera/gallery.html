@@ -7,7 +7,7 @@
 
     <script type="text/x-template" id="search-form-template">
         <div id="search-options">
-            <select v-model="selected_stage" @change="changeFilter()">
+            <select v-model="selected_stage" @change="changeFilters()">
                 <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
             </select>
         </div>
@@ -54,6 +54,8 @@
                 data: function() {
                     return {
                         stages: [
+                            {'value': '',  'text': '--None--'},
+                            {'value': '*', 'text': '--All--'},
                             {'value': 'i', 'text': 'Imago'},
                             {'value': 'e', 'text': 'Egg'},
                             {'value': 'l', 'text': 'Larva'}
@@ -65,12 +67,12 @@
                 mounted: function () {
                     this.$nextTick(function () {
                         // After page load, launch a first search with selected filter
-                        this.changeFilter()
+                        this.changeFilters()
                     })
                 },
 
                 methods: {
-                    changeFilter: function() {
+                    changeFilters: function() {
                         this.$parent.changeFilter(this.selected_stage);
                     },
                 }
@@ -81,14 +83,14 @@
                 el: '#gallery-container',
                 data: {
                     pictures: [],
-                    filters_stage: ''
+                    filters: {'stage': ''}
                 },
                 methods: {
                     infiniteHandler: function($state) {
                         var that = this;
                         $.getJSON(galleryConf.picsJSONUrl, {
                             page: this.pictures.length / galleryConf.picsPerPage + 1,
-                            filters_stage: this.filters_stage
+                            filters_stage: this.filters.stage
                         })
                             .done(function (json) {
                                 var results = json.results;
@@ -105,8 +107,9 @@
                             })
 
                     },
+
                     changeFilter: function(stage) {
-                        this.filters_stage = stage
+                        this.filters.stage = stage
                         this.pictures = [];
                         this.$nextTick(()=> {
                             this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
