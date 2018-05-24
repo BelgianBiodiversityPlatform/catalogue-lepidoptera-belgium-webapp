@@ -12,7 +12,7 @@
             <div class="form-group row">
                 <label for="stage-select" class="col-sm-2 col-form-label">Specimen stage: </label>
                 <div class="col-sm-10">
-                    <select id="stage-select" class="form-control form-control-sm" v-model="selected_stage" @change="changeFilters()">
+                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedStage" @change="changeFilters()">
                         <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
                     </select>
                 </div>
@@ -21,7 +21,7 @@
     </script>
 
     <div id="gallery-container" v-cloak>
-        <search-form></search-form>
+        <search-form initial-selected-stage="*"></search-form>
 
         <div id="results">
             <span v-for="picture in pictures" class="result">
@@ -65,6 +65,7 @@
             Vue.component('search-form', {
                 delimiters: ['[[', ']]'],
                 template: '#search-form-template',
+                props: ['initialSelectedStage'],
                 data: function() {
                     return {
                         stages: [
@@ -74,7 +75,7 @@
                             {'value': 'e', 'text': 'Egg'},
                             {'value': 'l', 'text': 'Larva'}
                         ],
-                        selected_stage: '*',
+                        selectedStage: this.initialSelectedStage,
                     }
                 },
 
@@ -87,7 +88,7 @@
 
                 methods: {
                     changeFilters: function() {
-                        this.$parent.changeFilter(this.selected_stage);
+                        this.$parent.changeFilter(this.selectedStage);
                     },
                 }
             })
