@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.paginator import Paginator
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -234,7 +235,9 @@ def autocomplete(request, query_string):
 
 
 def gallery_page(request):
-    return render(request, 'lepidoptera/gallery.html')
+    return render(request, 'lepidoptera/gallery.html', {
+        'specimen_stage_choices': json.dumps(SpeciesPicture.STAGES_CHOICES)
+    })
 
 
 def pictures_json(request):
