@@ -18,7 +18,13 @@
 
         <div id="results">
             <span v-for="picture in pictures" class="result">
-                <img :src="picture.thumbnaillUrl" class="img-fluid img-thumbnail">
+                <a :href="picture.fullSizeURL"
+                   data-toggle="lightbox"
+                   data-gallery="results-gallery"
+                   :data-title="picture.HTMLSpeciesName"
+                   :data-footer="picture.HTMLMetadata">
+                    <img :src="picture.thumbnaillURL" class="img-fluid img-thumbnail">
+                </a>
             </span>
 
             <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
@@ -60,7 +66,7 @@
                             {'value': 'e', 'text': 'Egg'},
                             {'value': 'l', 'text': 'Larva'}
                         ],
-                        selected_stage: '',
+                        selected_stage: '*',
                     }
                 },
 

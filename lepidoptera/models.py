@@ -740,6 +740,9 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     def html_str(self):
         return format_html("<i>{}</i>", self.__str__() )
 
+    def html_str_link(self):
+        return format_html('<a href="{}">{}</a>', self.get_absolute_url(), self.html_str())
+
     @property
     def parent(self):
         # Return the most direct parent

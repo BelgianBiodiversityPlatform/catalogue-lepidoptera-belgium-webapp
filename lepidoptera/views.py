@@ -247,5 +247,11 @@ def pictures_json(request):
         pictures = pictures.filter(specimen_stage=specimen_stage)
 
     paginated_pictures = Paginator(pictures, settings.GALLERY_PAGE_SIZE).get_page(page_number)
-    pictures_data = [{'thumbnaillUrl': picture.image_thumbnail.url} for picture in paginated_pictures]
+    pictures_data = [{
+        'thumbnaillURL': picture.image_thumbnail.url,
+        'fullSizeURL': picture.image.url,
+        'HTMLSpeciesName': picture.species.html_str_link(),
+        'HTMLMetadata': picture.html_metadata()
+    } for picture in paginated_pictures]
+
     return JsonResponse({'hasMoreResults': paginated_pictures.has_next(), 'results': pictures_data}, safe=False)
