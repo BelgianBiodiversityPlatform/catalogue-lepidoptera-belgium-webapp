@@ -30,8 +30,8 @@
     <div id="gallery-container" v-cloak>
         <search-form initial-selected-stage="*"
                      initial-selected-subject="*"
-                     v-bind:stage-choices="specimenStageChoices"
-                     v-bind:subject-choices="subjectChoices" ></search-form>
+                     v-bind:filter-choices="filterChoices">
+        </search-form>
 
         <div id="results">
             <span v-for="picture in pictures" class="result">
@@ -69,8 +69,7 @@
             var galleryConf = {
                 picsJSONUrl: "{% url 'pictures_json' %}",
                 picsPerPage: {{ settings.GALLERY_PAGE_SIZE }},
-                specimenStageChoices: {{ specimen_stage_choices|safe}},
-                subjectChoices: {{ subject_choices|safe }}
+                filtersChoices: {{ filters_choices|safe }}
             };
 
             Vue.component('search-form', {
@@ -79,8 +78,7 @@
                 props: [
                     'initialSelectedStage',
                     'initialSelectedSubject',
-                    'stageChoices',
-                    'subjectChoices'
+                    'filterChoices'
                 ],
 
                 data: function() {
@@ -91,13 +89,13 @@
                     ];
 
                     var stagesForSelect = allNoneChoices.slice();
-                    for (var i = 0; i < this.stageChoices.length; i++) {
-                        stagesForSelect.push({'value': this.stageChoices[i][0], 'text': this.stageChoices[i][1]});
+                    for (var i = 0; i < this.filterChoices.specimenStages.length; i++) {
+                        stagesForSelect.push({'value': this.filterChoices.specimenStages[i][0], 'text': this.filterChoices.specimenStages[i][1]});
                     };
 
                     var subjectsForSelect = allNoneChoices.slice();
-                    for (var i = 0; i < this.subjectChoices.length; i++) {
-                        subjectsForSelect.push({'value': this.subjectChoices[i][0], 'text': this.subjectChoices[i][1]})
+                    for (var i = 0; i < this.filterChoices.imageSubjects.length; i++) {
+                        subjectsForSelect.push({'value': this.filterChoices.imageSubjects[i][0], 'text': this.filterChoices.imageSubjects[i][1]})
                     };
 
                     return {
@@ -128,8 +126,7 @@
                 data: {
                     pictures: [],
                     filters: {'stage': '', 'subject': ''},
-                    specimenStageChoices: galleryConf.specimenStageChoices,
-                    subjectChoices: galleryConf.subjectChoices,
+                    filterChoices: galleryConf.filtersChoices
                 },
                 methods: {
                     infiniteHandler: function($state) {

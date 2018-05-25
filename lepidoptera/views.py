@@ -236,8 +236,10 @@ def autocomplete(request, query_string):
 
 def gallery_page(request):
     return render(request, 'lepidoptera/gallery.html', {
-        'specimen_stage_choices': json.dumps(SpeciesPicture.STAGES_CHOICES),
-        'subject_choices': json.dumps(SpeciesPicture.SUBJECT_CHOICES)
+        'filters_choices': json.dumps({
+            'specimenStages': SpeciesPicture.STAGES_CHOICES,
+            'imageSubjects': SpeciesPicture.SUBJECT_CHOICES
+        })
     })
 
 
