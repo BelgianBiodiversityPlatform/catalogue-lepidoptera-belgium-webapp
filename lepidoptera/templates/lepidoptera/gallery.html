@@ -12,14 +12,14 @@
             <div class="form-group row">
                 <label for="stage-select" class="col-sm-2 col-form-label">Specimen stage: </label>
                 <div class="col-sm-10">
-                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedStage" @change="changeFilters()">
+                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedFilters.specimenStage" @change="changeFilters()">
                         <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
                     </select>
                 </div>
 
                 <label for="stage-select" class="col-sm-2 col-form-label">Subject: </label>
                 <div class="col-sm-10">
-                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedSubject" @change="changeFilters()">
+                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedFilters.imageSubject" @change="changeFilters()">
                         <option v-for="subject in subjects" v-bind:value="subject.value">[[ subject.text ]]</option>
                     </select>
                 </div>
@@ -100,8 +100,10 @@
                     return {
                         stages: stagesForSelect,
                         subjects: subjectsForSelect,
-                        selectedStage: this.initialSelectedStage,
-                        selectedSubject: this.initialSelectedSubject,
+                        selectedFilters: {
+                            specimenStage: this.initialSelectedStage,
+                            imageSubject: this.initialSelectedSubject
+                        },
                     }
                 },
 
@@ -114,7 +116,7 @@
 
                 methods: {
                     changeFilters: function() {
-                        this.$parent.changeFilter(this.selectedStage, this.selectedSubject);
+                        this.$parent.changeFilter(this.selectedFilters.specimenStage, this.selectedFilters.imageSubject);
                     },
                 }
             });
