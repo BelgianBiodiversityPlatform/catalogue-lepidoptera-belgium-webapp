@@ -236,18 +236,23 @@ def autocomplete(request, query_string):
 
 def gallery_page(request):
     return render(request, 'lepidoptera/gallery.html', {
-        'specimen_stage_choices': json.dumps(SpeciesPicture.STAGES_CHOICES)
+        'specimen_stage_choices': json.dumps(SpeciesPicture.STAGES_CHOICES),
+        'subject_choices': json.dumps(SpeciesPicture.SUBJECT_CHOICES)
     })
 
 
 def pictures_json(request):
     page_number = request.GET.get('page')
     specimen_stage = request.GET.get('filters_stage')
+    image_subject = request.GET.get('filters_subject')
 
     pictures = SpeciesPicture.objects.all()
 
     if specimen_stage != '*':
         pictures = pictures.filter(specimen_stage=specimen_stage)
+
+    if image_subject != '*':
+        pictures = pictures.filter(image_subject=image_subject)
 
     paginated_pictures = Paginator(pictures, settings.GALLERY_PAGE_SIZE).get_page(page_number)
     pictures_data = [{

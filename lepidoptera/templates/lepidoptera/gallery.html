@@ -16,12 +16,22 @@
                         <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
                     </select>
                 </div>
+
+                <label for="stage-select" class="col-sm-2 col-form-label">Subject: </label>
+                <div class="col-sm-10">
+                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedSubject" @change="changeFilters()">
+                        <option v-for="subject in subjects" v-bind:value="subject.value">[[ subject.text ]]</option>
+                    </select>
+                </div>
             </div>
         </div>
     </script>
 
     <div id="gallery-container" v-cloak>
-        <search-form initial-selected-stage="*" v-bind:stage-choices="specimenStageChoices"></search-form>
+        <search-form initial-selected-stage="*"
+                     initial-selected-subject="*"
+                     v-bind:stage-choices="specimenStageChoices"
+                     v-bind:subject-choices="subjectChoices" ></search-form>
 
         <div id="results">
             <span v-for="picture in pictures" class="result">
@@ -59,26 +69,42 @@
             var galleryConf = {
                 picsJSONUrl: "{% url 'pictures_json' %}",
                 picsPerPage: {{ settings.GALLERY_PAGE_SIZE }},
-                specimenStageChoices: {{ specimen_stage_choices|safe}}
+                specimenStageChoices: {{ specimen_stage_choices|safe}},
+                subjectChoices: {{ subject_choices|safe }}
             };
 
             Vue.component('search-form', {
                 delimiters: ['[[', ']]'],
                 template: '#search-form-template',
-                props: ['initialSelectedStage', 'stageChoices'],
+                props: [
+                    'initialSelectedStage',
+                    'initialSelectedSubject',
+                    'stageChoices',
+                    'subjectChoices'
+                ],
+
                 data: function() {
                     // Prepare the (received via props) stage choices for the template, and add all/none options
-                    var stagesForSelect = [
+                    var allNoneChoices = [
                             {'value': '',  'text': '--None--'},
                             {'value': '*', 'text': '--All--'}
                     ];
+
+                    var stagesForSelect = allNoneChoices.slice();
                     for (var i = 0; i < this.stageChoices.length; i++) {
                         stagesForSelect.push({'value': this.stageChoices[i][0], 'text': this.stageChoices[i][1]});
                     };
 
+                    var subjectsForSelect = allNoneChoices.slice();
+                    for (var i = 0; i < this.subjectChoices.length; i++) {
+                        subjectsForSelect.push({'value': this.subjectChoices[i][0], 'text': this.subjectChoices[i][1]})
+                    };
+
                     return {
                         stages: stagesForSelect,
+                        subjects: subjectsForSelect,
                         selectedStage: this.initialSelectedStage,
+                        selectedSubject: this.initialSelectedSubject,
                     }
                 },
 
@@ -91,7 +117,7 @@
 
                 methods: {
                     changeFilters: function() {
-                        this.$parent.changeFilter(this.selectedStage);
+                        this.$parent.changeFilter(this.selectedStage, this.selectedSubject);
                     },
                 }
             })
@@ -101,15 +127,17 @@
                 el: '#gallery-container',
                 data: {
                     pictures: [],
-                    filters: {'stage': ''},
+                    filters: {'stage': '', 'subject': ''},
                     specimenStageChoices: galleryConf.specimenStageChoices,
+                    subjectChoices: galleryConf.subjectChoices,
                 },
                 methods: {
                     infiniteHandler: function($state) {
                         var that = this;
                         $.getJSON(galleryConf.picsJSONUrl, {
                             page: this.pictures.length / galleryConf.picsPerPage + 1,
-                            filters_stage: this.filters.stage
+                            filters_stage: this.filters.stage,
+                            filters_subject: this.filters.subject
                         })
                             .done(function (json) {
                                 var results = json.results;
@@ -127,8 +155,9 @@
 
                     },
 
-                    changeFilter: function(stage) {
+                    changeFilter: function(stage, subject) {
                         this.filters.stage = stage
+                        this.filters.subject = subject
                         this.pictures = [];
                         this.$nextTick(()=> {
                             this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
