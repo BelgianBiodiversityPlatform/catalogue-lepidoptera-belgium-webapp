@@ -21,7 +21,7 @@
     </script>
 
     <div id="gallery-container" v-cloak>
-        <search-form initial-selected-stage="*"></search-form>
+        <search-form initial-selected-stage="*" v-bind:stage-choices="specimenStageChoices"></search-form>
 
         <div id="results">
             <span v-for="picture in pictures" class="result">
@@ -65,16 +65,19 @@
             Vue.component('search-form', {
                 delimiters: ['[[', ']]'],
                 template: '#search-form-template',
-                props: ['initialSelectedStage'],
+                props: ['initialSelectedStage', 'stageChoices'],
                 data: function() {
-                    return {
-                        stages: [
+                    // Prepare the (received via props) stage choices for the template, and add all/none options
+                    var stagesForSelect = [
                             {'value': '',  'text': '--None--'},
-                            {'value': '*', 'text': '--All--'},
-                            {'value': 'i', 'text': 'Imago'},
-                            {'value': 'e', 'text': 'Egg'},
-                            {'value': 'l', 'text': 'Larva'}
-                        ],
+                            {'value': '*', 'text': '--All--'}
+                    ];
+                    for (var i = 0; i < this.stageChoices.length; i++) {
+                        stagesForSelect.push({'value': this.stageChoices[i][0], 'text': this.stageChoices[i][1]});
+                    };
+
+                    return {
+                        stages: stagesForSelect,
                         selectedStage: this.initialSelectedStage,
                     }
                 },
@@ -98,7 +101,8 @@
                 el: '#gallery-container',
                 data: {
                     pictures: [],
-                    filters: {'stage': ''}
+                    filters: {'stage': ''},
+                    specimenStageChoices: galleryConf.specimenStageChoices,
                 },
                 methods: {
                     infiniteHandler: function($state) {
