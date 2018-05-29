@@ -245,8 +245,8 @@ def gallery_page(request):
 
 def pictures_json(request):
     page_number = request.GET.get('page')
-    specimen_stage = request.GET.get('filters_stage')
-    image_subject = request.GET.get('filters_subject')
+    specimen_stage = request.GET.get('specimenStage')
+    image_subject = request.GET.get('imageSubject')
 
     pictures = SpeciesPicture.objects.all()
 

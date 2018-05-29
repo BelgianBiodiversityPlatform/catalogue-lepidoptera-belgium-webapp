@@ -12,15 +12,15 @@
             <div class="form-group row">
                 <label for="stage-select" class="col-sm-2 col-form-label">Specimen stage: </label>
                 <div class="col-sm-10">
-                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedFilters.specimenStage" @change="changeFilters()">
-                        <option v-for="stage in stages" v-bind:value="stage.value">[[ stage.text ]]</option>
+                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedFilters.specimenStage">
+                        <option v-for="stage in stages" :value="stage.value">[[ stage.text ]]</option>
                     </select>
                 </div>
 
-                <label for="stage-select" class="col-sm-2 col-form-label">Subject: </label>
+                <label for="subject-select" class="col-sm-2 col-form-label">Subject: </label>
                 <div class="col-sm-10">
-                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedFilters.imageSubject" @change="changeFilters()">
-                        <option v-for="subject in subjects" v-bind:value="subject.value">[[ subject.text ]]</option>
+                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedFilters.imageSubject">
+                        <option v-for="subject in subjects" :value="subject.value">[[ subject.text ]]</option>
                     </select>
                 </div>
             </div>
@@ -30,7 +30,7 @@
     <div id="gallery-container" v-cloak>
         <search-form initial-selected-stage="*"
                      initial-selected-subject="*"
-                     v-bind:filter-choices="filterChoices">
+                     :filter-choices="filterChoices">
         </search-form>
 
         <div id="results">
@@ -81,6 +81,14 @@
                     'filterChoices'
                 ],
 
+                watch: {
+                    selectedFilters: {
+                        handler: function () {this.changeFilters()},
+                        deep: true,
+                        immediate: true // Trigger a search after page load
+                    }
+                },
+
                 data: function() {
                     // Prepare the (received via props) stage choices for the template, and add all/none options
                     var i;
@@ -107,16 +115,9 @@
                     }
                 },
 
-                mounted: function () {
-                    this.$nextTick(function () {
-                        // After page load, launch a first search with selected filter
-                        this.changeFilters()
-                    })
-                },
-
                 methods: {
                     changeFilters: function() {
-                        this.$parent.changeFilter(this.selectedFilters.specimenStage, this.selectedFilters.imageSubject);
+                        this.$parent.resetAndLoad(this.selectedFilters);
                     },
                 }
             });
@@ -126,17 +127,21 @@
                 el: '#gallery-container',
                 data: {
                     pictures: [],
-                    filters: {'stage': '', 'subject': ''},
+                    filters: {'specimenStage': '', 'imageSubject': ''},
                     filterChoices: galleryConf.filtersChoices
                 },
                 methods: {
+                    paramsForServer: function() {
+                        var params = {
+                            page: this.pictures.length / galleryConf.picsPerPage + 1,
+                        }
+
+                        return Object.assign(params, this.filters);
+                    },
+
                     infiniteHandler: function($state) {
                         var that = this;
-                        $.getJSON(galleryConf.picsJSONUrl, {
-                            page: this.pictures.length / galleryConf.picsPerPage + 1,
-                            filters_stage: this.filters.stage,
-                            filters_subject: this.filters.subject
-                        })
+                        $.getJSON(galleryConf.picsJSONUrl, this.paramsForServer())
                             .done(function (json) {
                                 var results = json.results;
                                 var hasMoreResults = json.hasMoreResults;
@@ -153,13 +158,13 @@
 
                     },
 
-                    changeFilter: function(stage, subject) {
-                        this.filters.stage = stage;
-                        this.filters.subject = subject;
+                    resetAndLoad: function(filters) {
+                        this.filters = filters;
+
                         this.pictures = [];
                         this.$nextTick(()=> {
                             this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
-                    })
+                        })
                     },
                 }
             });
