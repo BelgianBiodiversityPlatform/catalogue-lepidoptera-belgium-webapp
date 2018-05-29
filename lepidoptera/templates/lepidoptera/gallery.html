@@ -34,6 +34,7 @@
         </search-form>
 
         <div id="results">
+            <p>[[ count ]] pictures found.</p>
             <span v-for="picture in pictures" class="result">
                 <a :href="picture.fullSizeURL"
                    data-toggle="lightbox"
@@ -127,6 +128,7 @@
                 el: '#gallery-container',
                 data: {
                     pictures: [],
+                    count: 0,  // (Total) number of pictures matching the criteria
                     filters: {'specimenStage': '', 'imageSubject': ''},
                     filterChoices: galleryConf.filtersChoices
                 },
@@ -145,6 +147,7 @@
                             .done(function (json) {
                                 var results = json.results;
                                 var hasMoreResults = json.hasMoreResults;
+                                that.count = json.count;
 
                                 that.pictures = that.pictures.concat(results);
                                 $state.loaded();
