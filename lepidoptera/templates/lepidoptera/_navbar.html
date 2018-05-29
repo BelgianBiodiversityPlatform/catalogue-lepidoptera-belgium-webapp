@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <nav id="main-navigation" class="navbar navbar-expand-sm navbar-dark bg-primary">
-    <a class="navbar-brand font-weight-light" href="{% url 'home' %}"><span class="oi oi-cloudy"></span> {{ settings.WEBSITE_NAME }}</a>
+    <a class="navbar-brand font-weight-light" href="{% url 'home' %}">{{ settings.WEBSITE_NAME }}</a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -15,25 +15,23 @@
 
         <ul class="navbar-nav mr-auto">
             {% if request.path == home_url %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Home" href=home_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Home" href=home_url oi_icon_identifier="oi-home" %}
             {% else %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Home" href=home_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Home" href=home_url oi_icon_identifier="oi-home" %}
             {% endif %}
 
-
-            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href=browse_url %}
+            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href=browse_url oi_icon_identifier="oi-spreadsheet" %}
 
             {% if request.path == gallery_url %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Gallery" href=gallery_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Gallery" href=gallery_url oi_icon_identifier="oi-image" %}
             {% else %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Gallery" href=gallery_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Gallery" href=gallery_url oi_icon_identifier="oi-image" %}
             {% endif %}
 
-
             {% if request.path == about_url %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="About" href=about_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="About" href=about_url oi_icon_identifier="oi-compass" %}
             {% else %}
-                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="About" href=about_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="About" href=about_url oi_icon_identifier="oi-compass" %}
             {% endif %}
         </ul>
 
