@@ -16,20 +16,19 @@ class Command(LepidopteraCommand):
         self.w("========================")
         call_command('access_import', '--truncate')
 
-        self.w("Step 2: Website import and reconciliation...")
+        self.w("\nStep 2: Website import and reconciliation...")
         self.w("============================================")
         call_command('website_import', options['website_families_csv'], options['website_species_csv'])
 
-        self.w("Step 3: Add Wikidata identifiers...")
+        self.w("\nStep 3: Add Wikidata identifiers...")
         self.w("===================================")
         call_command('add_wikidata_identifiers')
 
-        self.w("Step 4: Import species pictures...")
+        self.w("\nStep 4: Import species pictures...")
         self.w("==================================")
         call_command('speciespictures_import', '--truncate', options['species_picture_dir'])
 
-        self.w("Step 5: Denormalized data full rebuild...")
+        self.w("\nStep 5: Denormalized data full rebuild...")
         self.w("=========================================")
-
         call_command('denorm_rebuild')
 

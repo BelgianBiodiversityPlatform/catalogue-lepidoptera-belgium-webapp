@@ -5,25 +5,33 @@
 {% block content %}
     <h1>{% trans "Gallery" %}</h1>
 
+    <script type="text/x-template" id="filter-select-template">
+        <div class="form-group row">
+            <label :for="controlHtmlId" class="col-sm-2 col-form-label">[[ label ]]:</label>
+
+            <div class="col-sm-10">
+                <select :id="controlHtmlId" class="form-control form-control-sm" v-model="selectVal">
+                    <option v-for="option in options" :value="option.value">[[ option.text ]]</option>
+                </select>
+            </div>
+        </div>
+    </script>
+
     <script type="text/x-template" id="search-form-template">
         <div id="search-options">
             <h2>Filters</h2>
 
-            <div class="form-group row">
-                <label for="stage-select" class="col-sm-2 col-form-label">Specimen stage: </label>
-                <div class="col-sm-10">
-                    <select id="stage-select" class="form-control form-control-sm" v-model="selectedFilters.specimenStage">
-                        <option v-for="stage in stages" :value="stage.value">[[ stage.text ]]</option>
-                    </select>
-                </div>
+            <filter-select label="Specimen stage"
+                           control-html-id="stage-select"
+                           v-model="selectedFilters.specimenStage"
+                           :options="stages">
+            </filter-select>
 
-                <label for="subject-select" class="col-sm-2 col-form-label">Subject: </label>
-                <div class="col-sm-10">
-                    <select id="subject-select" class="form-control form-control-sm" v-model="selectedFilters.imageSubject">
-                        <option v-for="subject in subjects" :value="subject.value">[[ subject.text ]]</option>
-                    </select>
-                </div>
-            </div>
+            <filter-select label="Subject"
+                           control-html-id="subject-select"
+                           v-model="selectedFilters.imageSubject"
+                           :options="subjects">
+            </filter-select>
         </div>
     </script>
 
@@ -73,6 +81,25 @@
                 filtersChoices: {{ filters_choices|safe }}
             };
 
+            Vue.component('filter-select', {
+                delimiters: ['[[', ']]'],
+                template: '#filter-select-template',
+                props: [
+                    'label',
+                    'controlHtmlId',
+                    'value',
+                    'options'
+                ],
+                data: function () {
+                    return {selectVal: this.value}
+                },
+                watch: {
+                    selectVal(val) {
+                        this.$emit('input', val);
+                    }
+                }
+            });
+
             Vue.component('search-form', {
                 delimiters: ['[[', ']]'],
                 template: '#search-form-template',
@@ -84,27 +111,35 @@
 
                 watch: {
                     selectedFilters: {
-                        handler: function () {this.changeFilters()},
+                        handler: function () {
+                            this.changeFilters()
+                        },
                         deep: true,
                         immediate: true // Trigger a search after page load
                     }
                 },
 
-                data: function() {
+                data: function () {
                     // Prepare the (received via props) stage choices for the template, and add all/none options
                     var i;
                     var allNoneChoices = [
-                            {'value': '',  'text': '--None--'},
-                            {'value': '*', 'text': '--All--'}
+                        {'value': '', 'text': '--None--'},
+                        {'value': '*', 'text': '--All--'}
                     ];
 
                     var stagesForSelect = allNoneChoices.slice();
                     for (i = 0; i < this.filterChoices.specimenStages.length; i++) {
-                        stagesForSelect.push({'value': this.filterChoices.specimenStages[i][0], 'text': this.filterChoices.specimenStages[i][1]});
+                        stagesForSelect.push({
+                            'value': this.filterChoices.specimenStages[i][0],
+                            'text': this.filterChoices.specimenStages[i][1]
+                        });
                     }
                     var subjectsForSelect = allNoneChoices.slice();
                     for (i = 0; i < this.filterChoices.imageSubjects.length; i++) {
-                        subjectsForSelect.push({'value': this.filterChoices.imageSubjects[i][0], 'text': this.filterChoices.imageSubjects[i][1]})
+                        subjectsForSelect.push({
+                            'value': this.filterChoices.imageSubjects[i][0],
+                            'text': this.filterChoices.imageSubjects[i][1]
+                        })
                     }
                     return {
                         stages: stagesForSelect,
@@ -117,7 +152,7 @@
                 },
 
                 methods: {
-                    changeFilters: function() {
+                    changeFilters: function () {
                         this.$parent.resetAndLoad(this.selectedFilters);
                     },
                 }
@@ -133,7 +168,7 @@
                     filterChoices: galleryConf.filtersChoices
                 },
                 methods: {
-                    paramsForServer: function() {
+                    paramsForServer: function () {
                         var params = {
                             page: this.pictures.length / galleryConf.picsPerPage + 1,
                         }
@@ -141,7 +176,7 @@
                         return Object.assign(params, this.filters);
                     },
 
-                    infiniteHandler: function($state) {
+                    infiniteHandler: function ($state) {
                         var that = this;
                         $.getJSON(galleryConf.picsJSONUrl, this.paramsForServer())
                             .done(function (json) {
@@ -161,13 +196,13 @@
 
                     },
 
-                    resetAndLoad: function(filters) {
+                    resetAndLoad: function (filters) {
                         this.filters = filters;
 
                         this.pictures = [];
-                        this.$nextTick(()=> {
+                        this.$nextTick(() => {
                             this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset');
-                        })
+                    })
                     },
                 }
             });
