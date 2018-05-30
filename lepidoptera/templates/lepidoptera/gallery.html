@@ -22,13 +22,11 @@
             <h2>Filters</h2>
 
             <filter-select label="Specimen stage"
-                           control-html-id="stage-select"
                            v-model="selectedFilters.specimenStage"
                            :options="stages">
             </filter-select>
 
             <filter-select label="Subject"
-                           control-html-id="subject-select"
                            v-model="selectedFilters.imageSubject"
                            :options="subjects">
             </filter-select>
@@ -81,17 +79,27 @@
                 filtersChoices: {{ filters_choices|safe }}
             };
 
+            var slugify = function(text) {
+                return text.toString().toLowerCase().trim()
+                    .replace(/\s+/g, '-')           // Replace spaces with -
+                    .replace(/&/g, '-and-')         // Replace & with 'and'
+                    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+                    .replace(/\-\-+/g, '-');        // Replace multiple - with single
+            };
+
             Vue.component('filter-select', {
                 delimiters: ['[[', ']]'],
                 template: '#filter-select-template',
                 props: [
                     'label',
-                    'controlHtmlId',
                     'value',
                     'options'
                 ],
                 data: function () {
-                    return {selectVal: this.value}
+                    return {
+                        selectVal: this.value,
+                        controlHtmlId: slugify(this.label) + '-select'
+                    }
                 },
                 watch: {
                     selectVal(val) {
