@@ -30,12 +30,18 @@
                            v-model="selectedFilters.imageSubject"
                            :options="subjects">
             </filter-select>
+
+            <filter-select label="Photographer"
+                           v-model="selectedFilters.photographer"
+                           :options="photographers">
+            </filter-select>
         </div>
     </script>
 
     <div id="gallery-container" v-cloak>
         <search-form initial-selected-stage="*"
                      initial-selected-subject="*"
+                     initial-selected-photographer="*"
                      :filter-choices="filterChoices">
         </search-form>
 
@@ -114,6 +120,7 @@
                 props: [
                     'initialSelectedStage',
                     'initialSelectedSubject',
+                    'initialSelectedPhotographer',
                     'filterChoices'
                 ],
 
@@ -147,14 +154,25 @@
                         subjectsForSelect.push({
                             'value': this.filterChoices.imageSubjects[i][0],
                             'text': this.filterChoices.imageSubjects[i][1]
+                        });
+                    }
+
+                    var photographersForSelect = allNoneChoices.slice();
+                    for (i = 0; i < this.filterChoices.photographers.length; i++) {
+                        photographersForSelect.push({
+                            'value': this.filterChoices.photographers[i].id,
+                            'text': this.filterChoices.photographers[i].name
                         })
                     }
+
                     return {
                         stages: stagesForSelect,
                         subjects: subjectsForSelect,
+                        photographers: photographersForSelect,
                         selectedFilters: {
                             specimenStage: this.initialSelectedStage,
-                            imageSubject: this.initialSelectedSubject
+                            imageSubject: this.initialSelectedSubject,
+                            photographer: this.initialSelectedPhotographer
                         },
                     }
                 },

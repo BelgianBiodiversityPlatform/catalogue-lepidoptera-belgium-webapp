@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture
+    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
+    Photographer
 
 
 def home_page(request):
@@ -238,7 +239,10 @@ def gallery_page(request):
     return render(request, 'lepidoptera/gallery.html', {
         'filters_choices': json.dumps({
             'specimenStages': SpeciesPicture.STAGES_CHOICES,
-            'imageSubjects': SpeciesPicture.SUBJECT_CHOICES
+            'imageSubjects': SpeciesPicture.SUBJECT_CHOICES,
+            'photographers': [
+                {'id': photographer.pk, 'name': photographer.full_name} for photographer in Photographer.objects.all()
+            ]
         })
     })
 
@@ -247,6 +251,7 @@ def pictures_json(request):
     page_number = request.GET.get('page')
     specimen_stage = request.GET.get('specimenStage')
     image_subject = request.GET.get('imageSubject')
+    photographer_id = request.GET.get('photographer')
 
     pictures = SpeciesPicture.objects.all()
 
@@ -255,6 +260,12 @@ def pictures_json(request):
 
     if image_subject != '*':
         pictures = pictures.filter(image_subject=image_subject)
+
+    if photographer_id != '*':
+        if photographer_id == '':  # Pictures with no photographers set
+            pictures = pictures.filter(photographer_id=None)
+        else:
+            pictures = pictures.filter(photographer_id=int(photographer_id))
 
     paginator = Paginator(pictures, settings.GALLERY_PAGE_SIZE)
     paginated_pictures = paginator.get_page(page_number)
