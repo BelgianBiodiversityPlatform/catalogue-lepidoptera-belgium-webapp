@@ -38,6 +38,16 @@
         </div>
     </script>
 
+    <script type="text/x-template" id="picture-entry-template">
+        <a :href="pictureData.fullSizeURL"
+           :data-title="pictureData.HTMLSpeciesName"
+           :data-footer="pictureData.HTMLMetadata"
+           data-toggle="lightbox"
+           data-gallery="results-gallery"  >
+            <img :src="pictureData.thumbnaillURL" class="img-fluid img-thumbnail">
+        </a>
+    </script>
+
     <div id="gallery-container" v-cloak>
         <search-form initial-selected-stage="*"
                      initial-selected-subject="*"
@@ -48,13 +58,7 @@
         <div id="results">
             <p>[[ count ]] pictures found.</p>
             <span v-for="picture in pictures" class="result">
-                <a :href="picture.fullSizeURL"
-                   data-toggle="lightbox"
-                   data-gallery="results-gallery"
-                   :data-title="picture.HTMLSpeciesName"
-                   :data-footer="picture.HTMLMetadata">
-                    <img :src="picture.thumbnaillURL" class="img-fluid img-thumbnail">
-                </a>
+                <picture-entry :picture-data="picture"></picture-entry>
             </span>
 
             <infinite-loading @infinite="infiniteHandler" ref="infiniteLoading">
@@ -92,6 +96,13 @@
                     .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
                     .replace(/\-\-+/g, '-');        // Replace multiple - with single
             };
+
+            Vue.component('picture-entry', {
+                template: '#picture-entry-template',
+                props: [
+                    'pictureData'
+                ]
+            });
 
             Vue.component('filter-select', {
                 delimiters: ['[[', ']]'],
@@ -137,19 +148,15 @@
                 data: function () {
                     // Prepare the (received via props) stage choices for the template, and add all/none options
                     var i;
-                    var allNoneChoices = [
-                        {'value': '', 'text': '--None--'},
-                        {'value': '*', 'text': '--All--'}
-                    ];
 
-                    var stagesForSelect = allNoneChoices.slice();
+                    var stagesForSelect = this.getInitialOptionsForSelect();
                     for (i = 0; i < this.filterChoices.specimenStages.length; i++) {
                         stagesForSelect.push({
                             'value': this.filterChoices.specimenStages[i][0],
                             'text': this.filterChoices.specimenStages[i][1]
                         });
                     }
-                    var subjectsForSelect = allNoneChoices.slice();
+                    var subjectsForSelect = this.getInitialOptionsForSelect();
                     for (i = 0; i < this.filterChoices.imageSubjects.length; i++) {
                         subjectsForSelect.push({
                             'value': this.filterChoices.imageSubjects[i][0],
@@ -157,7 +164,7 @@
                         });
                     }
 
-                    var photographersForSelect = allNoneChoices.slice();
+                    var photographersForSelect = this.getInitialOptionsForSelect();
                     for (i = 0; i < this.filterChoices.photographers.length; i++) {
                         photographersForSelect.push({
                             'value': this.filterChoices.photographers[i].id,
@@ -181,6 +188,14 @@
                     changeFilters: function () {
                         this.$parent.resetAndLoad(this.selectedFilters);
                     },
+
+                    getInitialOptionsForSelect: function () {
+                        var allNoneChoices = [
+                            {'value': '', 'text': '--None--'},
+                            {'value': '*', 'text': '--All--'}
+                        ];
+                        return allNoneChoices.slice();
+                    }
                 }
             });
 
@@ -190,7 +205,7 @@
                 data: {
                     pictures: [],
                     count: 0,  // (Total) number of pictures matching the criteria
-                    filters: {'specimenStage': '', 'imageSubject': ''},
+                    filters: {},
                     filterChoices: galleryConf.filtersChoices
                 },
                 methods: {
@@ -219,7 +234,6 @@
                             .fail(function (jqxhr, textStatus, error) {
                                 alert("error");
                             })
-
                     },
 
                     resetAndLoad: function (filters) {
