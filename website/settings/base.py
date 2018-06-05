@@ -126,7 +126,7 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'  # ModelTranslation is used for other m
 
 WEBSITE_NAME = "Catalogue of the Lepidoptera of Belgium"
 
-GALLERY_PAGE_SIZE = 20
+GALLERY_PAGE_SIZE = 10
 
 SETTINGS_EXPORT = [
     'WEBSITE_NAME',

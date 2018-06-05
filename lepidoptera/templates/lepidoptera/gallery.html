@@ -104,7 +104,16 @@
                 ],
                 methods: {
                     openLightbox: function(event) {
-                        $(event.target).parent().ekkoLightbox();
+                        var component = this;
+                        $(event.target).parent().ekkoLightbox({
+                            onNavigate: function(direction, itemIndex) {
+                                // If we navigate from image to image, we need to inform the gallery that it may need
+                                // loading more images (right direction only)
+                                if (direction==='right') {
+                                    component.$parent.loadMoreImagesIfNeeded(itemIndex);
+                                }
+                            }
+                        });
                     }
                 }
             });
@@ -214,6 +223,13 @@
                     filterChoices: galleryConf.filtersChoices
                 },
                 methods: {
+                    loadMoreImagesIfNeeded: function(imageIndex) {
+                        // Are we navigating the last picture?
+                        if (imageIndex === (this.pictures.length - 1)) {
+                            console.log("Let's load!");
+                        }
+                    },
+
                     paramsForServer: function () {
                         var params = {
                             page: this.pictures.length / galleryConf.picsPerPage + 1,
