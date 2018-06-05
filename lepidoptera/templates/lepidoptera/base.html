@@ -42,11 +42,6 @@
         // Initialize (table) sticky headers
         $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
     });
-
-    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
-        event.preventDefault();
-        $(this).ekkoLightbox();
-    });
 </script>
 
 {% block bottom-of-body %}{% endblock %}

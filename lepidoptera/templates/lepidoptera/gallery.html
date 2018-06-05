@@ -42,8 +42,8 @@
         <a :href="pictureData.fullSizeURL"
            :data-title="pictureData.HTMLSpeciesName"
            :data-footer="pictureData.HTMLMetadata"
-           data-toggle="lightbox"
-           data-gallery="results-gallery"  >
+           data-gallery="results-gallery"
+           v-on:click.prevent="openLightbox">
             <img :src="pictureData.thumbnaillURL" class="img-fluid img-thumbnail">
         </a>
     </script>
@@ -101,7 +101,12 @@
                 template: '#picture-entry-template',
                 props: [
                     'pictureData'
-                ]
+                ],
+                methods: {
+                    openLightbox: function(event) {
+                        $(event.target).parent().ekkoLightbox();
+                    }
+                }
             });
 
             Vue.component('filter-select', {
