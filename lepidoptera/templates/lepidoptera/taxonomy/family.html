@@ -8,6 +8,7 @@
 
     <hr/>
 
+    <h2>{% trans "Species in Belgium" %}</h2>
     {% include "lepidoptera/taxonomy/_species_table.html" with species_list=taxon.all_species provinces=all_provinces timeperiods=all_timeperiods%}
 
 {% endblock %}

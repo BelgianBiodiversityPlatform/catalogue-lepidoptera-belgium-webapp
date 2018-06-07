@@ -1,8 +1,6 @@
 {%  load i18n %}
 {%  load various_helpers %}
 
-<h2>{% trans "Species in Belgium" %}</h2>
-
 <p class="text-center">
     {% for province in provinces %}
         <b>{{ province.code }}</b> = {{ province.name }}
@@ -22,7 +20,7 @@
 </p>
 
 <table class="table table-bordered table-hover table-striped table-sm sticky-header">
-    <thead class="thead-inverse">
+    <thead class="thead-dark">
         <tr>
             <th scope="col">{% trans 'Name' %}</th>
             <th scope="col">{% trans 'Synonyms' %}</th>

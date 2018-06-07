@@ -6,6 +6,8 @@
     <div class="row">
         <div class="col">
             <h2>{% trans "Distribution" %}</h2>
+            {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods%}
+
         </div>
     </div>
 
