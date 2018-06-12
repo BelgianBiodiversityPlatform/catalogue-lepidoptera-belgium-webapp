@@ -561,7 +561,7 @@ class SpeciesPicture(models.Model):
     photographer = models.ForeignKey('Photographer', null=True, blank=True, on_delete=models.SET_NULL)
     image = models.ImageField(blank=True, null=True, upload_to='specimen_pictures')
     image_thumbnail = ImageSpecField(source='image',
-                                     processors=[ResizeToFit(320, 240)],
+                                     processors=[ResizeToFit(160, 120)],
                                      format='JPEG',
                                      options={'quality': 95})
     image_admin_thumbnail = ImageSpecField(source='image',
