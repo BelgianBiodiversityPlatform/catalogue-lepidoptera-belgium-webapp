@@ -4,7 +4,7 @@
 {% if species|has_content_for_section:section_name %}
     <div class="row">
         <div class="col">
-            <h2>{% section_display_name section_name %}</h2>
+            <h3>{% section_display_name section_name %}</h3>
             <div class="section-text">
                 {{ species|get_text_for_section:section_name|markdown }}
             </div>

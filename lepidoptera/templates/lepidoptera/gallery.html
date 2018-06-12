@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans "Gallery" %}</h1>
+    <h2>{% trans "Gallery" %}</h2>
 
     <script type="text/x-template" id="filter-select-template">
         <div class="form-group row">
@@ -19,7 +19,7 @@
 
     <script type="text/x-template" id="search-form-template">
         <div id="search-options">
-            <h2>Filters</h2>
+            <h3>Filters</h3>
 
             <filter-select label="Specimen stage"
                            v-model="selectedFilters.specimenStage"

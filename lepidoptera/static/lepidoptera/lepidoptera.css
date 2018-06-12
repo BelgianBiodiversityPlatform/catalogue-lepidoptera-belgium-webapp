@@ -23,3 +23,8 @@ img.province-icon {
     bottom:0;
     margin:auto;
 }
+
+#mapid {
+    width: 640px;
+    height: 480px;
+}

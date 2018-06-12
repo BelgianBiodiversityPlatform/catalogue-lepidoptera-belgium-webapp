@@ -2,6 +2,6 @@
 {% load i18n %}
 
 {% block details %}
-    <h2>{% trans "Direct lower taxa" %}</h2>
+    <h3>{% trans "Direct lower taxa" %}</h3>
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=taxon.genus_set.all only %}
 {% endblock %}

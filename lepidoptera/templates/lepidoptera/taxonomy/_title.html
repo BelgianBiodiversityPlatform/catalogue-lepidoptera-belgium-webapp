@@ -7,7 +7,7 @@
             <a class="btn-sm btn btn-danger" href="{{ taxon.admin_change_url }}"><span class="oi oi-lock-locked" title="admin interface"></span> Edit {{ taxon|to_class_name }} in admin</a>
         {% endif %}
 
-        <h1 class="display-4">
+        <h2>
             {% if species_mode %}<i>{% endif %}
             <b>
                 {{ taxon.html_str }}
@@ -18,7 +18,7 @@
             {% with taxon_type_name=taxon|to_class_name %}
                 {% include "lepidoptera/_entity_type_badge.html" %}
             {% endwith %}
-        </h1>
+        </h2>
 
         <p class="small text-muted">{% trans "Last modified:" %} {{ taxon.last_modified }}</p>
 

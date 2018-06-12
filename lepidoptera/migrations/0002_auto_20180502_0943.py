@@ -39,7 +39,7 @@ def populate_page_fragments(apps, schema_editor):
     PageFragment.objects.create(identifier='welcome',
                                 content_nl="""
 Welkom!
-=======
+-------
 
 **Lorem ipsum dolor sit amet**, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
 labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -48,25 +48,25 @@ esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat n
 in culpa qui officia deserunt mollit anim id est laborum""",
                                 content_fr="""
 Bienvenue !
-===========
+-----------
 
 **Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore """,
                                 content_en="""
 Welcome!
-========
+--------
 
 **Lorem ipsum** dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
 """)
 
     about_page_text = """
 History of site/catalogue
-=========================
+-------------------------
 
 Disclaimer
-==========
+----------
 
 How to cite
-===========
+-----------
 """
     PageFragment.objects.create(identifier='about_page_content',
                                 content_nl=about_page_text,
