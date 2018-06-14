@@ -23,7 +23,6 @@
     <thead class="thead-dark">
         <tr>
             <th scope="col">{% trans 'Name' %}</th>
-            <th scope="col">{% trans 'Synonyms' %}</th>
             <th scope="col">{% trans 'Vernacular names' %}</th>
 
             {% for province in provinces %}
@@ -36,12 +35,18 @@
         {% for s in species_list %}
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr>
-                    <td class="small"><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a><span class="font-weight-light"> {{ s.author }}</span></td>
                     <td class="small">
+                        <a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a>
+                        <span class="font-weight-light"> {{ s.author }}</span>
+
                         {% for synonym in s.synonyms.all %}
-                                <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> <br/>
+                            <span class="font-weight-light">
+                                <br/> = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }} {{ synonym.author }}</a>
+                            </span>
                         {% endfor %}
+
                     </td>
+
                     <td class="small">
                         {% field_in_all_available_languages settings.LANGUAGES s 'vernacular_name' %}
                     </td>
