@@ -380,7 +380,12 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     accepted_objects = AcceptedGenusManager()
     synonym_objects = SynonymGenusManager()
 
-    direct_species_count = CountField('species_set')
+    # NOTE: Do NOT try to implement with a CountField (django-denorm) since is fails miserably when we set a filter that
+    # spans accross tables (which is needed to filter where the species status is ACCEPTED.
+    # If performance requires it, it's probably better to hack manually something similar to CountFiled
+    @property
+    def direct_species_count(self):
+        return self.species_set.filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES).count()
 
     @property
     def species_count(self):
@@ -452,7 +457,12 @@ class Subgenus(TaxonomicModel):
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
 
-    species_count = CountField('species_set')
+    # NOTE: Do NOT try to implement with a CountField (django-denorm) since is fails miserably when we set a filter that
+    # spans accross tables (which is needed to filter where the species status is ACCEPTED.
+    # If performance requires it, it's probably better to hack manually something similar to CountFiled
+    @property
+    def species_count(self):
+        return self.species_set.filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES).count()
 
     def get_absolute_url(self):
         return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})

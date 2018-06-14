@@ -59,7 +59,7 @@
     {% if taxon|to_class_name != 'Species' %}
         <dt class="col-sm-2">{% trans "Species in Belgium" %}</dt>
         <dd class="col-sm-10">
-            {{ taxon.all_species.count }}
+            {{ taxon.species_count }}
         </dd>
     {% endif %}
 
