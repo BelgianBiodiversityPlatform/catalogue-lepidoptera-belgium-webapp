@@ -34,24 +34,26 @@
 
     <tbody>
         {% for s in species_list %}
-            <tr>
-                <td class="small"><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a><span class="font-weight-light"> {{ s.author }}</span></td>
-                <td class="small">
-                    {% for synonym in s.synonyms.all %}
-                            <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> <br/>
-                    {% endfor %}
-                </td>
-                <td class="small">
-                    {% field_in_all_available_languages settings.LANGUAGES s 'vernacular_name' %}
-                </td>
+            {% if s.is_valid %} {# We skip synonyms... #}
+                <tr>
+                    <td class="small"><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a><span class="font-weight-light"> {{ s.author }}</span></td>
+                    <td class="small">
+                        {% for synonym in s.synonyms.all %}
+                                <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> <br/>
+                        {% endfor %}
+                    </td>
+                    <td class="small">
+                        {% field_in_all_available_languages settings.LANGUAGES s 'vernacular_name' %}
+                    </td>
 
-                {% for province in provinces %}
-                <td style="overflow: auto; position: relative;">
-                    {# If we want to optimize this further, we should try to do a single call instead of one by province #}
-                    {% species_presence_icons s.id province.id %}
-                </td>
-                {% endfor %}
-            </tr>
+                    {% for province in provinces %}
+                        <td style="overflow: auto; position: relative;">
+                            {# If we want to optimize this further, we should try to do a single call instead of one by province #}
+                            {% species_presence_icons s.id province.id %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {%  endif %}
         {% endfor %}
     </tbody>
 </table>

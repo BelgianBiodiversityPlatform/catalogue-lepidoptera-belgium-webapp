@@ -703,6 +703,9 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     bionomics_section_text = MarkdownxField(blank=True)
     habitat_section_text = MarkdownxField(blank=True)
 
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
+
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
 
