@@ -4,6 +4,13 @@
     {% include 'lepidoptera/taxonomy/_next_previous.html' %}
 
     {% include "lepidoptera/taxonomy/_title.html" %}
+
+    {% if taxon.synonym_of %}
+        <div class="alert alert-warning" role="alert">
+            <span class="oi oi-warning"></span> This page describes a synonym. The <a href="{{ taxon.synonym_of.get_absolute_url }}" class="alert-link">page describing the accepted taxon</a> may contains more information.
+        </div>
+    {% endif %}
+
     {% include "lepidoptera/taxonomy/_common_attributes.html" %}
 
     {% block details %}{% endblock details %}
