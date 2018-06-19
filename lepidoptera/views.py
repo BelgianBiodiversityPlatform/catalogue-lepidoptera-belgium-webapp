@@ -282,3 +282,20 @@ def pictures_json(request):
     return JsonResponse({'hasMoreResults': paginated_pictures.has_next(),
                          'results': pictures_data,
                          'count': paginator.count}, safe=False)
+
+
+def species_per_province_and_period(request):
+    species_id = int(request.GET.get('speciesId'))
+    sp = Species.objects.get(pk=species_id)
+
+    r = []
+
+    # Time periods are always listed, even if no data
+    for tp in TimePeriod.objects.all():
+        r.append({
+            'period_name': tp.name,
+            'present_in': [presence.province.code for presence in sp.speciespresence_set.filter(present=True,
+                                                                                                period=tp)]
+        })
+
+    return JsonResponse(r, safe=False)

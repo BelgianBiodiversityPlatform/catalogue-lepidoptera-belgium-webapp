@@ -16,6 +16,8 @@ urlpatterns = [
     path('genus/<int:genus_id>/', views.genus_page, name='genus_page'),
     path('subgenus/<int:subgenus_id>/', views.subgenus_page, name='subgenus_page'),
     path('species/<int:species_id>/', views.species_page, name='species_page'),
+    path('species_per_province_and_period/', views.species_per_province_and_period,
+         name='species_per_province_and_period'),
 
     # All_xxx pages
     path('families/', views.all_families, name='all_families_page'),

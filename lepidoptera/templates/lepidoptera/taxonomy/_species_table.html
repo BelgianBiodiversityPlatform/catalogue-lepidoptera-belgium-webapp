@@ -1,23 +1,23 @@
 {%  load i18n %}
 {%  load various_helpers %}
 
-<p class="text-center">
+<p class="text-center"><small>
     {% for province in provinces %}
         <b>{{ province.code }}</b> = {{ province.name }}
         {% if not forloop.last %}
             •
         {% endif %}
     {%  endfor %}
-</p>
+</small></p>
 
-<p class="text-center">
+<p class="text-center"><small>
     {% for period in timeperiods %}
         <img src="{{ period.icon.url }}" /> = {{ period.name }}
         {% if not forloop.last %}
             •
         {% endif %}
     {% endfor %}
-</p>
+</small></p>
 
 <table class="table table-bordered table-hover table-striped table-sm sticky-header">
     <thead class="thead-dark">

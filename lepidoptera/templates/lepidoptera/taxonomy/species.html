@@ -11,23 +11,82 @@
    crossorigin=""></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.2.0/leaflet-providers.min.js"></script>
+    <style>
+    .province {
+        stroke-width: 1.5;
+        r: 15px;
+        fill:lightgrey;
+        stroke: red;
+    }
+
+    .activeprovince {
+        stroke:green !important;
+    }
+
+    .activeText {
+        font-weight: bold;
+    }
+    </style>
 {% endblock %}
 
 {% block details %}
 
+    <script type="text/x-template" id="country-grape-template">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">[[ period.period_name ]]</h5>
+                    <svg width="300" height="112">
+                        <province-icon v-for="province in provinces" :pos-x="province.posX"  :pos-y="province.posY" :province-code="province.name" :is-active="province.active"></province-icon>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="province-icon-template">
+        <g>
+            <circle
+                :cx="posX"
+                :cy="posY"
+                class="province"
+                v-bind:class="{ activeprovince: isActive }" />
+        <text :x="posX" :y="posY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="11" v-bind:class="{ activeText: isActive }">
+            [[ provinceCode ]]
+        </text>
+        </g>
+    </script>
+
+    <h2>{% trans "Distribution" %}</h2>
+
     <div class="row">
         <div class="col">
-            <h2>{% trans "Distribution" %}</h2>
             {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods%}
+        </div>
+    </div>
+
+    <div class="row" id="distribution-grapefruit">
+        <country-grape v-for="period in periods" :period="period"></country-grape>
+    </div>
+
+    <hr>
+
+    <div class="row">
+        <div class="col">
+            <h2>{% trans "Flight periods" %}</h2>
             <div id="mapid"></div>
         </div>
     </div>
+
+    <hr>
 
     <div class="row">
         <div class="col">
             <h2>{% trans "Observed on" %}</h2>
         </div>
     </div>
+
+    <hr>
 
     <dl class="row">
         {% if plant_species_observations %}
@@ -73,6 +132,12 @@
 {% block bottom-of-body %}
     <script type="text/javascript">
     $(function () {
+        var pageConf = {
+            presenceJSONUrl: "{% url 'species_per_province_and_period' %}",
+            speciesId: {{ taxon.pk }}
+        };
+
+        // Set up the lightbox
         $(document).on('click', '[data-toggle="lightbox"]', function(event) {
             event.preventDefault();
             $(this).ekkoLightbox();
@@ -84,6 +149,80 @@
 	        maxZoom: 18,
 	        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(mymap);
+
+        // And Vue
+        Vue.component('province-icon', {
+            delimiters: ['[[', ']]'],
+            template: '#province-icon-template',
+            props: {
+                posX: Number,
+                posY: Number,
+                isActive: Boolean,
+                provinceCode: String
+            }
+        });
+
+        Vue.component('country-grape', {
+            delimiters: ['[[', ']]'],
+            template: '#country-grape-template',
+            props: {
+                period: Object // has a name, and a list of provinces codes where the species is present
+            },
+            data: function () {
+                var i, j, found;
+                var that = this;
+
+                var provinces = [
+                    {name: 'BR', posX:160 , posY:48, active:false},
+                    {name: 'NA', posX:160 , posY:80, active:false},
+                    {name: 'LX', posX:188 , posY:96, active:false},
+                    {name: 'LG', posX:188 , posY:64, active:false },
+                    {name: 'LI', posX:188 , posY:32, active:false },
+                    {name: 'AN', posX:160 , posY:16, active:false },
+                    {name: 'OV', posX:132 , posY:32, active:false },
+                    {name: 'HA', posX:132 , posY:64, active:false },
+                    {name: 'WV', posX:104 , posY:16, active:false }
+                ];
+
+                for (i = 0; i < this.period.present_in.length; i++)
+                    for (j = 0; j < provinces.length; j++) {
+                        if (provinces[j]['name'] === this.period.present_in[i]) {
+                             provinces[j].active = true;
+                        }
+
+                    }
+
+                return {
+                    provinces: provinces
+                }
+            }
+        });
+
+        var vm = new Vue({
+            delimiters: ['[[', ']]'],
+            el: '#distribution-grapefruit',
+            data: {
+                speciesId: pageConf.speciesId,
+                periods: []
+            },
+            mounted: function () {
+                this.$nextTick(function () {
+                    this.loadData();
+                })
+            },
+            methods: {
+                loadData: function() {
+                    var that = this;
+                    $.getJSON(pageConf.presenceJSONUrl, {speciesId: this.speciesId})
+                        .done(function (json) {
+                            that.periods = json;
+                        })
+                        .fail(function (jqxhr, textStatus, error) {
+                            alert("error");
+                        })
+                }
+            }
+        });
 
     });
     </script>
