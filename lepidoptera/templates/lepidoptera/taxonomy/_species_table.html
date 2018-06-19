@@ -2,15 +2,6 @@
 {%  load various_helpers %}
 
 <p class="text-center"><small>
-    {% for province in provinces %}
-        <b>{{ province.code }}</b> = {{ province.name }}
-        {% if not forloop.last %}
-            •
-        {% endif %}
-    {%  endfor %}
-</small></p>
-
-<p class="text-center"><small>
     {% for period in timeperiods %}
         <img src="{{ period.icon.url }}" /> = {{ period.name }}
         {% if not forloop.last %}

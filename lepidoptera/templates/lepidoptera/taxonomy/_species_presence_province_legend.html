@@ -1,0 +1,8 @@
+<p class="text-center"><small>
+    {% for province in provinces %}
+        <b>{{ province.code }}</b> = {{ province.name }}
+        {% if not forloop.last %}
+            •
+        {% endif %}
+    {%  endfor %}
+</small></p>

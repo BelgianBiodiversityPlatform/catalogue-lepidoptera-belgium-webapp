@@ -59,14 +59,31 @@
 
     <h2>{% trans "Distribution" %}</h2>
 
-    <div class="row">
-        <div class="col">
-            {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods%}
-        </div>
-    </div>
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="pills-grape-tab" data-toggle="pill" href="#pills-grape" role="tab" aria-controls="pills-grape" aria-selected="true">Grape view</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="pills-table-tab" data-toggle="pill" href="#pills-table" role="tab" aria-controls="pills-table" aria-selected="false">Table view </a>
+        </li>
+    </ul>
 
-    <div class="row" id="distribution-grapefruit">
-        <country-grape v-for="period in periods" :period="period"></country-grape>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
+            <div class="row" id="distribution-grapefruit">
+                <country-grape v-for="period in periods" :period="period"></country-grape>
+                {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+            <div class="row">
+                <div class="col">
+                    {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
+                    {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods%}
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>
