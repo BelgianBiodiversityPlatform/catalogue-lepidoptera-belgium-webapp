@@ -14,7 +14,6 @@
     <style>
     .province {
         stroke-width: 1.5;
-        r: 15px;
         fill:lightgrey;
         stroke: red;
     }
@@ -49,6 +48,7 @@
             <circle
                 :cx="posX"
                 :cy="posY"
+                r="15"
                 class="province"
                 v-bind:class="{ activeprovince: isActive }" />
         <text :x="posX" :y="posY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="11" v-bind:class="{ activeText: isActive }">
