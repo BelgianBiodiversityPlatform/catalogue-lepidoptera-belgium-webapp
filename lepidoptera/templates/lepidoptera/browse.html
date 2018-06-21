@@ -15,12 +15,14 @@
     </script>
 
     <script type="text/x-template" id="content-entry-template">
-        <div class="tab-pane fade show" :id="htmlId" role="tabpanel">[[ content ]]</div>
+        <div class="tab-pane fade show" :id="htmlId" role="tabpanel">
+            [[ content ]]
+        </div>
     </script>
 
     <script type="text/x-template" id="results-zone-template">
         <div class="tab-content" id="nav-tabContent">
-            <content-entry v-for="entry in entries" :html-id="entry.target" :content="entry.target" :class="{ active: entry.target === selected }"></content-entry>
+            <content-entry v-for="entry in entries" :key="entry.target" :html-id="entry.target" :active="entry.target === selected" :content="entry.target" :class="{ active: entry.target === selected }"></content-entry>
         </div>
     </script>
 
@@ -33,6 +35,10 @@
 {% block bottom-of-body %}
     <script type="text/javascript">
     $(function () {
+        var browseConf = {
+            hostPlantsUrl: "{% url 'browse_hostplants_json' %}",
+        };
+
         Vue.component('content-entry', {
             delimiters: ['[[', ']]'],
             template: '#content-entry-template',
@@ -40,6 +46,23 @@
                 htmlId: String,
                 content: String,
                 active: Boolean
+            },
+            data: function() {
+                return {
+                    fromServer: [],
+                    alreadyLoaded: false
+                }
+            },
+            watch: {
+                active: {
+                    immediate: true,
+                    handler (newVal, oldVal) {
+                        if (newVal === true && !this.alreadyLoaded) {
+                            console.log(this.htmlId + 'will be loaded')
+                            this.alreadyLoaded = true;
+                        }
+                    }
+                }
             }
         });
 
@@ -60,14 +83,6 @@
                 entries: Array,
                 selected: String
             },
-            watch: {
-                selected: {
-                    immediate: true,
-                    handler (newVal, oldVal) { // selection changed
-                        console.log('Selected changed: ', newVal, ' | was: ', oldVal)
-                    }
-                }
-            }
         });
 
         var vm = new Vue({
@@ -77,7 +92,7 @@
                 menuEntries: [
                     {label: 'Taxonomy (lepidoptera)', target: '#list-taxonomy'},
                     {label: 'Vernacular names', target: '#list-vernacularnames'},
-                    {label: 'Host plants', target: '#list-hostplants'},
+                    {label: 'Host plants', target: '#list-hostplants', url: browseConf.hostPlantsUrl},
                     {label: 'Substrates', target: '#substrates'},
                     {label: 'Publications', target: '#list-publications'},
                 ],

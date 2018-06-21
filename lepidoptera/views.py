@@ -299,3 +299,12 @@ def species_per_province_and_period(request):
         })
 
     return JsonResponse(r, safe=False)
+
+
+def browse_hostplants_json(request):
+    r = {}
+
+    hpf = HostPlantFamily.objects.all().order_by('name')
+    r['families'] = [{'name': f.name} for f in hpf]
+
+    return JsonResponse(r, safe=False)
