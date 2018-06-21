@@ -1,3 +1,5 @@
+import time
+
 from django.conf import settings
 from django.core.paginator import Paginator
 import json
@@ -305,6 +307,6 @@ def browse_hostplants_json(request):
     r = {}
 
     hpf = HostPlantFamily.objects.all().order_by('name')
-    r['families'] = [{'name': f.name} for f in hpf]
+    r['families'] = [{'name': f.name, 'link': f.get_absolute_url()} for f in hpf]
 
     return JsonResponse(r, safe=False)

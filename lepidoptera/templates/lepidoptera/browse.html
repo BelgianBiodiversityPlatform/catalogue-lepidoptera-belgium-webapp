@@ -14,15 +14,32 @@
         </div>
     </script>
 
+    <script type="text/x-template" id="content-entry-hostplants-template">
+        <div>
+            <h2>Host plant families</h2>
+            <ul>
+                <li v-for="family in jsonData.families"><a :href="family.link">[[ family.name ]]</a></li>
+            </ul>
+        </div>
+    </script>
+
     <script type="text/x-template" id="content-entry-template">
         <div class="tab-pane fade show" :id="htmlId" role="tabpanel">
-            [[ content ]]
+            <span v-if="currentlyLoading">Loading...</span>
+
+            <div v-else>
+                <content-entry-hostplants v-if="htmlId === '#list-hostplants'" :json-data="fromServer"></content-entry-hostplants>
+            </div>
         </div>
     </script>
 
     <script type="text/x-template" id="results-zone-template">
         <div class="tab-content" id="nav-tabContent">
-            <content-entry v-for="entry in entries" :key="entry.target" :html-id="entry.target" :active="entry.target === selected" :content="entry.target" :class="{ active: entry.target === selected }"></content-entry>
+            <content-entry v-for="entry in entries" :key="entry.target" :html-id="entry.target"
+                           :active="entry.target === selected"
+                           :class="{ active: entry.target === selected }"
+                           :service-url="entry.url">
+            </content-entry>
         </div>
     </script>
 
@@ -39,18 +56,27 @@
             hostPlantsUrl: "{% url 'browse_hostplants_json' %}",
         };
 
+        Vue.component('content-entry-hostplants', {
+            delimiters: ['[[', ']]'],
+            template: '#content-entry-hostplants-template',
+            props: {
+                jsonData: Object
+            }
+        });
+
         Vue.component('content-entry', {
             delimiters: ['[[', ']]'],
             template: '#content-entry-template',
             props: {
                 htmlId: String,
-                content: String,
-                active: Boolean
+                active: Boolean,
+                serviceUrl: String
             },
             data: function() {
                 return {
-                    fromServer: [],
-                    alreadyLoaded: false
+                    fromServer: {},
+                    alreadyLoaded: false,
+                    currentlyLoading: false
                 }
             },
             watch: {
@@ -58,8 +84,19 @@
                     immediate: true,
                     handler (newVal, oldVal) {
                         if (newVal === true && !this.alreadyLoaded) {
-                            console.log(this.htmlId + 'will be loaded')
-                            this.alreadyLoaded = true;
+                            var that = this;
+                            that.currentlyLoading = true;
+                            $.getJSON(this.serviceUrl, {})
+                                .done(function (json) {
+                                    that.fromServer = json;
+                                    that.alreadyLoaded = true;
+                            })
+                            .fail(function (jqxhr, textStatus, error) {
+                                alert("error");
+                            })
+                                .always(function() {
+                                    that.currentlyLoading = false
+                                })
                         }
                     }
                 }
