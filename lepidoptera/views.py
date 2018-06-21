@@ -1,5 +1,3 @@
-import time
-
 from django.conf import settings
 from django.core.paginator import Paginator
 import json
@@ -25,32 +23,33 @@ def family_page(request, family_id):
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
         'all_provinces': Province.objects.all(),
-        'all_timeperiods': TimePeriod.objects.all()
+        'all_timeperiods': TimePeriod.objects.all(),
+        'select_browse_menu': True
     })
 
 
 def subfamily_page(request, subfamily_id):
     subfamily = Subfamily.objects.get(pk=subfamily_id)
 
-    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'taxon': subfamily})
+    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'taxon': subfamily, 'select_browse_menu': True})
 
 
 def tribus_page(request, tribus_id):
     tribus = Tribus.objects.get(pk=tribus_id)
 
-    return render(request, 'lepidoptera/taxonomy/tribus.html', {'taxon': tribus})
+    return render(request, 'lepidoptera/taxonomy/tribus.html', {'taxon': tribus, 'select_browse_menu': True})
 
 
 def genus_page(request, genus_id):
     genus = Genus.objects.get(pk=genus_id)
 
-    return render(request, 'lepidoptera/taxonomy/genus.html', {'taxon': genus})
+    return render(request, 'lepidoptera/taxonomy/genus.html', {'taxon': genus, 'select_browse_menu': True})
 
 
 def subgenus_page(request, subgenus_id):
     subgenus = Subgenus.objects.get(pk=subgenus_id)
 
-    return render(request, 'lepidoptera/taxonomy/subgenus.html', {'taxon': subgenus})
+    return render(request, 'lepidoptera/taxonomy/subgenus.html', {'taxon': subgenus, 'select_browse_menu': True})
 
 
 def species_page(request, species_id):
@@ -63,7 +62,9 @@ def species_page(request, species_id):
         'plant_genus_observations': Observation.objects.filter(species=species, plant_genus__isnull=False),
         'species_as_a_list': [species],
         'all_provinces': Province.objects.all(),
-        'all_timeperiods': TimePeriod.objects.all()
+        'all_timeperiods': TimePeriod.objects.all(),
+
+        'select_browse_menu': True
     }
 
     return render(request, 'lepidoptera/taxonomy/species.html', context)
@@ -74,7 +75,7 @@ def about_page(request):
 
 
 def browse_page(request):
-    return render(request, 'lepidoptera/browse.html')
+    return render(request, 'lepidoptera/browse.html', {'select_browse_menu': True})
 
 # All_xxx pages
 
@@ -83,7 +84,8 @@ def all_families(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All families',
-        'taxa': families
+        'taxa': families,
+        'select_browse_menu': True
     })
 
 
@@ -92,7 +94,8 @@ def all_subfamilies(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All subfamilies',
-        'taxa': subfamilies
+        'taxa': subfamilies,
+        'select_browse_menu': True
     })
 
 
@@ -101,7 +104,8 @@ def all_tribus(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All tribus',
-        'taxa': tribus
+        'taxa': tribus,
+        'select_browse_menu': True
     })
 
 
@@ -110,7 +114,8 @@ def all_accepted_genera(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All accepted genera',
-        'taxa': genera
+        'taxa': genera,
+        'select_browse_menu': True
     })
 
 
@@ -119,7 +124,8 @@ def all_genera_synonyms(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All synonyms of genera',
-        'taxa': genera
+        'taxa': genera,
+        'select_browse_menu': True
     })
 
 
@@ -137,7 +143,8 @@ def all_accepted_species(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All accepted species',
-        'taxa': species
+        'taxa': species,
+        'select_browse_menu': True
     })
 
 
@@ -146,7 +153,8 @@ def all_species_synonyms(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All species synonym',
-        'taxa': species
+        'taxa': species,
+        'select_browse_menu': True
     })
 
 
@@ -155,7 +163,8 @@ def all_hostplant_species(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All host plant species',
-        'taxa': species
+        'taxa': species,
+        'select_browse_menu': True
     })
 
 
@@ -164,7 +173,8 @@ def all_hostplant_genera(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All host plant genera',
-        'taxa': genera
+        'taxa': genera,
+        'select_browse_menu': True
     })
 
 
@@ -173,7 +183,8 @@ def all_hostplant_families(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All host plant families',
-        'taxa': families
+        'taxa': families,
+        'select_browse_menu': True
     })
 
 
@@ -182,7 +193,8 @@ def all_substrates(request):
 
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All substrates',
-        'taxa': substrates
+        'taxa': substrates,
+        'select_browse_menu': True
     })
 
 
@@ -191,7 +203,8 @@ def hostplant_species(request, species_id):
 
     return render(request, 'lepidoptera/hostplant_species.html', {
         'species': species,
-        'lepidoptera_species': species.lepidoptera_species.all
+        'lepidoptera_species': species.lepidoptera_species.all,
+        'select_browse_menu': True
     })
 
 
@@ -200,7 +213,8 @@ def hostplant_genus(request, genus_id):
 
     return render(request, 'lepidoptera/hostplant_genus.html', {
         'genus': genus,
-        'lepidoptera_species': genus.lepidoptera_species.all
+        'lepidoptera_species': genus.lepidoptera_species.all,
+        'select_browse_menu': True
     })
 
 
@@ -208,7 +222,8 @@ def hostplant_family(request, family_id):
     family = HostPlantFamily.objects.get(pk=family_id)
 
     return render(request, 'lepidoptera/hostplant_family.html', {
-        'family': family
+        'family': family,
+        'select_browse_menu': True
     })
 
 
@@ -217,7 +232,8 @@ def substrate_page(request, substrate_id):
 
     return render(request, 'lepidoptera/substrate.html', {
         'substrate': substrate,
-        'lepidoptera_species': substrate.lepidoptera_species.all
+        'lepidoptera_species': substrate.lepidoptera_species.all,
+        'select_browse_menu': True
     })
 
 

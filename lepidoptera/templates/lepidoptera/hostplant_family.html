@@ -7,10 +7,12 @@
 {% endblock %}
 
 {% block additional_details %}
-    {% trans "Genera in this family" %}:
+    <h3>{% trans "Genera in this family" %}</h3>
     {% for genus in family.hostplantgenus_set.all %}
         <a href="{{ genus.get_absolute_url }}">{{ genus.html_str }}</a>
-        {% if not forloop.last %}, {% endif %}
-    {% endfor %}.
+        {% include 'lepidoptera/_comma.html' %}
+    {% empty %}
+        Nothing found
+    {% endfor %}
     </p>
 {% endblock %}

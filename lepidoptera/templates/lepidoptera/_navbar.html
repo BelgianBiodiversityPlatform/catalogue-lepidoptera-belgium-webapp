@@ -20,7 +20,11 @@
                 {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Home" href=home_url oi_icon_identifier="oi-home" %}
             {% endif %}
 
-            {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href=browse_url oi_icon_identifier="oi-spreadsheet" %}
+            {% if select_browse_menu %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Browse data" href=browse_url oi_icon_identifier="oi-spreadsheet" %}
+            {% else %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Browse data" href=browse_url oi_icon_identifier="oi-spreadsheet" %}
+            {%  endif %}
 
             {% if request.path == gallery_url %}
                 {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Gallery" href=gallery_url oi_icon_identifier="oi-image" %}

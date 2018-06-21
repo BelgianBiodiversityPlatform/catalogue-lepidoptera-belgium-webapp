@@ -3,6 +3,15 @@
 {% block content %}
     <h2>Browse data</h2>
 
+    <script type="text/x-template" id="content-entry-hostplants-template">
+        <div>
+            <h2>Host plant families</h2>
+            <ul>
+                <li v-for="family in jsonData.families"><a :href="family.link">[[ family.name ]]</a></li>
+            </ul>
+        </div>
+    </script>
+
     <script type="text/x-template" id="tab-selector-template">
         <div class="list-group">
             <a v-for="entry in entries" :href="entry.target" class="list-group-item list-group-item-action"
@@ -11,15 +20,6 @@
 
                [[ entry.label ]]
             </a>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="content-entry-hostplants-template">
-        <div>
-            <h2>Host plant families</h2>
-            <ul>
-                <li v-for="family in jsonData.families"><a :href="family.link">[[ family.name ]]</a></li>
-            </ul>
         </div>
     </script>
 
