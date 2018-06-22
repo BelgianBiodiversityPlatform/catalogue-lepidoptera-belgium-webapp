@@ -198,7 +198,7 @@
                     {name: 'AN', posX:160 , posY:16, active:false },
                     {name: 'OV', posX:132 , posY:32, active:false },
                     {name: 'HA', posX:132 , posY:64, active:false },
-                    {name: 'WV', posX:104 , posY:16, active:false }
+                    {name: 'WV', posX:104 , posY:48, active:false }
                 ];
 
                 for (i = 0; i < this.period.present_in.length; i++)
@@ -206,7 +206,6 @@
                         if (provinces[j]['name'] === this.period.present_in[i]) {
                              provinces[j].active = true;
                         }
-
                     }
 
                 return {
