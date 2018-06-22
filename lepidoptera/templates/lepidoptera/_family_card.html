@@ -1,12 +1,14 @@
 {% load i18n %}
-<div class="card">
+<div class="card familyCard">
+    <a class="d-none" href="{% url 'family_page' family.id %}">link</a>
     {% if family.representative_picture %}
-        <img class="card-img-top" src="{{ family.representative_picture_thumbnail.url }}" alt="Species representative picture" />
+        <img class="card-img-top" src="{{ family.representative_picture_thumbnail.url }}"
+             alt="Species representative picture"/>
     {% endif %}
 
     <div class="card-body">
         <h5 class="card-title">{{ family.name }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ family.species_count }} {% trans "species in Belgium" %}.</h6>
-        <a href="{% url 'family_page' family.id %}" class="btn btn-outline-primary btn-sm">View family</a>
     </div>
 </div>
+
