@@ -319,10 +319,20 @@ def species_per_province_and_period(request):
     return JsonResponse(r, safe=False)
 
 
-def browse_hostplants_json(request):
+# TODO: Factorize with next
+def browse_hostplants_families_json(request):
     r = {}
 
     hpf = HostPlantFamily.objects.all().order_by('name')
     r['families'] = [{'name': f.name, 'link': f.get_absolute_url()} for f in hpf]
+
+    return JsonResponse(r, safe=False)
+
+
+def browse_hostplants_genera_json(request):
+    r = {}
+
+    hpf = HostPlantGenus.objects.all().order_by('name')
+    r['genera'] = [{'name': f.name, 'link': f.get_absolute_url()} for f in hpf]
 
     return JsonResponse(r, safe=False)

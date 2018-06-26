@@ -7,7 +7,8 @@ urlpatterns = [
     path('about/', views.about_page, name='about'),
 
     path('browse/', views.browse_page, name='browse'),
-    path('browse_hostplants_json', views.browse_hostplants_json, name='browse_hostplants_json'),
+    path('browse_hostplants_families_json', views.browse_hostplants_families_json, name='browse_hostplants_families_json'),
+    path('browse_hostplants_genera_json', views.browse_hostplants_genera_json, name='browse_hostplants_genera_json'),
 
     path('gallery/', views.gallery_page, name='gallery'),
     path('pictures_json', views.pictures_json, name='pictures_json'),

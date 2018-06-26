@@ -3,11 +3,20 @@
 {% block content %}
     <h2>Browse data</h2>
 
-    <script type="text/x-template" id="content-entry-hostplants-template">
+    <script type="text/x-template" id="content-entry-hostplants-families-template">
         <div>
             <h2>Host plant families</h2>
             <ul>
                 <li v-for="family in jsonData.families"><a :href="family.link">[[ family.name ]]</a></li>
+            </ul>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="content-entry-hostplants-genera-template">
+        <div>
+            <h2>Host plant genera</h2>
+            <ul>
+                <li v-for="genus in jsonData.genera"><a :href="genus.link">[[ genus.name ]]</a></li>
             </ul>
         </div>
     </script>
@@ -28,7 +37,8 @@
             <span v-if="currentlyLoading">Loading...</span>
 
             <div v-else>
-                <content-entry-hostplants v-if="htmlId === '#list-hostplants'" :json-data="fromServer"></content-entry-hostplants>
+                <content-entry-hostplants-families v-if="htmlId === '#list-hostplants-families'" :json-data="fromServer"></content-entry-hostplants-families>
+                <content-entry-hostplants-genera v-if="htmlId === '#list-hostplants-genera'" :json-data="fromServer"></content-entry-hostplants-genera>
             </div>
         </div>
     </script>
@@ -53,12 +63,21 @@
     <script type="text/javascript">
     $(function () {
         var browseConf = {
-            hostPlantsUrl: "{% url 'browse_hostplants_json' %}",
+            hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
+            hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
         };
 
-        Vue.component('content-entry-hostplants', {
+        Vue.component('content-entry-hostplants-genera', {
             delimiters: ['[[', ']]'],
-            template: '#content-entry-hostplants-template',
+            template: '#content-entry-hostplants-genera-template',
+            props: {
+                jsonData: Object
+            }
+        });
+
+        Vue.component('content-entry-hostplants-families', {
+            delimiters: ['[[', ']]'],
+            template: '#content-entry-hostplants-families-template',
             props: {
                 jsonData: Object
             }
@@ -129,7 +148,8 @@
                 menuEntries: [
                     {label: 'Taxonomy (lepidoptera)', target: '#list-taxonomy'},
                     {label: 'Vernacular names', target: '#list-vernacularnames'},
-                    {label: 'Host plants', target: '#list-hostplants', url: browseConf.hostPlantsUrl},
+                    {label: 'Host plants families', target: '#list-hostplants-families', url: browseConf.hostPlantsFamiliesUrl},
+                    {label: 'Host plants genera', target: '#list-hostplants-genera', url: browseConf.hostPlantsGeneraUrl},
                     {label: 'Substrates', target: '#substrates'},
                     {label: 'Publications', target: '#list-publications'},
                 ],
