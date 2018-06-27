@@ -843,8 +843,9 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
     def __str__(self):
         return "{} {}".format(self.genus.name, self.name)
 
+    @property
     def html_str(self):
-        return format_html("<i>{}</i>", self.__str__() )
+        return format_html("<i>{}</i>", self.__str__())
 
 
 class Observation(models.Model):

@@ -7,7 +7,7 @@
         <div>
             <h2>[[ jsonData.resultsTitle ]]</h2>
             <ul>
-                <li v-for="entry in jsonData.entries"><a :href="entry.link">[[ entry.name ]]</a></li>
+                <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a></li>
             </ul>
         </div>
     </script>
@@ -53,8 +53,19 @@
     <script type="text/javascript">
     $(function () {
         var browseConf = {
+            lepidopteraFamiliesUrl: "{% url 'browse_lepidoptera_families_json' %}",
+            lepidopteraSubfamiliesUrl: "{% url 'browse_lepidoptera_subfamilies_json' %}",
+            lepidopteraTribusUrl: "{% url 'browse_lepidoptera_tribus_json' %}",
+            lepidopteraGeneraUrl: "{% url 'browse_lepidoptera_genera_json' %}",
+            lepidopteraSubgeneraUrl: "{% url 'browse_lepidoptera_subgenera_json' %}",
+            lepidopteraSpeciesUrl: "{% url 'browse_lepidoptera_species_json' %}",
+
             hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
             hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
+            hostPlantSpeciesUrl: "{% url 'browse_hostplants_species_json' %}",
+
+            substratesUrl: "{% url 'browse_substrates_json' %}",
+            vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
         };
 
         Vue.component('content-entry-simplelist', {
@@ -128,14 +139,19 @@
             el: '#browse-module',
             data: {
                 menuEntries: [
-                    {label: 'Taxonomy (lepidoptera)', target: '#list-taxonomy'},
-                    {label: 'Vernacular names', target: '#list-vernacularnames'},
+                    {label: 'Families (lepidoptera)', target: '#list-families', url: browseConf.lepidopteraFamiliesUrl},
+                    {label: 'Subfamilies (lepidoptera)', target: '#list-subfamilies', url: browseConf.lepidopteraSubfamiliesUrl},
+                    {label: 'Tribus (lepidoptera)', target: '#list-tribus', url: browseConf.lepidopteraTribusUrl},
+                    {label: 'Genera (lepidoptera)', target: '#list-genera', url: browseConf.lepidopteraGeneraUrl},
+                    {label: 'Subgenera (lepidoptera)', target: '#list-subgenera', url: browseConf.lepidopteraSubgeneraUrl},
+                    {label: 'Species (lepidoptera)', target: '#list-species', url: browseConf.lepidopteraSpeciesUrl},
+                    {label: 'Vernacular names', target: '#list-vernacularnames', url: browseConf.vernacularNamesUrl},
                     {label: 'Host plants families', target: '#list-hostplants-families', url: browseConf.hostPlantsFamiliesUrl},
                     {label: 'Host plants genera', target: '#list-hostplants-genera', url: browseConf.hostPlantsGeneraUrl},
-                    {label: 'Substrates', target: '#substrates'},
-                    {label: 'Publications', target: '#list-publications'},
+                    {label: 'Host plant species', target: '#list-hostplant-species', url: browseConf.hostPlantSpeciesUrl},
+                    {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
                 ],
-                selectedEntryTarget: '#list-taxonomy'
+                selectedEntryTarget: '#list-families'
             },
             methods: {
                 selectedEntry: function(selectedTarget) {

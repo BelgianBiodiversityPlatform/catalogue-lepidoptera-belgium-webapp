@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from django.core.paginator import Paginator
 import json
 from django.http import JsonResponse
@@ -319,19 +320,88 @@ def species_per_province_and_period(request):
     return JsonResponse(r, safe=False)
 
 
-def _browse_model_json(model, title):
-    r = {}
+def _sort_list_of_dicts_by_name(l):
+    return sorted(l, key=lambda k: k['name'])
 
-    qs = model.objects.all().order_by('name')
-    r['entries'] = [{'name': e.name, 'link': e.get_absolute_url()} for e in qs]
+def _browse_model_json(model, title, name_attr='name'):
+    try:
+        model._meta.get_field(name_attr)
+        name_attr_is_field = True
+    except FieldDoesNotExist:
+        name_attr_is_field = False
+
+    qs = model.objects.all()
+
+    if name_attr_is_field:  # in this case, we can order at the DB level
+        qs = qs.order_by(name_attr)
+
+    r = {}
+    r['entries'] = [{'name': getattr(e, name_attr), 'link': e.get_absolute_url()} for e in qs]
     r['resultsTitle'] = title
+
+    if not name_attr_is_field:  # We have to sort in python
+        r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
 
     return JsonResponse(r, safe=False)
 
 
 def browse_hostplants_families_json(request):
-    return _browse_model_json(HostPlantFamily, 'Host plan families')
+    return _browse_model_json(HostPlantFamily, 'Host plant families')
 
 
 def browse_hostplants_genera_json(request):
-    return _browse_model_json(HostPlantGenus, 'Host plan genera')
+    return _browse_model_json(HostPlantGenus, 'Host plant genera')
+
+
+def browse_hostplants_species_json(request):
+    return _browse_model_json(HostPlantSpecies, 'Host plant species', name_attr='html_str')
+
+
+def browse_lepidoptera_families_json(request):
+    return _browse_model_json(Family, 'Families')
+
+
+def browse_lepidoptera_subfamilies_json(request):
+    return _browse_model_json(Subfamily, 'Subfamilies')
+
+
+def browse_lepidoptera_tribus_json(request):
+    return _browse_model_json(Tribus, 'Tribus')
+
+
+def browse_lepidoptera_genera_json(request):
+    return _browse_model_json(Genus, 'Genera')
+
+
+def browse_lepidoptera_subgenera_json(request):
+    return _browse_model_json(Subgenus, 'Subgenera')
+
+
+def browse_lepidoptera_species_json(request):
+    return _browse_model_json(Species, 'Species', name_attr='binomial_name')
+
+
+def browse_substrates_json(request):
+    return _browse_model_json(Substrate, 'Substates')
+
+
+def browse_vernacularnames_json(request):
+    qs = Species.objects.all()
+
+    r = {
+        'entries': [],
+        'resultsTitle': 'Vernacular names'
+    }
+
+    # TODO: extract names automatically from django-modeltranslation? Factorize with field_in_all_available_languages?
+    field_names = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
+    for species in qs:
+        for field_name in field_names:
+            val = getattr(species, field_name)
+            if val is not None and val != '':
+                r['entries'].append({'name': val, 'link': species.get_absolute_url()})
+
+    r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
+
+    return JsonResponse(r, safe=False)
+
