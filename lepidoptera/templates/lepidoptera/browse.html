@@ -4,12 +4,15 @@
     <h2>Browse data</h2>
 
     <script type="text/x-template" id="content-entry-simplelist-template">
-        <div>
-            <h2>[[ jsonData.resultsTitle ]]</h2>
-            <ul>
-                <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a></li>
-            </ul>
-        </div>
+        <transition name="fade">
+            <div>
+                <h2>[[ jsonData.resultsTitle ]]</h2>
+                <ul>
+                    <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </transition>
     </script>
 
     <script type="text/x-template" id="tab-selector-template">
@@ -18,13 +21,13 @@
                :class="{ active: entry.target === selected }"
                v-on:click.prevent="$emit('clicked-entry', entry.target)">
 
-               [[ entry.label ]]
+                [[ entry.label ]]
             </a>
         </div>
     </script>
 
     <script type="text/x-template" id="content-entry-template">
-        <div class="tab-pane fade show" :id="htmlId" role="tabpanel">
+        <div class="tab-pane" :id="htmlId" role="tabpanel">
             <span v-if="currentlyLoading">Loading...</span>
 
             <div v-else>
@@ -44,125 +47,162 @@
     </script>
 
     <div id="browse-module" class="row">
-        <div class="col-4"><tab-selector :entries="menuEntries" :selected="selectedEntryTarget" v-on:clicked-entry="selectedEntry"></tab-selector></div>
-        <div class="col-8"><results-zone :entries="menuEntries" :selected="selectedEntryTarget"></results-zone></div>
+        <div class="col-4">
+            <tab-selector :entries="menuEntries" :selected="selectedEntryTarget"
+                          v-on:clicked-entry="selectedEntry"></tab-selector>
+        </div>
+        <div class="col-8">
+            <results-zone :entries="menuEntries" :selected="selectedEntryTarget"></results-zone>
+        </div>
     </div>
 {% endblock content %}
 
 {% block bottom-of-body %}
     <script type="text/javascript">
-    $(function () {
-        var browseConf = {
-            lepidopteraFamiliesUrl: "{% url 'browse_lepidoptera_families_json' %}",
-            lepidopteraSubfamiliesUrl: "{% url 'browse_lepidoptera_subfamilies_json' %}",
-            lepidopteraTribusUrl: "{% url 'browse_lepidoptera_tribus_json' %}",
-            lepidopteraGeneraUrl: "{% url 'browse_lepidoptera_genera_json' %}",
-            lepidopteraSubgeneraUrl: "{% url 'browse_lepidoptera_subgenera_json' %}",
-            lepidopteraSpeciesUrl: "{% url 'browse_lepidoptera_species_json' %}",
+        $(function () {
+            var browseConf = {
+                lepidopteraFamiliesUrl: "{% url 'browse_lepidoptera_families_json' %}",
+                lepidopteraSubfamiliesUrl: "{% url 'browse_lepidoptera_subfamilies_json' %}",
+                lepidopteraTribusUrl: "{% url 'browse_lepidoptera_tribus_json' %}",
+                lepidopteraGeneraUrl: "{% url 'browse_lepidoptera_genera_json' %}",
+                lepidopteraSubgeneraUrl: "{% url 'browse_lepidoptera_subgenera_json' %}",
+                lepidopteraSpeciesUrl: "{% url 'browse_lepidoptera_species_json' %}",
 
-            hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
-            hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
-            hostPlantSpeciesUrl: "{% url 'browse_hostplants_species_json' %}",
+                hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
+                hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
+                hostPlantSpeciesUrl: "{% url 'browse_hostplants_species_json' %}",
 
-            substratesUrl: "{% url 'browse_substrates_json' %}",
-            vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
-        };
+                substratesUrl: "{% url 'browse_substrates_json' %}",
+                vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
+            };
 
-        Vue.component('content-entry-simplelist', {
-            delimiters: ['[[', ']]'],
-            template: '#content-entry-simplelist-template',
-            props: {
-                jsonData: Object
-            }
-        });
-
-        Vue.component('content-entry', {
-            delimiters: ['[[', ']]'],
-            template: '#content-entry-template',
-            props: {
-                htmlId: String,
-                active: Boolean,
-                serviceUrl: String
-            },
-            data: function() {
-                return {
-                    fromServer: {},
-                    alreadyLoaded: false,
-                    currentlyLoading: false
+            Vue.component('content-entry-simplelist', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-simplelist-template',
+                props: {
+                    jsonData: Object
                 }
-            },
-            watch: {
-                active: {
-                    immediate: true,
-                    handler (newVal, oldVal) {
-                        if (newVal === true && !this.alreadyLoaded) {
-                            var that = this;
-                            that.currentlyLoading = true;
-                            $.getJSON(this.serviceUrl, {})
-                                .done(function (json) {
-                                    that.fromServer = json;
-                                    that.alreadyLoaded = true;
-                            })
-                            .fail(function (jqxhr, textStatus, error) {
-                                alert("error");
-                            })
-                                .always(function() {
-                                    that.currentlyLoading = false
-                                })
+            });
+
+            Vue.component('content-entry', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-template',
+                props: {
+                    htmlId: String,
+                    active: Boolean,
+                    serviceUrl: String
+                },
+                data: function () {
+                    return {
+                        fromServer: {},
+                        alreadyLoaded: false,
+                        currentlyLoading: false
+                    }
+                },
+                watch: {
+                    active: {
+                        immediate: true,
+                        handler(newVal, oldVal) {
+                            if (newVal === true && !this.alreadyLoaded) {
+                                var that = this;
+                                that.currentlyLoading = true;
+                                $.getJSON(this.serviceUrl, {})
+                                    .done(function (json) {
+                                        that.fromServer = json;
+                                        that.alreadyLoaded = true;
+                                    })
+                                    .fail(function (jqxhr, textStatus, error) {
+                                        alert("error");
+                                    })
+                                    .always(function () {
+                                        that.currentlyLoading = false
+                                    })
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        Vue.component('tab-selector', {
-            delimiters: ['[[', ']]'],
-            template: '#tab-selector-template',
-            props: {
-                entries: Array,
-                selected: String
-            },
+            Vue.component('tab-selector', {
+                delimiters: ['[[', ']]'],
+                template: '#tab-selector-template',
+                props: {
+                    entries: Array,
+                    selected: String
+                },
 
-        });
+            });
 
-        Vue.component('results-zone', {
-            delimiters: ['[[', ']]'],
-            template: '#results-zone-template',
-            props: {
-                entries: Array,
-                selected: String
-            },
-        });
+            Vue.component('results-zone', {
+                delimiters: ['[[', ']]'],
+                template: '#results-zone-template',
+                props: {
+                    entries: Array,
+                    selected: String
+                },
+            });
 
-        var vm = new Vue({
-            delimiters: ['[[', ']]'],
-            el: '#browse-module',
-            data: {
-                menuEntries: [
-                    {label: 'Families (lepidoptera)', target: '#list-families', url: browseConf.lepidopteraFamiliesUrl},
-                    {label: 'Subfamilies (lepidoptera)', target: '#list-subfamilies', url: browseConf.lepidopteraSubfamiliesUrl},
-                    {label: 'Tribus (lepidoptera)', target: '#list-tribus', url: browseConf.lepidopteraTribusUrl},
-                    {label: 'Genera (lepidoptera)', target: '#list-genera', url: browseConf.lepidopteraGeneraUrl},
-                    {label: 'Subgenera (lepidoptera)', target: '#list-subgenera', url: browseConf.lepidopteraSubgeneraUrl},
-                    {label: 'Species (lepidoptera)', target: '#list-species', url: browseConf.lepidopteraSpeciesUrl},
-                    {label: 'Vernacular names', target: '#list-vernacularnames', url: browseConf.vernacularNamesUrl},
-                    {label: 'Host plants families', target: '#list-hostplants-families', url: browseConf.hostPlantsFamiliesUrl},
-                    {label: 'Host plants genera', target: '#list-hostplants-genera', url: browseConf.hostPlantsGeneraUrl},
-                    {label: 'Host plant species', target: '#list-hostplant-species', url: browseConf.hostPlantSpeciesUrl},
-                    {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
-                ],
-                selectedEntryTarget: '#list-families'
-            },
-            methods: {
-                selectedEntry: function(selectedTarget) {
-                    if (selectedTarget != this.selectedEntryTarget) { // Ignore if we click on the entry already selected
-                        this.selectedEntryTarget = selectedTarget;
+            var vm = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#browse-module',
+                data: {
+                    menuEntries: [
+                        {
+                            label: 'Families (lepidoptera)',
+                            target: '#list-families',
+                            url: browseConf.lepidopteraFamiliesUrl
+                        },
+                        {
+                            label: 'Subfamilies (lepidoptera)',
+                            target: '#list-subfamilies',
+                            url: browseConf.lepidopteraSubfamiliesUrl
+                        },
+                        {label: 'Tribus (lepidoptera)', target: '#list-tribus', url: browseConf.lepidopteraTribusUrl},
+                        {label: 'Genera (lepidoptera)', target: '#list-genera', url: browseConf.lepidopteraGeneraUrl},
+                        {
+                            label: 'Subgenera (lepidoptera)',
+                            target: '#list-subgenera',
+                            url: browseConf.lepidopteraSubgeneraUrl
+                        },
+                        {
+                            label: 'Species (lepidoptera)',
+                            target: '#list-species',
+                            url: browseConf.lepidopteraSpeciesUrl
+                        },
+                        {
+                            label: 'Vernacular names',
+                            target: '#list-vernacularnames',
+                            url: browseConf.vernacularNamesUrl
+                        },
+                        {
+                            label: 'Host plants families',
+                            target: '#list-hostplants-families',
+                            url: browseConf.hostPlantsFamiliesUrl
+                        },
+                        {
+                            label: 'Host plants genera',
+                            target: '#list-hostplants-genera',
+                            url: browseConf.hostPlantsGeneraUrl
+                        },
+                        {
+                            label: 'Host plant species',
+                            target: '#list-hostplant-species',
+                            url: browseConf.hostPlantSpeciesUrl
+                        },
+                        {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
+                    ],
+                    selectedEntryTarget: '#list-families'
+                },
+                methods: {
+                    selectedEntry: function (selectedTarget) {
+                        if (selectedTarget != this.selectedEntryTarget) { // Ignore if we click on the entry already selected
+                            this.selectedEntryTarget = selectedTarget;
+                        }
+
                     }
-
                 }
-            }
-        });
+            });
 
-    });
+        });
     </script>
 {% endblock %}
