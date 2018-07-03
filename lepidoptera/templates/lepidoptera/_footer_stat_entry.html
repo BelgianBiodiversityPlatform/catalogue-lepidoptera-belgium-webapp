@@ -2,6 +2,8 @@
 
 {% if page_name %}
     <a class="text-dark" href="{% url page_name %}">{{ label }}</a>
+{% elif browse_page_anchor %}
+    <a class="text-dark" href="{% url "browse" %}#{{ browse_page_anchor }}">{{ label }}</a>
 {% else %}
     {{ label }}
 {% endif %}

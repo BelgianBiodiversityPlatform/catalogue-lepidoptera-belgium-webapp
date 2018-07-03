@@ -19,7 +19,7 @@
         <div class="list-group">
             <a v-for="entry in entries" :href="entry.target" class="list-group-item list-group-item-action"
                :class="{ active: entry.target === selected }"
-               v-on:click.prevent="$emit('clicked-entry', entry.target)">
+               v-on:click="$emit('clicked-entry', entry.target)">
 
                 [[ entry.label ]]
             </a>
@@ -145,53 +145,63 @@
             var vm = new Vue({
                 delimiters: ['[[', ']]'],
                 el: '#browse-module',
-                data: {
-                    menuEntries: [
-                        {
-                            label: 'Families (lepidoptera)',
-                            target: '#list-families',
-                            url: browseConf.lepidopteraFamiliesUrl
-                        },
-                        {
-                            label: 'Subfamilies (lepidoptera)',
-                            target: '#list-subfamilies',
-                            url: browseConf.lepidopteraSubfamiliesUrl
-                        },
-                        {label: 'Tribus (lepidoptera)', target: '#list-tribus', url: browseConf.lepidopteraTribusUrl},
-                        {label: 'Genera (lepidoptera)', target: '#list-genera', url: browseConf.lepidopteraGeneraUrl},
-                        {
-                            label: 'Subgenera (lepidoptera)',
-                            target: '#list-subgenera',
-                            url: browseConf.lepidopteraSubgeneraUrl
-                        },
-                        {
-                            label: 'Species (lepidoptera)',
-                            target: '#list-species',
-                            url: browseConf.lepidopteraSpeciesUrl
-                        },
-                        {
-                            label: 'Vernacular names',
-                            target: '#list-vernacularnames',
-                            url: browseConf.vernacularNamesUrl
-                        },
-                        {
-                            label: 'Host plants families',
-                            target: '#list-hostplants-families',
-                            url: browseConf.hostPlantsFamiliesUrl
-                        },
-                        {
-                            label: 'Host plants genera',
-                            target: '#list-hostplants-genera',
-                            url: browseConf.hostPlantsGeneraUrl
-                        },
-                        {
-                            label: 'Host plant species',
-                            target: '#list-hostplant-species',
-                            url: browseConf.hostPlantSpeciesUrl
-                        },
-                        {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
-                    ],
-                    selectedEntryTarget: '#list-families'
+                data: function () {
+                    return {
+                        menuEntries: [
+                            {
+                                label: 'Families (lepidoptera)',
+                                target: '#list-families',
+                                url: browseConf.lepidopteraFamiliesUrl
+                            },
+                            {
+                                label: 'Subfamilies (lepidoptera)',
+                                target: '#list-subfamilies',
+                                url: browseConf.lepidopteraSubfamiliesUrl
+                            },
+                            {
+                                label: 'Tribus (lepidoptera)',
+                                target: '#list-tribus',
+                                url: browseConf.lepidopteraTribusUrl
+                            },
+                            {
+                                label: 'Genera (lepidoptera)',
+                                target: '#list-genera',
+                                url: browseConf.lepidopteraGeneraUrl
+                            },
+                            {
+                                label: 'Subgenera (lepidoptera)',
+                                target: '#list-subgenera',
+                                url: browseConf.lepidopteraSubgeneraUrl
+                            },
+                            {
+                                label: 'Species (lepidoptera)',
+                                target: '#list-species',
+                                url: browseConf.lepidopteraSpeciesUrl
+                            },
+                            {
+                                label: 'Vernacular names',
+                                target: '#list-vernacularnames',
+                                url: browseConf.vernacularNamesUrl
+                            },
+                            {
+                                label: 'Host plants families',
+                                target: '#list-hostplants-families',
+                                url: browseConf.hostPlantsFamiliesUrl
+                            },
+                            {
+                                label: 'Host plants genera',
+                                target: '#list-hostplants-genera',
+                                url: browseConf.hostPlantsGeneraUrl
+                            },
+                            {
+                                label: 'Host plant species',
+                                target: '#list-hostplants-species',
+                                url: browseConf.hostPlantSpeciesUrl
+                            },
+                            {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
+                        ],
+                        selectedEntryTarget: window.location.hash || '#list-families'
+                    }
                 },
                 methods: {
                     selectedEntry: function (selectedTarget) {

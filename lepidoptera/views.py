@@ -78,38 +78,8 @@ def about_page(request):
 def browse_page(request):
     return render(request, 'lepidoptera/browse.html', {'select_browse_menu': True})
 
+
 # All_xxx pages
-
-def all_families(request):
-    families = Family.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All families',
-        'taxa': families,
-        'select_browse_menu': True
-    })
-
-
-def all_subfamilies(request):
-    subfamilies = Subfamily.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All subfamilies',
-        'taxa': subfamilies,
-        'select_browse_menu': True
-    })
-
-
-def all_tribus(request):
-    tribus = Tribus.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All tribus',
-        'taxa': tribus,
-        'select_browse_menu': True
-    })
-
-
 def all_accepted_genera(request):
     genera = Genus.accepted_objects.all().order_by('name')
 
@@ -130,15 +100,6 @@ def all_genera_synonyms(request):
     })
 
 
-def all_subgenera(request):
-    subgenera = Subgenus.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All subgenera',
-        'taxa': subgenera
-    })
-
-
 def all_accepted_species(request):
     species = Species.accepted_objects.all().order_by('name')
 
@@ -155,46 +116,6 @@ def all_species_synonyms(request):
     return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
         'title': 'All species synonym',
         'taxa': species,
-        'select_browse_menu': True
-    })
-
-
-def all_hostplant_species(request):
-    species = HostPlantSpecies.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All host plant species',
-        'taxa': species,
-        'select_browse_menu': True
-    })
-
-
-def all_hostplant_genera(request):
-    genera = HostPlantGenus.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All host plant genera',
-        'taxa': genera,
-        'select_browse_menu': True
-    })
-
-
-def all_hostplant_families(request):
-    families = HostPlantFamily.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All host plant families',
-        'taxa': families,
-        'select_browse_menu': True
-    })
-
-
-def all_substrates(request):
-    substrates = Substrate.objects.all().order_by('name')
-
-    return render(request, 'lepidoptera/taxonomy/all_xxx.html', {
-        'title': 'All substrates',
-        'taxa': substrates,
         'select_browse_menu': True
     })
 
