@@ -2,6 +2,8 @@ from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.core.paginator import Paginator
 import json
+
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -159,9 +161,10 @@ def substrate_page(request, substrate_id):
     })
 
 
-# TODO: Implement more fields (vernacular names, ...) and models
+# TODO: Implement more fields and models
 def autocomplete(request, query_string):
     results = []
+
     models = HostPlantTaxonomicModel.__subclasses__()
     models.extend(TaxonomicModel.__subclasses__())
     models.extend([Substrate])
@@ -173,6 +176,19 @@ def autocomplete(request, query_string):
                 'value': str(instance),
                 'suggest_type': instance.suggest_type_label,
                 'url': instance.get_absolute_url()
+            })
+
+    # Also look into Species vernacular names
+    for vernacular_field_name in Species.VERNACULAR_FIELDS:
+        lookup_string = '{}__icontains'.format(vernacular_field_name)
+        args = {lookup_string: query_string}
+
+        species = Species.objects.filter(**args)
+        for s in species:
+            results.append({
+                'value': getattr(s, vernacular_field_name),
+                'suggest_type': 'Vernacular name',
+                'url': s.get_absolute_url()
             })
 
     return JsonResponse(results, safe=False)
@@ -244,6 +260,7 @@ def species_per_province_and_period(request):
 def _sort_list_of_dicts_by_name(l):
     return sorted(l, key=lambda k: k['name'])
 
+
 def _browse_model_json(model, title, name_attr='name'):
     try:
         model._meta.get_field(name_attr)
@@ -314,10 +331,8 @@ def browse_vernacularnames_json(request):
         'resultsTitle': 'Vernacular names'
     }
 
-    # TODO: extract names automatically from django-modeltranslation? Factorize with field_in_all_available_languages?
-    field_names = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
     for species in qs:
-        for field_name in field_names:
+        for field_name in Species.VERNACULAR_FIELDS:
             val = getattr(species, field_name)
             if val is not None and val != '':
                 r['entries'].append({'name': val, 'link': species.get_absolute_url()})

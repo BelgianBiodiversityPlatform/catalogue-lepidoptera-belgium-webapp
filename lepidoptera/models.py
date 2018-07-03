@@ -667,6 +667,8 @@ SPECIES_PAGE_SECTIONS = {
 class Species(ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
+    VERNACULAR_FIELDS = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
+
     verbatim_species_number = get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
         validate_only_numbers_and_uppercase,
