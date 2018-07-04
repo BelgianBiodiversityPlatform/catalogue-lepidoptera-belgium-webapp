@@ -59,7 +59,14 @@
     </script>
 
     <script type="text/x-template" id="half-province-icon-template">
-        <path fill="none" :d="moveList" class="province" v-bind:class="{ activeprovince: isActive }"/>
+        <g>
+            <path fill="none" :d="moveList" class="province" v-bind:class="{ activeprovince: isActive }"/>
+
+            <text :x="posX" :y="textPosY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="9"
+                  v-bind:class="{ activeText: isActive }">
+                [[ provinceCode ]]
+            </text>
+        </g>
     </script>
 
     <script type="text/x-template" id="province-icon-template">
@@ -212,9 +219,17 @@
                     return {
                         moveList: this.describeArc(this.posX, this.posY, pageConf.circleRadius, this.startAngle,
                             this.endAngle),
+                        textPosY: this.getTextYPos()
                     }
                 },
                 methods: {
+                    getTextYPos: function() {
+                        if (this.startAngle < this.endAngle) {
+                            return this.posY + 5;
+                        } else {
+                            return this.posY - 5;
+                        }
+                    },
                     describeArc: function (x, y, radius, startAngle, endAngle) {
                         var polarToCartesian = function (centerX, centerY, radius, angleInDegrees) {
                             var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
