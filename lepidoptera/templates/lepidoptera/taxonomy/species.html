@@ -20,6 +20,7 @@
 
         .activeprovince {
             stroke: green !important;
+            stroke-width: 2.5 !important;
         }
 
         .activeText {
@@ -44,7 +45,6 @@
                                        :key="province.name"></province-icon>
 
                         <half-province-icon v-for="province in specialProvinces"
-                                            v-if="province.active"
                                             :pos-x="province.posX"
                                             :pos-y="province.posY"
                                             :start-angle="province.startAngle"
@@ -59,7 +59,7 @@
     </script>
 
     <script type="text/x-template" id="half-province-icon-template">
-        <path fill="none" :d="moveList" class="province activeprovince"/>
+        <path fill="none" :d="moveList" class="province" v-bind:class="{ activeprovince: isActive }"/>
     </script>
 
     <script type="text/x-template" id="province-icon-template">
@@ -271,13 +271,17 @@
                                 if (provinces[j]['name'] === presences[i]) {
                                     provinces[j].active = true;
                                 }
+
+                                if (provinces[j]['partOf'] === presences[i]) {
+                                    provinces[j].active = true;
+                                }
                             }
                         }
                         return provinces;
                     };
 
                     var provinces = [
-                        {name: 'BR', posX: 160, posY: 48, active: false},
+                        /* Brabant is not displayed as a full province but as the aggregate of BRW and VBR*/
                         {name: 'NA', posX: 160, posY: 80, active: false},
                         {name: 'LX', posX: 188, posY: 96, active: false},
                         {name: 'LG', posX: 188, posY: 64, active: false},
@@ -289,8 +293,8 @@
                     ];
 
                     var specialProvinces = [
-                        {name: 'BRW', posX: 160, posY: 48, startAngle: 90, endAngle: 270, active: false},
-                        {name: 'VBR', posX: 160, posY: 48, startAngle: 270, endAngle: 90, active: false}
+                        {name: 'BRW', posX: 160, posY: 48, startAngle: 90, endAngle: 270, active: false, partOf: 'BR'},
+                        {name: 'VBR', posX: 160, posY: 48, startAngle: 270, endAngle: 90, active: false, partOf: 'BR'}
                     ];
 
                     return {
