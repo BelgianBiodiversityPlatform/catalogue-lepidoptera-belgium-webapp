@@ -705,8 +705,13 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     bionomics_section_text = MarkdownxField(blank=True)
     habitat_section_text = MarkdownxField(blank=True)
 
+    @property
     def is_valid(self):
         return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
 
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
@@ -728,6 +733,13 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
 
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
+
+    @property
+    def additional_data_for_json(self):
+        return {
+            'hasPic': self.speciespicture_set.exists(),
+            'synonym': self.is_synonym
+        }
 
     @property
     def family(self):

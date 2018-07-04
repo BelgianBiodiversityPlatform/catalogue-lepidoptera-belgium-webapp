@@ -3,16 +3,24 @@
 {% block content %}
     <h2>Browse data</h2>
 
+    <script type="text/x-template" id="content-entry-specieslist-template">
+        <ul>
+            <li v-for="entry in jsonData.entries">
+                <a :href="entry.link">
+                    <span v-html="entry.name"></span>
+                </a>
+
+                <span v-if="entry.additionalData.hasPic" class="oi oi-camera-slr"></span>
+                <span v-if="entry.additionalData.synonym" class="badge badge-secondary">Synonym</span>
+            </li>
+        </ul>
+    </script>
+
     <script type="text/x-template" id="content-entry-simplelist-template">
-        <transition name="fade">
-            <div>
-                <h2>[[ jsonData.resultsTitle ]]</h2>
-                <ul>
-                    <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a>
-                    </li>
-                </ul>
-            </div>
-        </transition>
+        <ul>
+            <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a>
+            </li>
+        </ul>
     </script>
 
     <script type="text/x-template" id="tab-selector-template">
@@ -31,7 +39,13 @@
             <span v-if="currentlyLoading">Loading...</span>
 
             <div v-else>
-                <content-entry-simplelist :json-data="fromServer"></content-entry-simplelist>
+                {# FIXME: transition doesn't work anymore? #}
+                <transition name="fade">
+                    <div>
+                        <h2>[[ fromServer.resultsTitle ]]</h2>
+                        <component :is="componentName" :json-data="fromServer"></component>
+                    </div>
+                </transition>
             </div>
         </div>
     </script>
@@ -41,7 +55,8 @@
             <content-entry v-for="entry in entries" :key="entry.target" :html-id="entry.target"
                            :active="entry.target === selected"
                            :class="{ active: entry.target === selected }"
-                           :service-url="entry.url">
+                           :service-url="entry.url"
+                           :component-name="entry.component">
             </content-entry>
         </div>
     </script>
@@ -76,6 +91,14 @@
                 vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
             };
 
+            Vue.component('content-entry-specieslist', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-specieslist-template',
+                props: {
+                    jsonData: Object
+                }
+            });
+
             Vue.component('content-entry-simplelist', {
                 delimiters: ['[[', ']]'],
                 template: '#content-entry-simplelist-template',
@@ -90,7 +113,8 @@
                 props: {
                     htmlId: String,
                     active: Boolean,
-                    serviceUrl: String
+                    serviceUrl: String,
+                    componentName: String
                 },
                 data: function () {
                     return {
@@ -151,52 +175,62 @@
                             {
                                 label: 'Families (lepidoptera)',
                                 target: '#list-families',
-                                url: browseConf.lepidopteraFamiliesUrl
+                                url: browseConf.lepidopteraFamiliesUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Subfamilies (lepidoptera)',
                                 target: '#list-subfamilies',
-                                url: browseConf.lepidopteraSubfamiliesUrl
+                                url: browseConf.lepidopteraSubfamiliesUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Tribus (lepidoptera)',
                                 target: '#list-tribus',
-                                url: browseConf.lepidopteraTribusUrl
+                                url: browseConf.lepidopteraTribusUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Genera (lepidoptera)',
                                 target: '#list-genera',
-                                url: browseConf.lepidopteraGeneraUrl
+                                url: browseConf.lepidopteraGeneraUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Subgenera (lepidoptera)',
                                 target: '#list-subgenera',
-                                url: browseConf.lepidopteraSubgeneraUrl
+                                url: browseConf.lepidopteraSubgeneraUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Species (lepidoptera)',
                                 target: '#list-species',
-                                url: browseConf.lepidopteraSpeciesUrl
+                                url: browseConf.lepidopteraSpeciesUrl,
+                                component: 'content-entry-specieslist'
                             },
                             {
                                 label: 'Vernacular names',
                                 target: '#list-vernacularnames',
-                                url: browseConf.vernacularNamesUrl
+                                url: browseConf.vernacularNamesUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Host plants families',
                                 target: '#list-hostplants-families',
-                                url: browseConf.hostPlantsFamiliesUrl
+                                url: browseConf.hostPlantsFamiliesUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Host plants genera',
                                 target: '#list-hostplants-genera',
-                                url: browseConf.hostPlantsGeneraUrl
+                                url: browseConf.hostPlantsGeneraUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {
                                 label: 'Host plant species',
                                 target: '#list-hostplants-species',
-                                url: browseConf.hostPlantSpeciesUrl
+                                url: browseConf.hostPlantSpeciesUrl,
+                                component: 'content-entry-simplelist'
                             },
                             {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
                         ],

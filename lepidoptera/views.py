@@ -273,9 +273,18 @@ def _browse_model_json(model, title, name_attr='name'):
     if name_attr_is_field:  # in this case, we can order at the DB level
         qs = qs.order_by(name_attr)
 
-    r = {}
-    r['entries'] = [{'name': getattr(e, name_attr), 'link': e.get_absolute_url()} for e in qs]
-    r['resultsTitle'] = title
+    r = {
+        'entries': [],
+        'resultsTitle': title
+    }
+
+    for e in qs:
+        entry = {'name': getattr(e, name_attr), 'link': e.get_absolute_url()}
+        if hasattr(e, 'additional_data_for_json'):
+            entry['additionalData'] = e.additional_data_for_json
+
+        r['entries'].append(entry)
+
 
     if not name_attr_is_field:  # We have to sort in python
         r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
