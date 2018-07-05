@@ -232,7 +232,12 @@
                                 url: browseConf.hostPlantSpeciesUrl,
                                 component: 'content-entry-simplelist'
                             },
-                            {label: 'Substrates', target: '#substrates', url: browseConf.substratesUrl},
+                            {
+                                label: 'Substrates',
+                                target: '#substrates',
+                                url: browseConf.substratesUrl,
+                                component: 'content-entry-simplelist'
+                            },
                         ],
                         selectedEntryTarget: window.location.hash || '#list-families'
                     }
