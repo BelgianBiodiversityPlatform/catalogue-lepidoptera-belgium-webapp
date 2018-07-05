@@ -7,6 +7,7 @@
             <th scope="col">{% trans 'Name' %}</th>
             <th scope="col">{% trans 'Vernacular names' %}</th>
             <th scope="col"><span class="oi oi-camera-slr"></span></th>
+            <th scope="col">{% trans 'Distribution' %}</th>
         </tr>
     </thead>
 
@@ -34,6 +35,9 @@
                         {% if s.has_pictures %}<span class="oi oi-camera-slr"></span>{% endif %}
                     </td>
 
+                    <td>
+
+                    </td>
                 </tr>
             {%  endif %}
         {% endfor %}

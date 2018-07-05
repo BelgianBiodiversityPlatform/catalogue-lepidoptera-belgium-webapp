@@ -19,9 +19,9 @@ img.province-icon {
     position: absolute;
     left: 0;
     right: 0;
-    top:0;
-    bottom:0;
-    margin:auto;
+    top: 0;
+    bottom: 0;
+    margin: auto;
 }
 
 #mapid {
@@ -31,8 +31,26 @@ img.province-icon {
 
 /* For Vue.js transitions */
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+    transition: opacity .5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */
+{
+    opacity: 0;
+}
+
+/* Province grapes */
+.province {
+    stroke-width: 1.5;
+    fill: lightgrey;
+    stroke: red;
+}
+
+.activeProvince {
+    stroke: green !important;
+    stroke-width: 2.5 !important;
+}
+
+.activeText {
+    font-weight: bold;
 }

@@ -12,79 +12,12 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-providers/1.2.0/leaflet-providers.min.js"></script>
     <style>
-        .province {
-            stroke-width: 1.5;
-            fill: lightgrey;
-            stroke: red;
-        }
 
-        .activeprovince {
-            stroke: green !important;
-            stroke-width: 2.5 !important;
-        }
-
-        .activeText {
-            font-weight: bold;
-        }
     </style>
 {% endblock %}
 
 {% block details %}
-
-    <script type="text/x-template" id="country-grape-template">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">[[ period.period_name ]]</h5>
-                    <svg width="300" height="112">
-                        <province-icon v-for="province in provinces"
-                                       :pos-x="province.posX"
-                                       :pos-y="province.posY"
-                                       :province-code="province.name"
-                                       :is-active="province.active"
-                                       :key="province.name"></province-icon>
-
-                        <half-province-icon v-for="province in specialProvinces"
-                                            :pos-x="province.posX"
-                                            :pos-y="province.posY"
-                                            :start-angle="province.startAngle"
-                                            :end-angle="province.endAngle"
-                                            :province-code="province.name"
-                                            :is-active="province.active"
-                                            :key="province.name"></half-province-icon>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/x-template" id="half-province-icon-template">
-        <g>
-            <path fill="none" :d="moveList" class="province" v-bind:class="{ activeprovince: isActive }"/>
-
-            <text :x="posX" :y="textPosY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="9"
-                  v-bind:class="{ activeText: isActive }">
-                [[ provinceCode ]]
-            </text>
-        </g>
-    </script>
-
-    <script type="text/x-template" id="province-icon-template">
-        <g>
-            <circle
-                    :cx="posX"
-                    :cy="posY"
-                    :r="radius"
-                    class="province"
-                    v-bind:class="{ activeprovince: isActive }"/>
-
-            <text :x="posX" :y="posY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="11"
-                  v-bind:class="{ activeText: isActive }">
-                [[ provinceCode ]]
-            </text>
-
-        </g>
-    </script>
+    {% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
 
     <h2>{% trans "Distribution" %}</h2>
 
@@ -182,13 +115,17 @@
 
 {% block bottom-of-body %}
     <script type="text/javascript">
-        $(function () {
-            var pageConf = {
-                presenceJSONUrl: "{% url 'species_per_province_and_period' %}",
-                speciesId: {{ taxon.pk }},
-                circleRadius: 15
-            };
+        var pageConf = {
+            presenceJSONUrl: "{% url 'species_per_province_and_period' %}",
+            speciesId: {{ taxon.pk }},
+            circleRadius: 15
+        };
+    </script>
 
+    {% include 'lepidoptera/taxonomy/_country_grape_js_components.html' %}
+
+    <script type="text/javascript">
+        $(function () {
             // Set up the lightbox
             $(document).on('click', '[data-toggle="lightbox"]', function (event) {
                 event.preventDefault();
@@ -201,123 +138,6 @@
                 maxZoom: 18,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(mymap);
-
-            // And Vue
-            Vue.component('half-province-icon', {
-                delimiters: ['[[', ']]'],
-                template: '#half-province-icon-template',
-                props: {
-                    posX: Number,
-                    posY: Number,
-                    startAngle: Number,
-                    endAngle: Number,
-
-                    isActive: Boolean,
-                    provinceCode: String
-                },
-                data: function () {
-                    return {
-                        moveList: this.describeArc(this.posX, this.posY, pageConf.circleRadius, this.startAngle,
-                            this.endAngle),
-                        textPosY: this.getTextYPos()
-                    }
-                },
-                methods: {
-                    getTextYPos: function() {
-                        if (this.startAngle < this.endAngle) {
-                            return this.posY + 5;
-                        } else {
-                            return this.posY - 5;
-                        }
-                    },
-                    describeArc: function (x, y, radius, startAngle, endAngle) {
-                        var polarToCartesian = function (centerX, centerY, radius, angleInDegrees) {
-                            var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-
-                            return {
-                                x: centerX + (radius * Math.cos(angleInRadians)),
-                                y: centerY + (radius * Math.sin(angleInRadians))
-                            };
-                        }
-
-                        var start = polarToCartesian(x, y, radius, endAngle);
-                        var end = polarToCartesian(x, y, radius, startAngle);
-
-                        var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-                        var d = [
-                            "M", start.x, start.y,
-                            "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
-                        ].join(" ");
-
-                        return d;
-                    }
-                }
-            });
-
-            Vue.component('province-icon', {
-                delimiters: ['[[', ']]'],
-                template: '#province-icon-template',
-                props: {
-                    posX: Number,
-                    posY: Number,
-                    isActive: Boolean,
-                    provinceCode: String
-                },
-                data: function () {
-                    return {
-                        'radius': pageConf.circleRadius
-                    }
-                }
-            });
-
-            Vue.component('country-grape', {
-                delimiters: ['[[', ']]'],
-                template: '#country-grape-template',
-                props: {
-                    period: Object // has a name, and a list of provinces codes where the species is present
-                },
-                data: function () {
-                    var activateProvinces = function (presences, provinces) {
-                        var i, j;
-
-                        for (i = 0; i < presences.length; i++) {
-                            for (j = 0; j < provinces.length; j++) {
-                                if (provinces[j]['name'] === presences[i]) {
-                                    provinces[j].active = true;
-                                }
-
-                                if (provinces[j]['partOf'] === presences[i]) {
-                                    provinces[j].active = true;
-                                }
-                            }
-                        }
-                        return provinces;
-                    };
-
-                    var provinces = [
-                        /* Brabant is not displayed as a full province but as the aggregate of BRW and VBR*/
-                        {name: 'NA', posX: 160, posY: 80, active: false},
-                        {name: 'LX', posX: 188, posY: 96, active: false},
-                        {name: 'LG', posX: 188, posY: 64, active: false},
-                        {name: 'LI', posX: 188, posY: 32, active: false},
-                        {name: 'AN', posX: 160, posY: 16, active: false},
-                        {name: 'OV', posX: 132, posY: 32, active: false},
-                        {name: 'HA', posX: 132, posY: 64, active: false},
-                        {name: 'WV', posX: 104, posY: 48, active: false}
-                    ];
-
-                    var specialProvinces = [
-                        {name: 'BRW', posX: 160, posY: 48, startAngle: 90, endAngle: 270, active: false, partOf: 'BR'},
-                        {name: 'VBR', posX: 160, posY: 48, startAngle: 270, endAngle: 90, active: false, partOf: 'BR'}
-                    ];
-
-                    return {
-                        provinces: activateProvinces(this.period.present_in, provinces),
-                        specialProvinces: activateProvinces(this.period.present_in, specialProvinces)
-                    }
-                }
-            });
 
             var vm = new Vue({
                 delimiters: ['[[', ']]'],

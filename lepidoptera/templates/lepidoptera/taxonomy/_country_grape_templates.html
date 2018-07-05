@@ -1,0 +1,54 @@
+<script type="text/x-template" id="country-grape-template">
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">[[ period.period_name ]]</h5>
+                <svg width="300" height="112">
+                    <province-icon v-for="province in provinces"
+                                   :pos-x="province.posX"
+                                   :pos-y="province.posY"
+                                   :province-code="province.name"
+                                   :is-active="province.active"
+                                   :key="province.name"></province-icon>
+
+                    <half-province-icon v-for="province in specialProvinces"
+                                        :pos-x="province.posX"
+                                        :pos-y="province.posY"
+                                        :start-angle="province.startAngle"
+                                        :end-angle="province.endAngle"
+                                        :province-code="province.name"
+                                        :is-active="province.active"
+                                        :key="province.name"></half-province-icon>
+                </svg>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="half-province-icon-template">
+    <g>
+        <path fill="none" :d="moveList" class="province" v-bind:class="{ activeProvince: isActive }"/>
+
+        <text :x="posX" :y="textPosY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="9"
+              v-bind:class="{ activeText: isActive }">
+            [[ provinceCode ]]
+        </text>
+    </g>
+</script>
+
+<script type="text/x-template" id="province-icon-template">
+    <g>
+        <circle
+                :cx="posX"
+                :cy="posY"
+                :r="radius"
+                class="province"
+                v-bind:class="{ activeProvince: isActive }"/>
+
+        <text :x="posX" :y="posY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="11"
+              v-bind:class="{ activeText: isActive }">
+            [[ provinceCode ]]
+        </text>
+
+    </g>
+</script>
