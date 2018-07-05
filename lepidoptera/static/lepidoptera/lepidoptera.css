@@ -54,3 +54,7 @@ img.province-icon {
 .activeText {
     font-weight: bold;
 }
+
+#species-table-body h5 {
+    font-size: 0.75rem !important;
+}

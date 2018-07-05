@@ -37,7 +37,7 @@
                         {% if s.has_pictures %}<span class="oi oi-camera-slr"></span>{% endif %}
                     </td>
 
-                    <td style="width: 450px;">
+                    <td class="px-3" style="width: 550px; overflow: auto;">
                         <distribution-grapefruit :species-id="{{ s.pk }}" :service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
                     </td>
                 </tr>
