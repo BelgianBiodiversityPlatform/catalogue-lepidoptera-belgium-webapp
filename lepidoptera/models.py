@@ -706,6 +706,10 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     habitat_section_text = MarkdownxField(blank=True)
 
     @property
+    def has_pictures(self):
+        return self.speciespicture_set.exists()
+
+    @property
     def is_valid(self):
         return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
 
@@ -737,7 +741,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     @property
     def additional_data_for_json(self):
         return {
-            'hasPic': self.speciespicture_set.exists(),
+            'hasPic': self.has_pictures,
             'synonym': self.is_synonym
         }
 

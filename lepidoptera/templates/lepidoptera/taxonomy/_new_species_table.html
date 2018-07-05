@@ -1,0 +1,41 @@
+{%  load i18n %}
+{%  load various_helpers %}
+
+<table class="table table-bordered table-hover table-striped table-sm sticky-header">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">{% trans 'Name' %}</th>
+            <th scope="col">{% trans 'Vernacular names' %}</th>
+            <th scope="col"><span class="oi oi-camera-slr"></span></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for s in species_list %}
+            {% if s.is_valid %} {# We skip synonyms... #}
+                <tr>
+                    <td class="small">
+                        <a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a>
+                        <span class="font-weight-light"> {{ s.author }}</span>
+
+                        {% for synonym in s.synonyms.all %}
+                            <span class="font-weight-light">
+                                <br/> = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }} {{ synonym.author }}</a>
+                            </span>
+                        {% endfor %}
+
+                    </td>
+
+                    <td class="small">
+                        {% field_in_all_available_languages settings.LANGUAGES s 'vernacular_name' %}
+                    </td>
+
+                    <td>
+                        {% if s.has_pictures %}<span class="oi oi-camera-slr"></span>{% endif %}
+                    </td>
+
+                </tr>
+            {%  endif %}
+        {% endfor %}
+    </tbody>
+</table>
