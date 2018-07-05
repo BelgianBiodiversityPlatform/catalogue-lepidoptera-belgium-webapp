@@ -38,7 +38,7 @@
                     </td>
 
                     <td class="px-3" style="width: 550px; overflow: auto;">
-                        <distribution-grapefruit :species-id="{{ s.pk }}" :service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
+                        <distribution-grapefruit :species-id="{{ s.pk }}" service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
                     </td>
                 </tr>
             {%  endif %}
