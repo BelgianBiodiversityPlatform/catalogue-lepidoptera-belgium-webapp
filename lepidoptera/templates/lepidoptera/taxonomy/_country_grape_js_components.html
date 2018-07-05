@@ -1,4 +1,8 @@
 <script type="text/javascript">
+    var provinceGrapesConf = {
+        circleRadius: 15
+    };
+
     Vue.component('half-province-icon', {
         delimiters: ['[[', ']]'],
         template: '#half-province-icon-template',
@@ -13,7 +17,7 @@
         },
         data: function () {
             return {
-                moveList: this.describeArc(this.posX, this.posY, pageConf.circleRadius, this.startAngle,
+                moveList: this.describeArc(this.posX, this.posY, provinceGrapesConf.circleRadius, this.startAngle,
                     this.endAngle),
                 textPosY: this.getTextYPos()
             }
@@ -34,7 +38,7 @@
                         x: centerX + (radius * Math.cos(angleInRadians)),
                         y: centerY + (radius * Math.sin(angleInRadians))
                     };
-                }
+                };
 
                 var start = polarToCartesian(x, y, radius, endAngle);
                 var end = polarToCartesian(x, y, radius, startAngle);
@@ -62,7 +66,37 @@
         },
         data: function () {
             return {
-                'radius': pageConf.circleRadius
+                'radius': provinceGrapesConf.circleRadius
+            }
+        }
+    });
+
+    Vue.component('distribution-grapefruit', {
+        template: '#distribution-grapefruit-template',
+        props: {
+            speciesId: Number,
+            serviceUrl: String
+        },
+        data: function() {
+            return {
+                periods: []
+            }
+        },
+        mounted: function () {
+            this.$nextTick(function () {
+                this.loadData();
+            })
+        },
+        methods: {
+            loadData: function () {
+                var that = this;
+                $.getJSON(this.serviceUrl, {speciesId: this.speciesId})
+                    .done(function (json) {
+                        that.periods = json;
+                    })
+                    .fail(function (jqxhr, textStatus, error) {
+                        alert("error");
+                    })
             }
         }
     });

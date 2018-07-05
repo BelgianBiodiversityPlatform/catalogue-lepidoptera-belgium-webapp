@@ -34,9 +34,8 @@
 
     <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
-            <div class="row" id="distribution-grapefruit">
-                <country-grape v-for="period in periods" :period="period" :key="period.period_name"></country-grape>
-                {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
+            <div id="distribution">
+                <distribution-grapefruit :species-id="{{ taxon.pk }}" :service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
             </div>
         </div>
 
@@ -114,14 +113,6 @@
 {% endblock %}
 
 {% block bottom-of-body %}
-    <script type="text/javascript">
-        var pageConf = {
-            presenceJSONUrl: "{% url 'species_per_province_and_period' %}",
-            speciesId: {{ taxon.pk }},
-            circleRadius: 15
-        };
-    </script>
-
     {% include 'lepidoptera/taxonomy/_country_grape_js_components.html' %}
 
     <script type="text/javascript">
@@ -140,29 +131,7 @@
             }).addTo(mymap);
 
             var vm = new Vue({
-                delimiters: ['[[', ']]'],
-                el: '#distribution-grapefruit',
-                data: {
-                    speciesId: pageConf.speciesId,
-                    periods: []
-                },
-                mounted: function () {
-                    this.$nextTick(function () {
-                        this.loadData();
-                    })
-                },
-                methods: {
-                    loadData: function () {
-                        var that = this;
-                        $.getJSON(pageConf.presenceJSONUrl, {speciesId: this.speciesId})
-                            .done(function (json) {
-                                that.periods = json;
-                            })
-                            .fail(function (jqxhr, textStatus, error) {
-                                alert("error");
-                            })
-                    }
-                }
+                el: '#distribution',
             });
 
         });

@@ -1,3 +1,9 @@
+<script type="text/x-template" id="distribution-grapefruit-template">
+    <div class="row">
+        <country-grape v-for="period in periods" :period="period" :key="period.period_name"></country-grape>
+    </div>
+</script>
+
 <script type="text/x-template" id="country-grape-template">
     <div class="col">
         <div class="card">
