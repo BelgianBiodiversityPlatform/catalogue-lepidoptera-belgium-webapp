@@ -1,6 +1,8 @@
 {%  load i18n %}
 {%  load various_helpers %}
 
+{% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+
 <table class="table table-bordered table-hover table-striped table-sm sticky-header">
     <thead class="thead-dark">
         <tr>
@@ -11,7 +13,7 @@
         </tr>
     </thead>
 
-    <tbody>
+    <tbody id="species-table-body">
         {% for s in species_list %}
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr>
@@ -35,8 +37,8 @@
                         {% if s.has_pictures %}<span class="oi oi-camera-slr"></span>{% endif %}
                     </td>
 
-                    <td>
-
+                    <td style="width: 450px;">
+                        <distribution-grapefruit :species-id="{{ s.pk }}" :service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
                     </td>
                 </tr>
             {%  endif %}
