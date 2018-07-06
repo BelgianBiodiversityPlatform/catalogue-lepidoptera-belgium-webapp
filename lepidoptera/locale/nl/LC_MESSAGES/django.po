@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-25 10:07+0000\n"
+"POT-Creation-Date: 2018-07-06 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,159 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lepidoptera/admin.py:26
+msgid "Filter title not set"
+msgstr ""
+
+#: lepidoptera/admin.py:33
+msgid "Not empty only"
+msgstr ""
+
+#: lepidoptera/admin.py:34
+msgid "Empty only"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/_family_card.html:11
+msgid "species in Belgium"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/_footer.html:5
+msgid "Contact"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/_footer.html:18
+msgid "Statistics"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/_footer.html:76
+msgid "Flemish Entomological Society"
+msgstr "Vlaamse Vereniging voor Entomologie"
+
+#: lepidoptera/templates/lepidoptera/gallery.html:6
+msgid "Gallery"
+msgstr ""
+
 #: lepidoptera/templates/lepidoptera/home.html:15
+msgid "Quick search"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/home.html:17
+msgid "Looking for..."
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/home.html:18
+msgid "Genus, family, species, host plants, substrates, vernacular name, ..."
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/home.html:25
 msgid "Overview of all valid families"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/hostplant_family.html:10
+msgid "Genera in this family"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/hostplant_genus.html:10
+msgid "From family"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/hostplant_genus.html:12
+msgid "Host plant species for this genus"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/hostplant_species.html:10
+msgid "From genus"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/hostplant_substrate.html:12
+msgid "Observed lepidoptera species"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:24
+msgid "Details"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:29
+msgid "Classification"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:32
+#: lepidoptera/templates/lepidoptera/taxonomy/_new_species_table.html:10
+#: lepidoptera/templates/lepidoptera/taxonomy/_species_table.html:17
+#: lepidoptera/templates/lepidoptera/taxonomy/_taxon_list_table.html:18
+msgid "Vernacular names"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:37
+#: lepidoptera/templates/lepidoptera/taxonomy/_taxon_list_table.html:19
+msgid "Status"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:43
+msgid "Synonym of "
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:50
+msgid "Synonyms"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:60
+#: lepidoptera/templates/lepidoptera/taxonomy/family.html:11
+msgid "Species in Belgium"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_common_attributes.html:68
+msgid "First mention in Belgium"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_new_species_table.html:9
+#: lepidoptera/templates/lepidoptera/taxonomy/_species_table.html:16
+#: lepidoptera/templates/lepidoptera/taxonomy/_taxon_list_table.html:17
+msgid "Name"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_new_species_table.html:12
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:22
+msgid "Distribution"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_species_section.html:26
+msgid "No pictures yet!"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/_title.html:23
+msgid "Last modified:"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/all_xxx.html:7
+msgid "found"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/family.html:5
+#: lepidoptera/templates/lepidoptera/taxonomy/genus.html:5
+#: lepidoptera/templates/lepidoptera/taxonomy/subfamily.html:5
+#: lepidoptera/templates/lepidoptera/taxonomy/subgenus.html:5
+#: lepidoptera/templates/lepidoptera/taxonomy/tribus.html:5
+msgid "Direct lower taxa"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:56
+msgid "Flight periods"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:65
+msgid "Observed on"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:73
+msgid "Host plant (species)"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:83
+msgid "Host plant (genera)"
+msgstr ""
+
+#: lepidoptera/templates/lepidoptera/taxonomy/species.html:93
+msgid "Substrates"
 msgstr ""

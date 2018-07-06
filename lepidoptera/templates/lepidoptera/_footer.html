@@ -1,16 +1,25 @@
 {% load i18n %}
+{% load static %}
 
 <div id="footer-main" class="row text-white bg-primary py-2">
     <div class="col">
         <h4>{% trans "Contact" %}</h4>
         <hr/>
-        <address class="small">
-            <b>Vlaamse Vereniging voor Entomologie</b><br>
-        Secretaris: W. De Prins<br>
- 	    Dorpstraat 401B<br>
- 	    B-3061 Leefdaal, Belgium<br>
-            <a class="text-dark" href="mailto:willy.deprins@gmail.com">willy.deprins@gmail.com</a>
-        </address>
+        <div class="row">
+            <div class="col-3 p-2">
+                <a href="http://www.phegea.org/"><img style="max-width: 100%" src="{% static 'lepidoptera/phegea-logo.png' %}"></a>
+            </div>
+            <div class="col-9">
+                <address class="small">
+                    <b><a class="text-light" href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a></b><br>
+                    Secretaris: W. De Prins<br>
+ 	                Dorpstraat 401B<br>
+ 	                B-3061 Leefdaal<br>
+                    Belgium<br/>
+                <span class="oi oi-envelope-closed"></span> <a class="text-light" href="mailto:willy.deprins@gmail.com">willy.deprins@gmail.com</a>
+                </address>
+            </div>
+        </div>
     </div>
     <div class="col">COL2</div>
     <div class="col">COL3</div>
@@ -73,7 +82,7 @@
 <div id="footer-copyright" class="row">
     <div class="col text-center text-white py-2">
         <span class="small align-middle">
-            © 2018 <a href="http://www.phegea.org/">Flemish Entomological Society</a>, developed by the <a href="http://www.biodiversity.be">Belgian Biodiversity Platform.</a>
+            © 2018 <a href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a>, developed by the <a href="http://www.biodiversity.be">Belgian Biodiversity Platform.</a>
         </span>
     </div>
 </div>
