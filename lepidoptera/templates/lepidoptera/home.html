@@ -27,15 +27,15 @@
     </div>
 
     {% for family in families %}
-        {% if forloop.counter0|divisibleby:4 %}
+        {% if forloop.counter0|divisibleby:6 %}
             <div class="row">
         {% endif %}
 
-    <div class="col-sm-3">
+    <div class="col-sm-2">
         {% include 'lepidoptera/_family_card.html' %}
     </div>
 
-    {% if forloop.counter|divisibleby:4 or forloop.last %}
+    {% if forloop.counter|divisibleby:6 or forloop.last %}
         </div>
     {% endif %}
 
