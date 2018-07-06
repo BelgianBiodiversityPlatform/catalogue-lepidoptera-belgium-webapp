@@ -18,12 +18,12 @@
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr class="clickable-row" data-href="{{ s.get_absolute_url }}">
                     <td class="small">
-                        <a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a>
+                        <b><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a></b>
                         <span class="font-weight-light"> {{ s.author }}</span>
 
                         {% for synonym in s.synonyms.all %}
                             <span class="font-weight-light">
-                                <br/> = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }} {{ synonym.author }}</a>
+                                <br/> &nbsp; &nbsp; = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
                             </span>
                         {% endfor %}
 
