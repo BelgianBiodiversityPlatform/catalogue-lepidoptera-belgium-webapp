@@ -115,6 +115,10 @@ LANGUAGES = [
     ('nl', _('Dutch')),
 ]
 
+LANGUAGES_AVAILABLE_IN_SELECTOR = [  # We cannot just not remove the ununsed from LANGUAGES since it is used for other things (such as venacular names)
+    ('en', _('English')),
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
@@ -131,6 +135,7 @@ GALLERY_PAGE_SIZE = 10
 SETTINGS_EXPORT = [
     'WEBSITE_NAME',
     'LANGUAGES',
+    'LANGUAGES_AVAILABLE_IN_SELECTOR',
     'GALLERY_PAGE_SIZE'
 ]
 
