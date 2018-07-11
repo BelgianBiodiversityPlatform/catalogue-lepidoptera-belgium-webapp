@@ -1,3 +1,4 @@
+import re
 from collections import namedtuple
 
 from django.core.management.base import CommandError
@@ -29,6 +30,15 @@ def namedtuplefetchall(cursor):
 class Command(LepidopteraCommand):
     help = "Import data from Access (tblXXXX tables) to Django's database"
 
+    def author_clean(self, raw_author):
+        # Case 1: There's a space between a year and a closing parentheses
+        author_before_case = raw_author
+        author = re.sub(r'(\d{4})\s(\))', '\\1\\2', author_before_case)
+        if author != author_before_case:
+            self.w(self.style.WARNING('\nAuthor was automatically cleaned, is it correct? Before: "{}", After: "{}"'.format(author_before_case, author)))
+
+        return author
+
     def add_arguments(self, parser):
         parser.add_argument(
             '--truncate',
@@ -52,7 +62,7 @@ class Command(LepidopteraCommand):
                 Status.objects.create(verbatim_status_id=result.StatusID,
                                       name=text_clean(result.StatusName))
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblStatus import OK'))
 
             self.w('Importing from tblJournals...')
             cursor.execute('SELECT * FROM "tblJournals"')
@@ -62,7 +72,7 @@ class Command(LepidopteraCommand):
                     title=text_clean(result.JournalTitle)
                 )
                 self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblJournals import OK'))
 
             self.w('Importing from tblPublications...')
             cursor.execute('SELECT * FROM "tblPublications"')
@@ -79,7 +89,7 @@ class Command(LepidopteraCommand):
                     page_numbers=text_clean(result.PublicationPageNumbers)
                 )
                 self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblPublications import OK'))
 
             self.w('Importing from tblFamilies...', ending='')
             cursor.execute('SELECT * FROM "tblFamilies"')
@@ -105,8 +115,10 @@ class Command(LepidopteraCommand):
                                           # but also a (modifiable) display order
                                           display_order=family_id)
                     self.w('.', ending='')
+                else:
+                    self.w(self.style.WARNING('\nSkipping special NULL family with id: {}\n'.format(NULL_FAMILY_ID)), ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblFamilies import OK'))
 
             self.w('Importing from tblSubfamilies...', ending='')
             cursor.execute('SELECT * FROM "tblSubfamilies"')
@@ -128,7 +140,7 @@ class Command(LepidopteraCommand):
                                          display_order=result.SubfamilyID)
                 self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblSubfamilies import OK'))
 
             self.w('Importing from tblTribus...', ending='')
             cursor.execute('SELECT * FROM "tblTribus"')
@@ -154,7 +166,7 @@ class Command(LepidopteraCommand):
                                       display_order=result.TribusID)
                 self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblTribus import OK'))
 
             self.w('Importing from tblGenera...', ending='')
             cursor.execute('SELECT * FROM "tblGenera" ORDER BY "StatusID"')  # ORDER so accepted are knwon before synonyms referencing them
@@ -166,7 +178,10 @@ class Command(LepidopteraCommand):
                 subfamily_id = result.SubfamilyID
                 family_id = result.FamilyID
 
-                if genus_id != NULL_GENUS_ID:
+                if genus_id == NULL_GENUS_ID:
+                    self.w(self.style.WARNING('\nSkipping special NULL genus with id: {}'.format(NULL_GENUS_ID),
+                                              ending=''))
+                else:
                     # Find the parent link...
                     if tribus_id is None and subfamily_id is None and family_id is not None:
                         # We only have a family...
@@ -211,7 +226,7 @@ class Command(LepidopteraCommand):
                     Genus.objects.create(**create_opts)
                     self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblGenera import OK'))
 
             self.w('Importing from tblSubgenera...', ending='')
             cursor.execute('SELECT * FROM "tblSubgenera"')
@@ -237,7 +252,7 @@ class Command(LepidopteraCommand):
                 )
                 self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblSubgenera import OK'))
 
             self.w('Importing from tblSpecies...', ending='')
             cursor.execute('SELECT * FROM "tblSpecies" ORDER BY "StatusID"')
@@ -257,11 +272,12 @@ class Command(LepidopteraCommand):
 
                         parent_link = {'subgenus': Subgenus.objects.get(verbatim_subgenus_id=subgenus_id)}
 
+                    cleaned_author = self.author_clean(text_clean(result.SpeciesAuthor))
                     create_opts = {'verbatim_species_number': result.SpeciesNumber,
                                    'name': text_clean(result.SpeciesName),
                                    'code': text_clean(result.SpeciesCode),
 
-                                   'author': text_clean(result.SpeciesAuthor),
+                                   'author': cleaned_author,
 
                                    'vernacular_name_nl': text_clean(result.SpeciesNameNL),
                                    'vernacular_name_en': text_clean(result.SpeciesNameEN),
@@ -291,7 +307,7 @@ class Command(LepidopteraCommand):
                     Species.objects.create(**create_opts)
                 self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblSpecies import OK'))
 
             self.w('Importing Host plants and substrates')
             self.w('Importing from tblHostPlantFamilies...', ending='')
@@ -308,7 +324,7 @@ class Command(LepidopteraCommand):
                 )
                 self.w('.', ending='')
 
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblHostPlantFamilies import OK'))
 
             self.w('Importing from tblHostPlantGenera...', ending='')
             cursor.execute('SELECT * FROM "tblHostPlantGenera"')
@@ -327,7 +343,7 @@ class Command(LepidopteraCommand):
                         family=HostPlantFamily.objects.get(verbatim_id=result.HostPlantFamilyID)
                     )
                 self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblHostPlantGenera import OK'))
 
             self.w('Importing Host plant observations, with related species and substrates...', ending='')
             cursor.execute('SELECT * FROM "tblHostPlants", "tblHostPlantSpecies" '
@@ -365,7 +381,7 @@ class Command(LepidopteraCommand):
 
                 observation.save()
                 self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblHostPlantGenera import OK'))
 
             self.w('Importing from tblPhotographers..', ending='')
             cursor.execute('SELECT * FROM "tblPhotographers"')
@@ -375,4 +391,4 @@ class Command(LepidopteraCommand):
                 photographer.verbatim_photographer_id = result.PhotographerID
                 photographer.save()
                 self.w('.', ending='')
-            self.w(self.style.SUCCESS('OK'))
+            self.w(self.style.SUCCESS('tblPhotographers import OK'))

@@ -63,6 +63,7 @@ class Command(LepidopteraCommand):
     def add_arguments(self, parser):
         parser.add_argument('families_csv')
         parser.add_argument('species_csv')
+        parser.add_argument('species_paragraphs_csv')
 
     def handle(self, *args, **options):
         with open(options['families_csv']) as families_csv_file:
@@ -71,8 +72,49 @@ class Command(LepidopteraCommand):
         with open(options['species_csv']) as species_csv_file:
             self.load_species(species_csv_file)
 
+        with open(options['species_paragraphs_csv']) as species_paragraphs_csv_file:
+            self.load_species_paragraphs(species_paragraphs_csv_file)
+
+    def load_species_paragraphs(self, species_paragraphs_csv_file):
+        self.w("Will now import species paragraphs (1-2-3) from the old website, and try to reconcile them with our new database.")
+        species_ignored_multiple_matches = []
+        species_not_found = []
+        species_with_overwritten_text = []
+        success_count = 0
+
+        for i, species_row in enumerate(csv.DictReader(species_paragraphs_csv_file, delimiter=',')):
+            species_full_name = text_clean(species_row['speciesCode'])
+            try:
+                species = Species.objects.get_with_name_and_author(species_full_name)
+
+                # Save the general text from paragraph 1
+                if species.text_en != '':
+                    species_with_overwritten_text.append(species_full_name)
+                species.text_en = text_clean(species_row['p1'])
+
+                species.hostplants_section_text = text_clean(species_row['p2'])
+                species.flightperiod_section_text = text_clean(species_row['p3'])
+
+                species.save()
+                success_count = success_count + 1
+                self.w('.', ending='')
+            except Species.DoesNotExist:
+                species_not_found.append(species_full_name)
+            except Species.MultipleObjectsReturned:
+                species_ignored_multiple_matches.append(species_full_name)
+
+        self.w(self.style.WARNING('The following species code are not found in the new website database: {}'.format(', '.join(species_not_found))))
+        self.w(self.style.WARNING(
+            '\nSpecies where matched failed because they were duplicates based on the full name (please enter data manually later): {}'.format(
+                ', '.join(species_ignored_multiple_matches))))
+        self.w(self.style.WARNING('The following species already had a general description in text_en, so it was overriden: {}'.format(
+            ', '.join(species_with_overwritten_text))))
+        self.w('Species paragraphs: {} species successfully imported, {} in error.'.format(success_count, len(species_not_found)))
+
     def load_species(self, species_csv_file):
+        self.w("Will now import Species (province presence) from the old website, and try to reconcile them with our new database.")
         missing_species = []
+        species_ignored_multiple_matches = []
         species_no_family_match = []
         successful_match_counter = 0
         error_in_presence_code_for = []
@@ -102,9 +144,12 @@ class Command(LepidopteraCommand):
 
             except Species.DoesNotExist:
                 missing_species.append(species_full_name)
+            except Species.MultipleObjectsReturned:
+                species_ignored_multiple_matches.append(species_full_name)
 
-        self.w(self.style.WARNING('\nMissing species: {}'.format(', '.join(missing_species))))
-        self.w(self.style.WARNING('\nSpecies found, but the family doesn\'t match: {}'.format(', '.join(species_no_family_match))))
+        self.w(self.style.WARNING('\nMissing species in new website database (please enter data manually later): {}'.format(', '.join(missing_species))))
+        self.w(self.style.WARNING('\nSpecies where matched failed because they were duplicates based on the full name (please enter data manually later): {}'.format(', '.join(species_ignored_multiple_matches))))
+        self.w(self.style.WARNING('\nSpecies found, but the family doesn\'t match (please enter data manually later): {}'.format(', '.join(species_no_family_match))))
         self.w('Successful species match: {}'.format(successful_match_counter))
         unsuccessful_match_counter = len(species_no_family_match) + len(missing_species)
         self.w('Unsuccessful species match: {}'.format(unsuccessful_match_counter))
@@ -113,6 +158,7 @@ class Command(LepidopteraCommand):
         )))
 
     def load_families(self, families_csv_file):
+        self.w("Will now import Families (text description) from the old website, and try to reconcile them with our new database.")
         missing_families = []
         families_with_already_a_description = []
 
@@ -133,7 +179,7 @@ class Command(LepidopteraCommand):
 
             self.w('.', ending='')
 
-        self.w(self.style.WARNING('\nMissing families: {}'.format(', '.join(missing_families))))
-        self.w(self.style.NOTICE('\nFamilies with already a description (overwritten, nothing to do): {}'.format(
+        self.w(self.style.WARNING('\nFamilies existing in the old website but missing in the new database families (please enter data manually later): {}'.format(', '.join(missing_families))))
+        self.w(self.style.NOTICE('\nFamilies with already a description (description overwritten, nothing to do): {}'.format(
             ', '.join(families_with_already_a_description)))
         )

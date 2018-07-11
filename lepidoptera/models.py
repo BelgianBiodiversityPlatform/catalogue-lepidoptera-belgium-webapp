@@ -20,7 +20,7 @@ class SpeciesManager(models.Manager):
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
 
-        name_part = " ".join(name_and_author_string.split(" ", 2)[:2]) # cut after second space
+        name_part = " ".join(name_and_author_string.replace('\xa0', ' ').split(" ", 2)[:2]) # cut after second space
         name_part = name_part.strip()  # Remove leading/trailing whitespaces
 
         name_part_genus, name_part_species = name_part.split()
@@ -704,6 +704,8 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
     cocoon_section_text = MarkdownxField(blank=True)
     bionomics_section_text = MarkdownxField(blank=True)
     habitat_section_text = MarkdownxField(blank=True)
+    hostplants_section_text = MarkdownxField(blank=True)
+    flightperiod_section_text = MarkdownxField(blank=True)
 
     @property
     def has_pictures(self):

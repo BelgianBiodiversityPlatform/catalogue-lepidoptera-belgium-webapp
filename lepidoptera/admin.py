@@ -218,6 +218,8 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
                        'cocoon_section_text',
                        'bionomics_section_text',
                        'habitat_section_text',
+                       'hostplants_section_text',
+                       'flightperiod_section_text',
                        
                        'display_order')
         }),

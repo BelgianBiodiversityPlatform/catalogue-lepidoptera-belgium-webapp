@@ -9,6 +9,7 @@ class Command(LepidopteraCommand):
     def add_arguments(self, parser):
         parser.add_argument('website_families_csv')
         parser.add_argument('website_species_csv')
+        parser.add_argument('website_species_paragraphs')
         parser.add_argument('species_picture_dir')
 
     def handle(self, *args, **options):
@@ -18,7 +19,7 @@ class Command(LepidopteraCommand):
 
         self.w("\nStep 2: Website import and reconciliation...")
         self.w("============================================")
-        call_command('website_import', options['website_families_csv'], options['website_species_csv'])
+        call_command('website_import', options['website_families_csv'], options['website_species_csv'], options['website_species_paragraphs'])
 
         self.w("\nStep 3: Add Wikidata identifiers...")
         self.w("===================================")
