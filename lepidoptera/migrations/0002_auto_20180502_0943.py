@@ -85,11 +85,11 @@ def populate_provinces(apps, schema_editor):
                             polygon_reference=2)
     Province.objects.create(name="Limburg", code="LI", order=15, historical=False, recent=False,
                             polygon_reference=10)
-    Province.objects.create(name="Vlaams Brabant", code="VBR", order=17, historical=False, recent=True,
+    Province.objects.create(name="Vlaams Brabant", code="VB", order=17, historical=False, recent=True,
                             polygon_reference=5)
     Province.objects.create(name="Brabant", code="BR", order=20, historical=True, recent=False,
                             polygon_reference=13)
-    Province.objects.create(name="Brabant Wallon", code="BRW", order=23, historical=False, recent=True,
+    Province.objects.create(name="Brabant Wallon", code="BW", order=23, historical=False, recent=True,
                             polygon_reference=7)
     Province.objects.create(name="Hainaut", code="HA", order=25, historical=False, recent=False,
                             polygon_reference=8)
