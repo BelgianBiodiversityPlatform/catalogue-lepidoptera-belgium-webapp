@@ -75,7 +75,8 @@
         template: '#distribution-grapefruit-template',
         props: {
             speciesId: Number,
-            serviceUrl: String
+            serviceUrl: String,
+            showBorders: Boolean,
         },
         data: function() {
             return {
@@ -105,7 +106,8 @@
         delimiters: ['[[', ']]'],
         template: '#country-grape-template',
         props: {
-            period: Object // has a name, and a list of provinces codes where the species is present
+            period: Object, // has a name, and a list of provinces codes where the species is present
+            showBorder: Boolean,
         },
         data: function () {
             var activateProvinces = function (presences, provinces) {
