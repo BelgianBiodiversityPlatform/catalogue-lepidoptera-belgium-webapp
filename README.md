@@ -14,7 +14,7 @@ Sandbox deployment/commands/...
 Full redeploy sur sandbox:
 ==========================
 
-1) Ask Julien to drop and recreate the DB
+1) Drop/recreate: dropdb -h dev.lan lepidoptera && createdb -h dev.lan lepidoptera
 2) git clone https://git.bebif.be/bbpf/belgium_lepidoptera_data.git  (use "pull" next time?)
 3) (chmod -R 0777 ~/belgium_lepidoptera_data) probably not necessary
 4) psql -h dev.lan -d lepidoptera -f ~/belgium_lepidoptera_data/access/converted/CatLepBelgium_be.sql
@@ -26,8 +26,7 @@ Full redeploy sur sandbox:
 8) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py migrate
 9) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py denorm_init
 10) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py createsuperuser (admin / lepidobbpf)
-11) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py reimport_everything ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LASpecies.csv ~/belgium_lepidoptera_data/CatLepBelgium_Images
-
+11) sudo -u www-lepidoptera DJANGO_SETTINGS_MODULE="website.settings.development" python manage.py reimport_everything ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LAFamilies.csv ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LASpecies.csv ~/belgium_lepidoptera_data/website_extract_andre/LepidopteraAtlas/LASpeciesParagraphs.csv  ~/belgium_lepidoptera_data/CatLepBelgium_Images
 Simple DB/pic update on sandbox:
 ================================
 

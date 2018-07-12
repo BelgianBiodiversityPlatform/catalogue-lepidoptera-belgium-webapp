@@ -52,11 +52,11 @@ class Command(LepidopteraCommand):
                             'side': SpeciesPicture.UNDER}
 
                 # We have a 'i' (Imago), a Sex (A/M/W) but no side => In vivo specimens
-                elif picture_info == 'iA':
+                elif picture_info == 'iA' or picture_info == 'IA' or picture_info == 'ia':
                     opts = {'specimen_stage': SpeciesPicture.IMAGO,
                             'image_subject': SpeciesPicture.IN_VIVO_SPECIMEN,
                             'specimen_sex': SpeciesPicture.ADULT}
-                elif picture_info == 'iM':
+                elif picture_info == 'iM' or picture_info == 'IM':
                     opts = {'specimen_stage': SpeciesPicture.IMAGO,
                             'image_subject': SpeciesPicture.IN_VIVO_SPECIMEN,
                             'specimen_sex': SpeciesPicture.MALE}
@@ -69,7 +69,7 @@ class Command(LepidopteraCommand):
                 elif picture_info == 'e':
                     opts = {'specimen_stage': SpeciesPicture.EGG,
                             'image_subject': SpeciesPicture.PRE_ADULT_STAGE}
-                elif picture_info == 'l':
+                elif picture_info == 'l' or picture_info == 'L':
                     opts = {'specimen_stage': SpeciesPicture.LARVA,
                             'image_subject': SpeciesPicture.PRE_ADULT_STAGE}
                 elif picture_info == 'c':
@@ -78,10 +78,10 @@ class Command(LepidopteraCommand):
                 elif picture_info == 'b':
                     opts = {'specimen_stage': SpeciesPicture.BAG,
                             'image_subject': SpeciesPicture.PRE_ADULT_STAGE}
-                elif picture_info == 'm':
+                elif picture_info == 'm' or picture_info == 'M':
                     opts = {'specimen_stage': SpeciesPicture.MINE,
                             'image_subject': SpeciesPicture.PRE_ADULT_STAGE}
-                elif picture_info == 'p':
+                elif picture_info == 'p' or picture_info == 'P':
                     opts = {'specimen_stage': SpeciesPicture.PUPA,
                             'image_subject': SpeciesPicture.PRE_ADULT_STAGE}
 
