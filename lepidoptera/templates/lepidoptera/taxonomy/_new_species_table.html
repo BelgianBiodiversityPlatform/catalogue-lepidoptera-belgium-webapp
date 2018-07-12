@@ -18,15 +18,7 @@
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr class="clickable-row" data-href="{{ s.get_absolute_url }}">
                     <td class="small">
-                        <b><a href="{{ s.get_absolute_url }}">{{ s.html_str }}</a></b>
-                        <span class="font-weight-light"> {{ s.author }}</span>
-
-                        {% for synonym in s.synonyms.all %}
-                            <span class="font-weight-light">
-                                <br/> &nbsp; &nbsp; = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
-                            </span>
-                        {% endfor %}
-
+                        {% include 'lepidoptera/taxonomy/_taxon_name_link_synonyms_cell.html' with taxon=s %}
                     </td>
 
                     <td class="small">

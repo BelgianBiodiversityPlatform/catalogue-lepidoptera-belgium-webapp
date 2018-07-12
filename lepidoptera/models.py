@@ -238,6 +238,14 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     valid_families_objects = ValidFamiliesManager()
 
     @property
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_FAMILY_SYNONYM)
+
+    @property
     def species_count(self):
         count = 0
 
@@ -301,6 +309,14 @@ class Subfamily(TaxonomicModel):
         return reverse('subfamily_page', kwargs={'subfamily_id': str(self.id)})
 
     @property
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SUBFAMILY)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SUBFAMILY_SYNONYM)
+
+    @property
     def parent(self):
         return self.family
 
@@ -332,6 +348,14 @@ class Tribus(TaxonomicModel):
     verbatim_tribus_id = get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
+
+    @property
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_TRIBUS)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_TRIBUS_SYNONYM)
 
     @property
     def species_count(self):
@@ -379,6 +403,14 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     objects = models.Manager()
     accepted_objects = AcceptedGenusManager()
     synonym_objects = SynonymGenusManager()
+
+    @property
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
 
     # NOTE: Do NOT try to implement with a CountField (django-denorm) since is fails miserably when we set a filter that
     # spans accross tables (which is needed to filter where the species status is ACCEPTED.
@@ -466,6 +498,14 @@ class Subgenus(TaxonomicModel):
 
     def get_absolute_url(self):
         return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})
+
+    @property
+    def is_valid(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SUBGENUS)
+
+    @property
+    def is_synonym(self):
+        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SUBGENUS_SYNONYM)
 
     @denormalized(models.CharField, max_length=255)
     @depend_on_related('Genus')

@@ -2,38 +2,41 @@
 {% load various_helpers %}
 
 {% if taxon_list.all %}
-    <p>
-        <a class="btn btn-primary" data-toggle="collapse" href="#container_{{ title }}" role="button" aria-expanded="false" aria-controls="collapseExample">
-        Show {{ title }} ({{ taxon_list|length }})
-        </a>
-    </p>
+    {% with valid_taxa=taxon_list|valid_taxa %}
+        <p>
+            <a class="btn btn-primary" data-toggle="collapse" href="#container_{{ title|slugify }}" role="button"
+               aria-expanded="false" aria-controls="collapseExample">
+                Show {{ title }} ({{ valid_taxa|length }})
+            </a>
+        </p>
 
-    <div class="collapse" id="container_{{ title }}">
-        {% for taxon in taxon_list %}
-            {% if forloop.first %}
-                <table class="table table-bordered table-hover table-striped table-sm">
+        <div class="collapse" id="container_{{ title|slugify }}">
+            {% for taxon in valid_taxa %}
+                {% if forloop.first %}
+                    <table class="table table-bordered table-hover table-striped table-sm">
                     <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">{% trans 'Name' %}</th>
-                            <th scope="col">{% trans 'Vernacular names' %}</th>
-                            <th scope="col">{% trans 'Status' %}</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">{% trans 'Name' %}</th>
+                        <th scope="col">{% trans 'Vernacular names' %}</th>
+                    </tr>
                     </thead>
 
                     <tbody>
-            {% endif %}
+                {% endif %}
 
-                    <tr>
-                        <td><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></td>
-                        <td>{% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}</td>
-                        <td>{{ taxon.status }}</td>
-                    </tr>
+            <tr>
+                <td class="small">
+                    {% include 'lepidoptera/taxonomy/_taxon_name_link_synonyms_cell.html' with taxon=taxon %}
+                </td>
+                <td>{% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}</td>
+            </tr>
 
-            {%  if forloop.last %}
-                    </tbody>
+            {% if forloop.last %}
+                </tbody>
                 </table>
             {% endif %}
 
-        {% endfor %}
-    </div>
+            {% endfor %}
+        </div>
+    {% endwith %}
 {% endif %}

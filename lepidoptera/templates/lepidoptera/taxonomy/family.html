@@ -3,8 +3,8 @@
 
 {% block details %}
     <h3>{% trans "Direct lower taxa" %}</h3>
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Subfamilies" taxon_list=taxon.subfamily_set.all only %}
-    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="Genera" taxon_list=taxon.genus_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="subfamily-group names" taxon_list=taxon.subfamily_set.all only %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="genus-group names" taxon_list=taxon.genus_set.all only %}
 
     <hr/>
 

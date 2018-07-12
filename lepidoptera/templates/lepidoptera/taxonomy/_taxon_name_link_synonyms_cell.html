@@ -1,0 +1,7 @@
+<b><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></b>
+<span class="font-weight-light"> {{ taxon.author }}</span>
+{% for synonym in taxon.synonyms.all %}
+    <span class="font-weight-light">
+        <br/> &nbsp; &nbsp; = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
+    </span>
+{% endfor %}

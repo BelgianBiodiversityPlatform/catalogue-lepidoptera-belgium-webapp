@@ -10,6 +10,12 @@ register = template.Library()
 
 
 @register.filter
+def valid_taxa(value):
+    """Given a queryset of taxa, filters so only valid taxa stays"""
+    return [taxon for taxon in value if taxon.is_valid]
+
+
+@register.filter
 def to_class_name(value):
     return value.__class__.__name__
 
