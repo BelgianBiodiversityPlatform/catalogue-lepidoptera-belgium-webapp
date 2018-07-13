@@ -7,6 +7,7 @@ from ._utils import LepidopteraCommand, text_clean
 SPECIES_CSV_PROVINCE_COL_NAMES = ['WV', 'OV', 'AN', 'LI', 'BR', 'HA', 'NA', 'LG', 'LX']
 # province Code in CSV and initial data match so it's easier
 
+SKIP_FAMILY_CHECK = True
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -123,7 +124,7 @@ class Command(LepidopteraCommand):
             species_full_name = text_clean(species_row['sName'])
             try:
                 species = Species.objects.get_with_name_and_author_ignore_brackets(species_full_name)
-                if species.family.name == text_clean(species_row['family']):
+                if SKIP_FAMILY_CHECK or species.family.name == text_clean(species_row['family']):
                     successful_match_counter = successful_match_counter + 1
 
                     for province_code in SPECIES_CSV_PROVINCE_COL_NAMES:
