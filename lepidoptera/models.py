@@ -17,6 +17,12 @@ def get_verbatim_id_field():
 
 
 class SpeciesManager(models.Manager):
+    def get_with_name_and_author_ignore_brackets(self, name_and_author_string):
+        try:
+            return self.get_with_name_and_author(name_and_author_string)
+        except Species.DoesNotExist:
+            return self.get_with_name_and_author(name_and_author_string.replace('[', '').replace(']', ''))
+
     def get_with_name_and_author(self, name_and_author_string):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
 

@@ -85,7 +85,7 @@ class Command(LepidopteraCommand):
         for i, species_row in enumerate(csv.DictReader(species_paragraphs_csv_file, delimiter=',')):
             species_full_name = text_clean(species_row['speciesCode'])
             try:
-                species = Species.objects.get_with_name_and_author(species_full_name)
+                species = Species.objects.get_with_name_and_author_ignore_brackets(species_full_name)
 
                 # Save the general text from paragraph 1
                 if species.text_en != '':
@@ -122,7 +122,7 @@ class Command(LepidopteraCommand):
         for i, species_row in enumerate(csv.DictReader(species_csv_file, delimiter=';')):
             species_full_name = text_clean(species_row['sName'])
             try:
-                species = Species.objects.get_with_name_and_author(species_full_name)
+                species = Species.objects.get_with_name_and_author_ignore_brackets(species_full_name)
                 if species.family.name == text_clean(species_row['family']):
                     successful_match_counter = successful_match_counter + 1
 
