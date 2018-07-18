@@ -17,13 +17,17 @@ def get_verbatim_id_field():
 
 
 class SpeciesManager(models.Manager):
-    def get_with_name_and_author_ignore_brackets(self, name_and_author_string):
+    # TODO: This messy piece of code id only used at import stage (to confirm 100%)
+    # TODO: (remove it once the app is in production)
+    def get_with_name_and_author_ignore_brackets(self, name_and_author_string, ignore_author=False):
         try:
-            return self.get_with_name_and_author(name_and_author_string)
+            return self.get_with_name_and_author(name_and_author_string, ignore_author)
         except Species.DoesNotExist:
-            return self.get_with_name_and_author(name_and_author_string.replace('[', '').replace(']', ''))
+            return self.get_with_name_and_author(name_and_author_string.replace('[', '').replace(']', ''), ignore_author)
 
-    def get_with_name_and_author(self, name_and_author_string):
+    # TODO: This messy piece of code id only used at import stage (to confirm 100%)
+    # TODO: (remove it once the app is in production)
+    def get_with_name_and_author(self, name_and_author_string, ignore_author=False):
         """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
 
         name_part = " ".join(name_and_author_string.replace('\xa0', ' ').split(" ", 2)[:2]) # cut after second space
@@ -34,7 +38,10 @@ class SpeciesManager(models.Manager):
         author_part = name_and_author_string.replace(name_part, '')
         author_part = author_part.strip()
 
-        all_matching_species = self.get_queryset().filter(name=name_part_species, author=author_part)
+        if ignore_author:
+            all_matching_species = self.get_queryset().filter(name=name_part_species)
+        else:
+            all_matching_species = self.get_queryset().filter(name=name_part_species, author=author_part)
 
         # Empty queryset: raise DoesNotExists
         if len(all_matching_species) == 0:
