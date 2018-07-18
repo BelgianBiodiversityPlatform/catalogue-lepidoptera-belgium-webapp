@@ -51,6 +51,9 @@ class SpeciesManager(models.Manager):
             all_matching_species = [species for species in all_matching_species if species.genus_name == name_part_genus]
 
             if len(all_matching_species) > 1:
+                if ignore_author:  # We retry with author...
+                    return self.get_with_name_and_author(name_and_author_string, ignore_author=False)
+
                 raise Species.MultipleObjectsReturned
             elif len(all_matching_species) == 0:
                 raise Species.DoesNotExist()
