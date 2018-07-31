@@ -7,8 +7,31 @@
     {% endif %}
 
     <div class="card-body">
-        <h5 class="card-title">{{ family.name }}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">{{ family.species_count }} {% trans "species in Belgium" %}.</h6>
+        <h6 class="card-title">
+            <a class="card-link" href="{% url 'family_page' family.id %}">{{ family.name }}</a>
+        </h6>
+
+        <p>
+        {% if family.vernacular_name_nl %}
+            <small class="card-text">• {{ family.vernacular_name_nl }} (NL)</small><br/>
+        {% endif %}
+
+        {% if family.vernacular_name_en %}
+            <small class="card-text">• {{ family.vernacular_name_en }} (EN)</small><br/>
+        {%  endif %}
+
+        {% if family.vernacular_name_fr %}
+            <small class="card-text">• {{ family.vernacular_name_fr }} (FR)</small><br/>
+        {% endif %}
+
+        {% if family.vernacular_name_de %}
+            <small class="card-text">• {{ family.vernacular_name_de }} (DE)</small><br/>
+        {% endif %}
+        </p>
+
+        <p>
+            <small class="card-text mb-2 text-muted">{{ family.species_count }} {% trans "species" %}.</small>
+        </p>
     </div>
 </div>
 

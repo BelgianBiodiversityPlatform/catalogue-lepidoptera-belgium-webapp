@@ -14,7 +14,6 @@
         <div class="col">
             <h3>{% trans "Quick search" %}</h3>
             <form>
-                <label for="multisearch">{% trans "Looking for..." %}</label>
                 <input type="text" class="form-control" id="multisearch" placeholder="{% trans "Genus, family, species, host plants, substrates, vernacular name, ..." %}">
             </form>
         </div>
@@ -28,7 +27,7 @@
 
     {% for family in families %}
         {% if forloop.counter0|divisibleby:6 %}
-            <div class="row">
+            <div class="row no-gutters">
         {% endif %}
 
     <div class="col-sm-2">
@@ -68,10 +67,12 @@
             });
 
             // Make Family cards clickable and having a hover effect.
+            $('.familyCard').css('cursor', 'pointer');
+
             $(".familyCard").hover(function() {
-                $(this).css("background-color", "#57a8e6");
+                $(this).css("border-color", "#57a8e6");
             }, function() {
-                $(this).css("background-color", "white");
+                $(this).css("border-color", "rgba(0, 0, 0, 0.125)");
             });
 
             $(".familyCard").click(function() {
