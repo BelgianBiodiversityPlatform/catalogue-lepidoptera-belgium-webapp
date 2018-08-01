@@ -1,88 +1,106 @@
 {% load i18n %}
 {% load static %}
 
-<div id="footer-main" class="row text-white bg-primary py-2">
-    <div class="col">
-        <h4>{% trans "Contact" %}</h4>
-        <hr/>
-        <div class="row">
-            <div class="col-3 p-2">
-                <a href="http://www.phegea.org/"><img style="max-width: 100%" src="{% static 'lepidoptera/phegea-logo.png' %}"></a>
-            </div>
-            <div class="col-9">
-                <address class="small">
-                    <b><a class="text-light" href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a></b><br>
-                    Secretaris: W. De Prins<br>
- 	                Dorpstraat 401B<br>
- 	                B-3061 Leefdaal<br>
-                    Belgium<br/>
-                <span class="oi oi-envelope-closed"></span> <a class="text-light" href="mailto:willy.deprins@gmail.com">willy.deprins@gmail.com</a>
-                </address>
-            </div>
+<div id="footer-main" class="text-white py-2">
+    <div class="row">
+        <div class="col">
+            <h5><span class="oi oi-envelope-closed"></span> {% trans "Contact" %}</h5>
+            <hr/>
+        </div>
+
+        <div class="col">
+            <h5><span class="oi oi-tags"></span> {% trans "Statistics" %}</h5>
+            <hr/>
         </div>
     </div>
-    <div class="col">COL2</div>
-    <div class="col">COL3</div>
-    <div class="col">
-        <h4>{% trans "Statistics" %}</h4>
-        <hr/>
-        <ul class="list-unstyled small">
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=family_counter label="Families" browse_page_anchor="list-families" %}
-            </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=subfamily_counter label="Subfamilies" browse_page_anchor="list-subfamilies" %}
-            </li>
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-3 p-2">
+                    <a href="http://www.phegea.org/"><img style="max-width: 100%"
+                                                          src="{% static 'lepidoptera/phegea-logo.png' %}"></a>
+                </div>
+                <div class="col-9">
+                    <address class="small">
+                        <b><a class="text-light"
+                              href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a></b><br>
+                        Secretaris: W. De Prins<br>
+                        Dorpstraat 401B<br>
+                        B-3061 Leefdaal<br>
+                        Belgium<br/>
+                        <span class="oi oi-envelope-closed"></span> <a class="text-light"
+                                                                       href="mailto:willy.deprins@gmail.com">willy.deprins@gmail.com</a>
+                    </address>
+                </div>
+            </div>
+        </div>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=tribus_counter label="Tribus" browse_page_anchor="list-tribus" %}
-            </li>
+        <div class="col col-3">
+            <ul class="list-unstyled small">
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=family_counter label="Families" browse_page_anchor="list-families" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_genus_counter label="Accepted_genera" page_name="all_accepted_genera_page" %},
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=genus_synonym_counter  label="synonyms" page_name="all_genera_synonyms_page" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=subfamily_counter label="Subfamilies" browse_page_anchor="list-subfamilies" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=subgenus_counter label="Subgenera" browse_page_anchor="list-subgenera" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=tribus_counter label="Tribus" browse_page_anchor="list-tribus" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_species_counter label="Accepted species" page_name="all_accepted_species_page" %}
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=species_synonym_counter label="synonyms" page_name="all_species_synonyms_page" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_genus_counter label="Accepted_genera" page_name="all_accepted_genera_page" %},
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=genus_synonym_counter  label="synonyms" page_name="all_genera_synonyms_page" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_species_counter label="Host plant species" browse_page_anchor="list-hostplants-species" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=subgenus_counter label="Subgenera" browse_page_anchor="list-subgenera" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_genus_counter label="Host plant genera" browse_page_anchor="list-hostplants-genera" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=valid_species_counter label="Accepted species" page_name="all_accepted_species_page" %}
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=species_synonym_counter label="synonyms" page_name="all_species_synonyms_page" %}
+                </li>
+            </ul>
+        </div>
+        <div class="col col-3">
+            <ul class="list-unstyled small">
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_species_counter label="Host plant species" browse_page_anchor="list-hostplants-species" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_family_counter label="Host plant families" browse_page_anchor="list-hostplants-families" %}
-            </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_genus_counter label="Host plant genera" browse_page_anchor="list-hostplants-genera" %}
+                </li>
 
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=substrate_counter label="Substrates" browse_page_anchor="substrates" %}
-            </li>
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=publications_counter label="Publications" %} in
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=journals_counter label="Journals" %}
-            </li>
-            <li>
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=species_pictures_counter label="Species pictures" page_name="gallery" %} from
-                {% include "lepidoptera/_footer_stat_entry.html" with counter=photographers_counter label="Photographers" %}
-            </li>
-        </ul>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=hostplant_family_counter label="Host plant families" browse_page_anchor="list-hostplants-families" %}
+                </li>
+
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=substrate_counter label="Substrates" browse_page_anchor="substrates" %}
+                </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=publications_counter label="Publications" %}
+                    in
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=journals_counter label="Journals" %}
+                </li>
+                <li>
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=species_pictures_counter label="Species pictures" page_name="gallery" %}
+                    from
+                    {% include "lepidoptera/_footer_stat_entry.html" with counter=photographers_counter label="Photographers" %}
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-<div id="footer-copyright" class="row">
-    <div class="col text-center text-white py-2">
+    <div id="footer-copyright" class="row">
+        <div class="col text-center text-white py-2">
         <span class="small align-middle">
-            © 2018 <a href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a>, developed by the <a href="http://www.biodiversity.be">Belgian Biodiversity Platform.</a>
+            © 2018 <a href="http://www.phegea.org/">{% trans "Flemish Entomological Society" %}</a>, developed by the <a
+                href="http://www.biodiversity.be">Belgian Biodiversity Platform.</a>
         </span>
+        </div>
     </div>
 </div>
