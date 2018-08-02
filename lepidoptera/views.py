@@ -3,7 +3,6 @@ from django.core.exceptions import FieldDoesNotExist
 from django.core.paginator import Paginator
 import json
 
-from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 

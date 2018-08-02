@@ -213,7 +213,7 @@ class TaxonomicModel(CommonTaxonomicModel):
 
     text = MarkdownxField(blank=True)
 
-    display_order = models.IntegerField(unique=True)
+    display_order = models.IntegerField(unique=True)  # Field shown as "Seq. # in public pages, harmonize name?"
 
     @property
     def all_parents(self):

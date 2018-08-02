@@ -34,7 +34,7 @@ def species_presence_icons(species_pk, province_id):
 
 @register.simple_tag
 def field_in_all_available_languages(languages, model, field_name):
-    """Return something such as 'Speckled Wood (en), Bont zandoogje (nl)'"""
+    """Return something such as 'Speckled Wood (EN), Bont zandoogje (NL)'"""
     s = ''
 
     for lang in languages:
@@ -43,7 +43,7 @@ def field_in_all_available_languages(languages, model, field_name):
         field_value = getattr(model, localized_field_name)
 
         if field_value:
-            s = s + '{field_value} ({lang_code}), '.format(field_value=field_value, lang_code=lang_code)
+            s = s + '{field_value} ({lang_code}), '.format(field_value=field_value, lang_code=lang_code.upper())
 
     if s == '':
         return '/'
