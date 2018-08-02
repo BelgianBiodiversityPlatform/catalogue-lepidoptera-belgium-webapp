@@ -26,13 +26,13 @@
                 {% endif %}
 
             <tr>
-                <td>
+                <td class="small">
                     {{ taxon.display_order }}
                 </td>
                 <td class="small">
                     {% include 'lepidoptera/taxonomy/_taxon_name_link_synonyms_cell.html' with taxon=taxon %}
                 </td>
-                <td>{% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}</td>
+                <td class="small">{% field_in_all_available_languages_ul settings.LANGUAGES taxon 'vernacular_name' %}</td>
             </tr>
 
             {% if forloop.last %}
