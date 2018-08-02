@@ -4,9 +4,11 @@
 {% if taxon_list.all %}
     {% with valid_taxa=taxon_list|valid_taxa %}
         <p>
-            <a class="btn btn-primary" data-toggle="collapse" href="#container_{{ title|slugify }}" role="button"
+            <a class="btn btn-primary collapsed" data-toggle="collapse" href="#container_{{ title|slugify }}" role="button"
                aria-expanded="false" aria-controls="collapseExample">
-                Show {{ title }} ({{ valid_taxa|length }})
+                <span class="if-collapsed">Show</span>
+                <span class="if-not-collapsed">Hide</span>
+                {{ title }} ({{ valid_taxa|length }})
             </a>
         </p>
 
