@@ -7,11 +7,11 @@
     {% endif %}
 
     <div class="card-body p-1">
-        <h6 class="card-title">
+        <h6 class="card-title m-1">
             <a class="card-link" href="{% url 'family_page' family.id %}">{{ family.name }}</a>
         </h6>
 
-        <p>
+        <p class="m-0">
         {% if family.vernacular_name_nl %}
             <small class="card-text">• {{ family.vernacular_name_nl }} (NL)</small><br/>
         {% endif %}
@@ -23,7 +23,7 @@
         {# FR/DE Vernacular names deliberately left blank for the moment #}
         </p>
 
-        <p>
+        <p class="m-0">
             <small class="card-text mb-2 text-muted">{{ family.species_count }} {% trans "species" %}.</small>
         </p>
     </div>
