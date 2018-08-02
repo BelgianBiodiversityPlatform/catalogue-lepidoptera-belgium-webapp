@@ -204,6 +204,7 @@ class TaxonomicModel(CommonTaxonomicModel):
 
     class Meta:
         abstract = True
+        ordering = ['display_order']
 
     # Common fields
     author = models.CharField(max_length=255)
@@ -298,7 +299,7 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     def parent(self):
         return None  # Top of the tree
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "families"
 
 
@@ -354,7 +355,7 @@ class Subfamily(TaxonomicModel):
             qs = qs.union(genus.all_species)
         return qs
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "subfamilies"
 
 
@@ -398,7 +399,7 @@ class Tribus(TaxonomicModel):
             qs = qs.union(genus.all_species)
         return qs
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "tribus"
 
 
@@ -461,7 +462,7 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
             qs = qs.union(subgenus.all_species)
         return qs
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "genera"
 
     @property
@@ -540,7 +541,7 @@ class Subgenus(TaxonomicModel):
     def direct_species(self):
         return self.species_set.all()
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "subgenera"
 
 
@@ -864,7 +865,7 @@ class Species(ParentForAdminListMixin, TaxonomicModel):
         self.full_clean()
         return super(Species, self).save(*args, **kwargs)
 
-    class Meta:
+    class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "species"
 
 

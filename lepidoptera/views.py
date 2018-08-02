@@ -13,7 +13,7 @@ from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Provinc
 
 
 def home_page(request):
-    valid_families = Family.valid_families_objects.all().order_by('display_order')
+    valid_families = Family.valid_families_objects.all()
 
     return render(request, 'lepidoptera/home.html', {'families': valid_families})
 

@@ -16,6 +16,7 @@
                     <table class="table table-bordered table-hover table-striped table-sm">
                     <thead class="thead-dark">
                     <tr>
+                        <th scope="col">Seq. #</th>
                         <th scope="col">{% trans 'Name' %}</th>
                         <th scope="col">{% trans 'Vernacular names' %}</th>
                     </tr>
@@ -25,6 +26,9 @@
                 {% endif %}
 
             <tr>
+                <td>
+                    {{ taxon.display_order }}
+                </td>
                 <td class="small">
                     {% include 'lepidoptera/taxonomy/_taxon_name_link_synonyms_cell.html' with taxon=taxon %}
                 </td>

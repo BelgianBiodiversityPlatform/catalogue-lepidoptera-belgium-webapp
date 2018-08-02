@@ -6,6 +6,7 @@
 <table class="table table-bordered table-hover table-striped table-sm sticky-header">
     <thead class="thead-dark">
         <tr>
+            <th scope="col">{% trans 'Seq. #' %}</th>
             <th scope="col">{% trans 'Name' %}</th>
             <th scope="col">{% trans 'Vernacular names' %}</th>
             <th scope="col"><span class="oi oi-camera-slr"></span></th>
@@ -17,6 +18,10 @@
         {% for s in species_list %}
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr class="clickable-row" data-href="{{ s.get_absolute_url }}">
+                    <td class="small">
+                        {{ s.display_order }}
+                    </td>
+
                     <td class="small">
                         {% include 'lepidoptera/taxonomy/_taxon_name_link_synonyms_cell.html' with taxon=s %}
                     </td>
