@@ -109,10 +109,10 @@ USE_L10N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('de', _('German')),
+    ('nl', _('Dutch')),
     ('en', _('English')),
     ('fr', _('French')),
-    ('nl', _('Dutch')),
+    ('de', _('German')),
 ]
 
 LANGUAGES_AVAILABLE_IN_SELECTOR = [  # We cannot just not remove the ununsed from LANGUAGES since it is used for other things (such as venacular names)
