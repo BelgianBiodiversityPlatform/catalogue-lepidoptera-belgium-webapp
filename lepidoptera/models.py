@@ -195,6 +195,9 @@ class Substrate(models.Model):
     def suggest_type_label(self):
         return "substrate"
 
+    class Meta:
+        ordering = ['name']
+
 
 class TaxonomicModel(CommonTaxonomicModel):
     """Common ground between all taxon-related models (for Lepidoptera)."""
@@ -915,7 +918,7 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     class Meta:
         verbose_name_plural = "Host plant species"
-        ordering = ['name']
+        ordering = ['genus__name', 'name']
 
     def __str__(self):
         return "{} {}".format(self.genus.name, self.name)
