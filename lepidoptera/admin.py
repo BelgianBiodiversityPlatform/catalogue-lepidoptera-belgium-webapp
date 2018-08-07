@@ -191,6 +191,11 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(SpeciesAdmin, self).get_form(request, obj, **kwargs)
+        form.base_fields['display_order'].widget.attrs['style'] = 'width: 20em;'
+        return form
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "genus":
             kwargs["queryset"] = Genus.objects.order_by('name')
