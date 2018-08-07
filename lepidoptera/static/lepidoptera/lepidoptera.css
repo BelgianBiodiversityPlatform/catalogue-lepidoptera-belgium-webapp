@@ -65,3 +65,8 @@ img.province-icon {
 [data-toggle="collapse"]:not(.collapsed) .if-collapsed {
   display: none;
 }
+
+.indent-except-first {
+    padding-left: 10px;
+    text-indent: -10px;
+}

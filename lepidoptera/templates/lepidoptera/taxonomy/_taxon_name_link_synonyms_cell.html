@@ -1,7 +1,12 @@
-<b><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></b>
-<span class="font-weight-light"> {{ taxon.author }}</span>
-{% for synonym in taxon.synonyms.all %}
-    <span class="font-weight-light">
-        <br/> &nbsp; &nbsp; = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
-    </span>
-{% endfor %}
+<p class="indent-except-first mb-1">
+    <b><a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a></b>
+    <span class="font-weight-light"> {{ taxon.author }}</span>
+</p>
+
+<div style="margin-left: 10px">
+    {% for synonym in taxon.synonyms.all %}
+        <p class="mb-0 font-weight-light indent-except-first">
+            = <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
+        </p>
+    {% endfor %}
+</div>
