@@ -11,7 +11,7 @@
             <a class="card-link" href="{% url 'family_page' family.id %}">{{ family.name }}</a> ({{ family.species_count }})
         </h6>
 
-        <p class="m-0" style="line-height: 1.2">
+        <p class="m-0" style="line-height: 1.2" >
         {% if family.vernacular_name_nl %}
             <small class="card-text text-muted">{{ family.vernacular_name_nl }} (NL)</small><br/>
         {% endif %}

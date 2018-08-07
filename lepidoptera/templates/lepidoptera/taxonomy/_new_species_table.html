@@ -18,7 +18,7 @@
         {% for s in species_list %}
             {% if s.is_valid %} {# We skip synonyms... #}
                 <tr class="clickable-row" data-href="{{ s.get_absolute_url }}">
-                    <td class="small">
+                    <td class="small text-muted">
                         {{ s.display_order }}
                     </td>
 

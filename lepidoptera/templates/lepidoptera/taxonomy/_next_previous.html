@@ -1,9 +1,15 @@
 <div style="margin-bottom: 20px;" class="row">
-    <div class="col">
+    <div class="col-1">
         {% if taxon.previous %}
             <a class="btn btn-outline-primary btn-sm" href="{{ taxon.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ taxon.previous.name }}</a>
         {% endif %}
+    </div>
 
+    <div class="col-10 text-center">
+        <span class="small text-muted">Seq # {{ taxon.display_order }}</span>
+    </div>
+
+    <div class="col-1">
         {% if taxon.next %}
             <a class="float-right btn btn-outline-primary btn-sm" href="{{ taxon.next.get_absolute_url }}">{{ taxon.next.name }} <span class="oi oi-caret-right"></span></a>
         {% endif %}
