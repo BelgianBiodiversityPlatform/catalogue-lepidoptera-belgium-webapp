@@ -5,9 +5,9 @@
 </script>
 
 <script type="text/x-template" id="country-grape-template">
-    <div class="col m-1 p-1" :class="{ border: showBorder}">
+    <div class="col m-0 p-0" :class="{ border: showBorder}">
         <h5>[[ period.period_name ]]</h5>
-        <svg viewBox="0 0 300 112">
+        <svg viewBox="0 0 155 112">
             <province-icon v-for="province in provinces"
                            :pos-x="province.posX"
                            :pos-y="province.posY"
@@ -24,7 +24,7 @@
                                 :is-active="province.active"
                                 :key="province.name"></half-province-icon>
 
-            <line x1="145" y1="48" x2="175" y2="48" style="stroke:rgb(0,0,0);stroke-width:1" />
+            <line x1="75" y1="48" x2="105" y2="48" style="stroke:rgb(0,0,0);stroke-width:1" />
         </svg>
     </div>
 </script>

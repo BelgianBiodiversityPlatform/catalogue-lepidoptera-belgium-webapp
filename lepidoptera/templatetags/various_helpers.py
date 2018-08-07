@@ -52,7 +52,7 @@ def field_in_all_available_languages_ul(languages, model, field_name):
 
     html = ''
     if entries:
-        html = html + '<ul>'
+        html = html + '<ul class="list-unstyled">'
         for entry in entries:
             html = html + '<li>{} ({})</li>'.format(entry['value'], entry['code'])
         html = html + '</ul>'
