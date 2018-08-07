@@ -30,6 +30,7 @@ class MyMarkdownxModelAdmin(MarkdownxModelAdmin):
         models.MarkdownxField: {'widget': AdminMarkdownxWidget(attrs={'rows': 5, 'cols': 40})},
     }
 
+
 class NotNullFilter(admin.SimpleListFilter):
     title = _('Filter title not set')
 
@@ -90,7 +91,12 @@ class ObservationsInline(admin.TabularInline):
 
 class SpeciesPicturesInline(admin.TabularInline):
     model = SpeciesPicture
-    readonly_fields = ('verbatim_image_filename',)
+    readonly_fields = ('verbatim_image_filename', 'thumbnail')
+    extra = 1
+
+    thumbnail = AdminThumbnail(image_field='image_admin_thumbnail')
+
+    fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'verbatim_image_filename')
 
 
 @admin.register(Family)

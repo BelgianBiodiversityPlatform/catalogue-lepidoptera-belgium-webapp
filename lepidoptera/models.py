@@ -648,6 +648,9 @@ class SpeciesPicture(models.Model):
 
     gallery_order = models.IntegerField(help_text="Order in various galleries. Smaller numbers comes first!")
 
+    date = models.DateField(blank=True, null=True)
+    locality = models.CharField(max_length=255, blank=True)
+
     def html_metadata(self):
         entries = []
         if self.image_subject:
