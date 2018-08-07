@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.files import File
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
@@ -204,6 +205,22 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdm
     readonly_fields = ('verbatim_species_number', 'binomial_name')
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
+
+    change_form_template = "lepidoptera/admin/species_changeform.html"
+
+    def response_change(self, request, obj):
+        res = super(SpeciesAdmin, self).response_change(request, obj)
+        if "_save_and_view" in request.POST:
+            return HttpResponseRedirect(obj.get_absolute_url())
+        else:
+            return res
+
+    def response_add(self, request, obj, post_url_continue=None):
+        res = super(SpeciesAdmin, self).response_add(request, obj, post_url_continue)
+        if "_save_and_view" in request.POST:
+            return HttpResponseRedirect(obj.get_absolute_url())
+        else:
+            return res
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(SpeciesAdmin, self).get_form(request, obj, **kwargs)
