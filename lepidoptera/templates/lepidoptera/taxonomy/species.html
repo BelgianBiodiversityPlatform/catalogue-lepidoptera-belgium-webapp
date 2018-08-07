@@ -18,110 +18,115 @@
 {% endblock %}
 
 {% block details %}
-    {% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+    {# TODO: Validation: in admin, check that no data is entered for those in case of a synonym (that data would never be visible) #}
+    {# TODO: Also check that there's no data for preexisting/imported species #}
+    {% if not taxon.synonym_of %}
+        {% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
 
-    <h2>{% trans "Distribution" %}</h2>
+        <h2>{% trans "Distribution" %}</h2>
 
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="pills-grape-tab" data-toggle="pill" href="#pills-grape" role="tab"
-               aria-controls="pills-grape" aria-selected="true">Grape view</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="pills-table-tab" data-toggle="pill" href="#pills-table" role="tab"
-               aria-controls="pills-table" aria-selected="false">Table view </a>
-        </li>
-    </ul>
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-grape-tab" data-toggle="pill" href="#pills-grape" role="tab"
+                   aria-controls="pills-grape" aria-selected="true">Grape view</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-table-tab" data-toggle="pill" href="#pills-table" role="tab"
+                   aria-controls="pills-table" aria-selected="false">Table view </a>
+            </li>
+        </ul>
 
-    <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
-            <div id="distribution" class="w-50 mx-auto">
-                <distribution-grapefruit :show-borders="true" :species-id="{{ taxon.pk }}" service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
+                <div id="distribution" class="w-50 mx-auto">
+                    <distribution-grapefruit :show-borders="true" :species-id="{{ taxon.pk }}"
+                                             service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
+                </div>
             </div>
-        </div>
 
-        <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
-            <div class="row">
-                <div class="col">
-                    {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
-                    {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods %}
+            <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
+                <div class="row">
+                    <div class="col">
+                        {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
+                        {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <hr>
+        <hr>
 
-    <div class="row">
-        <div class="col">
-            <h2>{% trans "Flight periods" %}</h2>
-            {% if taxon.flightperiod_section_text %}
-                <div class="alert alert-success">{{ taxon.flightperiod_section_text|markdown }}</div>
+        <div class="row">
+            <div class="col">
+                <h2>{% trans "Flight periods" %}</h2>
+                {% if taxon.flightperiod_section_text %}
+                    <div class="alert alert-success">{{ taxon.flightperiod_section_text|markdown }}</div>
+                {% endif %}
+                <div id="mapid"></div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col">
+                <h2>{% trans "Observed on" %}</h2>
+            </div>
+        </div>
+
+        <hr>
+
+        {% if taxon.hostplants_section_text %}
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-success">{{ taxon.hostplants_section_text|markdown }}</div>
+                </div>
+            </div>
+        {% endif %}
+
+        <dl class="row">
+            {% if plant_species_observations %}
+                <dt class="col-sm-3">{% trans "Host plant (species)" %}:</dt>
+                <dd class="col-sm-9">
+                    {% for observation in plant_species_observations %}
+                        <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
+                        {% include 'lepidoptera/_comma.html' %}
+                    {% endfor %}
+                </dd>
             {% endif %}
-            <div id="mapid"></div>
-        </div>
-    </div>
 
-    <hr>
+            {% if plant_genus_observations %}
+                <dt class="col-sm-3">{% trans "Host plant (genera)" %}:</dt>
+                <dd class="col-sm-9">
+                    {% for observation in plant_genus_observations %}
+                        <a href="{{ observation.plant_genus.get_absolute_url }}">{{ observation.plant_genus }}</a>
+                        {% include 'lepidoptera/_comma.html' %}
+                    {% endfor %}
+                </dd>
+            {% endif %}
 
-    <div class="row">
-        <div class="col">
-            <h2>{% trans "Observed on" %}</h2>
-        </div>
-    </div>
+            {% if substrate_observations %}
+                <dt class="col-sm-3">{% trans "Substrates" %}:</dt>
+                <dd class="col-sm-9">
+                    {% for observation in substrate_observations %}
+                        <a href="{{ observation.substrate.get_absolute_url }}">{{ observation.substrate }}</a>
+                        {% include 'lepidoptera/_comma.html' %}
+                    {% endfor %}
+                </dd>
+            {% endif %}
+        </dl>
 
-    <hr>
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='imago' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='egg' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='larva' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='case' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bag' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='mine' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='cocoon' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bionomics' %}
+        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='habitat' %}
 
-    {% if taxon.hostplants_section_text %}
-    <div class="row">
-        <div class="col">
-            <div class="alert alert-success">{{ taxon.hostplants_section_text|markdown }}</div>
-        </div>
-    </div>
     {% endif %}
-
-    <dl class="row">
-        {% if plant_species_observations %}
-            <dt class="col-sm-3">{% trans "Host plant (species)" %}:</dt>
-            <dd class="col-sm-9">
-                {% for observation in plant_species_observations %}
-                    <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
-                    {% include 'lepidoptera/_comma.html' %}
-                {% endfor %}
-            </dd>
-        {% endif %}
-
-        {% if plant_genus_observations %}
-            <dt class="col-sm-3">{% trans "Host plant (genera)" %}:</dt>
-            <dd class="col-sm-9">
-                {% for observation in plant_genus_observations %}
-                    <a href="{{ observation.plant_genus.get_absolute_url }}">{{ observation.plant_genus }}</a>
-                    {% include 'lepidoptera/_comma.html' %}
-                {% endfor %}
-            </dd>
-        {% endif %}
-
-        {% if substrate_observations %}
-            <dt class="col-sm-3">{% trans "Substrates" %}:</dt>
-            <dd class="col-sm-9">
-                {% for observation in substrate_observations %}
-                    <a href="{{ observation.substrate.get_absolute_url }}">{{ observation.substrate }}</a>
-                    {% include 'lepidoptera/_comma.html' %}
-                {% endfor %}
-            </dd>
-        {% endif %}
-    </dl>
-
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='imago' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='egg' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='larva' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='case' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bag' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='mine' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='cocoon' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bionomics' %}
-    {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='habitat' %}
-
 {% endblock %}
 
 {% block bottom-of-body %}
