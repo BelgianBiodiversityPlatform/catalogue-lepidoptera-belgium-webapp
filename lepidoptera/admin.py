@@ -10,6 +10,8 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from imagekit.admin import AdminThumbnail
+from markdownx import models
+from markdownx.widgets import AdminMarkdownxWidget
 
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
@@ -21,6 +23,12 @@ from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Provinc
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
+
+class MyMarkdownxModelAdmin(MarkdownxModelAdmin):
+    # Smaller widget
+    formfield_overrides = {
+        models.MarkdownxField: {'widget': AdminMarkdownxWidget(attrs={'rows': 5, 'cols': 40})},
+    }
 
 class NotNullFilter(admin.SimpleListFilter):
     title = _('Filter title not set')
@@ -86,7 +94,7 @@ class SpeciesPicturesInline(admin.TabularInline):
 
 
 @admin.register(Family)
-class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_family_id', 'wikidata_id')
@@ -119,7 +127,7 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin)
 
 
 @admin.register(Subfamily)
-class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subfamily_id', )
@@ -130,7 +138,7 @@ class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdm
 
 
 @admin.register(Tribus)
-class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_tribus_id', )
@@ -139,7 +147,7 @@ class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin)
 
 
 @admin.register(Genus)
-class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_genus_id', )
@@ -161,7 +169,7 @@ class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
 
 
 @admin.register(Subgenus)
-class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subgenus_id', )
@@ -184,7 +192,7 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmi
 
 
 @admin.register(Species)
-class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MarkdownxModelAdmin):
+class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
@@ -302,7 +310,7 @@ class PublicationAdmin(admin.ModelAdmin):
 
 
 @admin.register(PageFragment)
-class PageFragmentAdmin(MarkdownxModelAdmin):
+class PageFragmentAdmin(MyMarkdownxModelAdmin):
     list_display = ('identifier', 'content_en', 'content_nl', 'content_de', 'content_fr')
 
 
