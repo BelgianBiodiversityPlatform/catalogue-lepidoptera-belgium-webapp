@@ -42,7 +42,7 @@
     {% if taxon.synonym_of %}
         <dt class="col-sm-2">{% trans "Synonym of " %}</dt>
         <dd class="col-sm-10">
-            <a href="{{ taxon.synonym_of.get_absolute_url }}">{{ taxon.synonym_of.html_str }}</a>
+            <a href="{{ taxon.synonym_of.get_absolute_url }}">{{ taxon.synonym_of.html_str }}</a>  {{ taxon.synonym_of.author }}
         </dd>
     {% endif %}
 
@@ -50,7 +50,7 @@
         <dt class="col-sm-2">{% trans "Synonyms" %}
         <dd class="col-sm-10">
             {% for synonym in taxon.synonyms.all %}
-                <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a>
+                <a href="{{ synonym.get_absolute_url }}">{{ synonym.html_str }}</a> {{ synonym.author }}
                 {% include 'lepidoptera/_comma.html' %}
             {% endfor %}
         </dd>
