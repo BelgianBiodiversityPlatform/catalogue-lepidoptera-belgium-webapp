@@ -721,7 +721,7 @@ SPECIES_PAGE_SECTIONS = {
     }
 
 
-class Species(ParentForAdminListMixin, TaxonomicModel):
+class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
     ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
 
     VERNACULAR_FIELDS = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
