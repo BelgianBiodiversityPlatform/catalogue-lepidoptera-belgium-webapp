@@ -575,6 +575,7 @@ class SpeciesPicture(models.Model):
     HOST_PLANT = 'HOST_PLANT'
     BIONOMICS = 'BIONOMICS'
     HABITAT = 'HABITAT'
+    GENITALIA = 'GENITALIA'
 
     SUBJECT_CHOICES = (
         (MUSEUM_SPECIMEN, 'Museum specimen'),
@@ -582,7 +583,8 @@ class SpeciesPicture(models.Model):
         (PRE_ADULT_STAGE, 'Pre-adult stage'),
         (HOST_PLANT, 'Host plant'),
         (BIONOMICS, 'Bionomics'),
-        (HABITAT, 'Habitat')
+        (HABITAT, 'Habitat'),
+        (GENITALIA, 'Genitalia')
     )
 
     # Specimen stages
@@ -676,6 +678,12 @@ SPECIES_PAGE_SECTIONS = {
             'picture_filters': {'specimen_stage': SpeciesPicture.IMAGO}
         },
 
+        'genitalia': {
+            'display_name': 'Genitalia',
+            'text_field_name': "genitalia_section_text",
+            'picture_filters': {'image_subject': SpeciesPicture.GENITALIA}
+        },
+
         'egg': {
             'display_name': 'Egg',
             'text_field_name': 'egg_section_text',
@@ -759,6 +767,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
     first_mention_link = models.URLField(blank=True, verbose_name='hyperlink')
 
     imago_section_text = MarkdownxField(blank=True)
+    genitalia_section_text = MarkdownxField(blank=True)
     larva_section_text = MarkdownxField(blank=True)
     egg_section_text = MarkdownxField(blank=True)
     case_section_text = MarkdownxField(blank=True)

@@ -246,6 +246,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdm
                        'text',
 
                        'imago_section_text',
+                       'genitalia_section_text',
                        'egg_section_text',
                        'larva_section_text',
                        'case_section_text',
