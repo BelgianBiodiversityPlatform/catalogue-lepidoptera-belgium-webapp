@@ -1,0 +1,23 @@
+{% load various_helpers %}
+
+{% if species|has_content_for_section:section_name %}
+    <div class="row">
+        <div class="col">
+            <h3>{% section_display_name section_name %}</h3>
+            <div class="section-text">
+                {{ species|get_text_for_section:section_name|markdown }}
+            </div>
+
+            {% block section-pictures %}
+                <div class="section-pics text-center">
+                    {% section_pics species section_name as pictures %}
+
+                    {% include 'lepidoptera/taxonomy/_species_section_pics_loop.html' with pictures=pictures section_name=section_name only %}
+                </div>
+            {% endblock %}
+
+            <hr/>
+
+        </div>
+    </div>
+{% endif %}

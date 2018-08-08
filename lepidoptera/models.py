@@ -805,7 +805,20 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
 
     def get_pictures_for_section(self, section_name):
         qs = SpeciesPicture.objects.filter(species=self).order_by('gallery_order')
-        qs = qs.filter(**SPECIES_PAGE_SECTIONS[section_name]['picture_filters'])
+
+        if section_name == 'imago_museum' or section_name == 'imago_nature':
+            # Special case for imago, we allow getting only the nature or museum pictures
+            filters = {'specimen_stage': SpeciesPicture.IMAGO}
+
+            if section_name == 'imago_museum':
+                filters['image_subject'] = SpeciesPicture.MUSEUM_SPECIMEN
+            elif section_name == 'imago_nature':
+                filters['image_subject'] = SpeciesPicture.IN_VIVO_SPECIMEN
+
+            qs = qs.filter(**filters)
+        else:
+            # Normal case, we get the filters from SPECIES_PAGE_SECTIONS
+            qs = qs.filter(**SPECIES_PAGE_SECTIONS[section_name]['picture_filters'])
 
         return qs
 

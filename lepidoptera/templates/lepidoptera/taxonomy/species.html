@@ -116,16 +116,16 @@
             {% endif %}
         </dl>
 
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='imago' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='genitalia' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='egg' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='larva' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='case' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bag' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='mine' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='cocoon' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='bionomics' %}
-        {% include 'lepidoptera/taxonomy/_species_section.html' with species=taxon section_name='habitat' %}
+        {% include 'lepidoptera/taxonomy/_species_section_imago.html' with species=taxon section_name='imago' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='genitalia' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='egg' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='larva' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='case' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='bag' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='mine' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='cocoon' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='bionomics' %}
+        {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='habitat' %}
 
     {% endif %}
 {% endblock %}

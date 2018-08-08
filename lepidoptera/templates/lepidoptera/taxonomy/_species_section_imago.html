@@ -1,0 +1,16 @@
+{% extends 'lepidoptera/taxonomy/_species_section_generic.html' %}
+
+{% load various_helpers %}
+
+{% block section-pictures %}
+    <div class="section-pics text-center">
+        <h4>Museum specimens</h4>
+
+        {% section_pics species "imago_museum" as pictures %}
+        {% include 'lepidoptera/taxonomy/_species_section_pics_loop.html' with pictures=pictures section_name=section_name only %}
+
+        <h4>Specimens in nature</h4>
+        {% section_pics species "imago_nature" as pictures %}
+        {% include 'lepidoptera/taxonomy/_species_section_pics_loop.html' with pictures=pictures section_name=section_name only %}
+    </div>
+{% endblock %}

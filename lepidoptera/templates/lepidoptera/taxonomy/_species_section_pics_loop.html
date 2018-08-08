@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% for pic in pictures %}
+    {% include "lepidoptera/taxonomy/_species_section_pic.html" with pic=pic section_name=section_name only %}
+{% empty %}
+    {% trans "No pictures yet!" %}
+{% endfor %}
