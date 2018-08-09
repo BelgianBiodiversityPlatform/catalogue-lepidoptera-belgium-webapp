@@ -1,7 +1,7 @@
 <div style="margin-bottom: 20px;" class="row">
     <div class="col-1">
         {% if taxon.previous %}
-            <a class="btn btn-outline-primary btn-sm" href="{{ taxon.previous.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ taxon.previous.html_str }}</a>
+            <a class="btn btn-outline-primary btn-sm" href="{{ taxon.previous_valid.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ taxon.previous_valid.html_str }}</a>
         {% endif %}
     </div>
 
@@ -11,7 +11,7 @@
 
     <div class="col-1">
         {% if taxon.next %}
-            <a class="float-right btn btn-outline-primary btn-sm" href="{{ taxon.next.get_absolute_url }}">{{ taxon.next.html_str }} <span class="oi oi-caret-right"></span></a>
+            <a class="float-right btn btn-outline-primary btn-sm" href="{{ taxon.next_valid.get_absolute_url }}">{{ taxon.next_valid.html_str }} <span class="oi oi-caret-right"></span></a>
         {% endif %}
     </div>
 </div>

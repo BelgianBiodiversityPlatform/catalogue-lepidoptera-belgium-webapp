@@ -106,12 +106,26 @@ class DisplayOrderNavigable(object):
         except IndexError:
             return None
 
+    def next_valid(self):
+        n = self.next()
+        if n and n.is_synonym:
+            n = n.next_valid()
+
+        return n
+
     def previous(self):
         """Return the previous instance in display_order, or None if we're the first one."""
         try:
             return self.__class__.objects.filter(display_order__lt=self.display_order).order_by('-display_order')[0]
         except IndexError:
             return None
+
+    def previous_valid(self):
+        p = self.previous()
+        if p and p.is_synonym:
+            p = p.previous_valid()
+
+        return p
 
 
 class Status(models.Model):
