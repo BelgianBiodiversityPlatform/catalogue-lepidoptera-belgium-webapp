@@ -1,0 +1,9 @@
+<p class="bg-light text-dark small text-center p-2">
+
+    {% for period in timeperiods %}
+        <img src="{{ period.icon.url }}"/> = {{ period.name }}
+        {% if not forloop.last %}
+            •
+        {% endif %}
+    {% endfor %}
+</p>

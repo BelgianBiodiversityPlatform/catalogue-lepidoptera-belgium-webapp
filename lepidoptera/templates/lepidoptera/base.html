@@ -79,6 +79,9 @@
         }).bind('typeahead:select', function (ev, suggestion) {
             window.location.replace(suggestion.url);
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
     });
 </script>
 

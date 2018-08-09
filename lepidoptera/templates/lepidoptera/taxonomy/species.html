@@ -28,11 +28,11 @@
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="pills-grape-tab" data-toggle="pill" href="#pills-grape" role="tab"
-                   aria-controls="pills-grape" aria-selected="true">Grape view</a>
+                   aria-controls="pills-grape" aria-selected="true"><span class="oi oi-target"></span> Grape view</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="pills-table-tab" data-toggle="pill" href="#pills-table" role="tab"
-                   aria-controls="pills-table" aria-selected="false">Table view </a>
+                   aria-controls="pills-table" aria-selected="false"><span class="oi oi-spreadsheet"></span> Table view </a>
             </li>
         </ul>
 
@@ -47,6 +47,7 @@
             <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
                 <div class="row w-50 mx-auto">
                     <div class="col">
+                        {% include 'lepidoptera/taxonomy/_species_presence_period_legend.html' with timeperiods=all_timeperiods %}
                         {% include "lepidoptera/taxonomy/_species_province_table.html" with species=taxon provinces=all_provinces timeperiods=all_timeperiods %}
                         {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
                     </div>

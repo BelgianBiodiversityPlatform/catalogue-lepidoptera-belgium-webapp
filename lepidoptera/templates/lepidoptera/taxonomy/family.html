@@ -21,9 +21,38 @@
                 el: '#species-table-body',
             });
 
-            $(".clickable-row").click(function() {
+            $(".clickable-row").click(function () {
                 window.location = $(this).data("href");
             });
+
+            var setDistributionView = function (distributionType) {
+                switch (distributionType) {
+                    case 'grape':
+                        $('.distribution-grape-container').show();
+                        $('.distribution-table-container').hide();
+                        $('#table-timeperiod-help-button').hide();
+                        break;
+                    case 'table':
+                        $('.distribution-grape-container').hide();
+                        $('.distribution-table-container').show();
+                        $('#table-timeperiod-help-button').show();
+                        break;
+                }
+            };
+
+            var $typeRadioButtons =  $('input[type=radio][name=distributionType]');
+
+            $typeRadioButtons.on('change', function () {
+                setDistributionView($(this).attr('id'));
+            });
+
+            $typeRadioButtons.each(function () {
+                if ($(this).is(":checked")) {
+                    setDistributionView($(this).attr('id'));
+                }
+            });
+
+
         });
     </script>
 {% endblock %}
