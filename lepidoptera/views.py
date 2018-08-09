@@ -62,7 +62,6 @@ def species_page(request, species_id):
         'substrate_observations': Observation.objects.filter(species=species, substrate__isnull=False),
         'plant_species_observations': Observation.objects.filter(species=species, plant_species__isnull=False),
         'plant_genus_observations': Observation.objects.filter(species=species, plant_genus__isnull=False),
-        'species_as_a_list': [species],
         'all_provinces': Province.objects.all(),
         'all_timeperiods': TimePeriod.objects.all(),
 

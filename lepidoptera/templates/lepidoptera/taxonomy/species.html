@@ -45,10 +45,10 @@
             </div>
 
             <div class="tab-pane fade" id="pills-table" role="tabpanel" aria-labelledby="pills-table-tab">
-                <div class="row">
+                <div class="row w-50 mx-auto">
                     <div class="col">
+                        {% include "lepidoptera/taxonomy/_species_province_table.html" with species=taxon provinces=all_provinces timeperiods=all_timeperiods %}
                         {% include 'lepidoptera/taxonomy/_species_presence_province_legend.html' with provinces=all_provinces %}
-                        {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species_as_a_list provinces=all_provinces timeperiods=all_timeperiods %}
                     </div>
                 </div>
             </div>
