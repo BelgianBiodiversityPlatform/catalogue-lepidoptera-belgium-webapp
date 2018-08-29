@@ -2,90 +2,87 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    {% include 'lepidoptera/_google_analytics.html' %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <html lang="en">
+    <head>
+        {% include 'lepidoptera/_google_analytics.html' %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="{% static 'lepidoptera/bootstrap-custom/scss/custom.css' %}"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
-    <link rel="stylesheet" href="{% static 'lepidoptera/lepidoptera.css' %}"/>
-    <link rel="stylesheet" href="{% static 'lepidoptera/typeaheadjs.css' %}"/>
-    <link rel="stylesheet" href="{% static 'lepidoptera/ekko-lightbox.css' %}"/>
+        <link rel="stylesheet" href="{% static 'lepidoptera/bootstrap-custom/scss/custom.css' %}"/>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css"/>
+        <link rel="stylesheet" href="{% static 'lepidoptera/lepidoptera.css' %}"/>
+        <link rel="stylesheet" href="{% static 'lepidoptera/typeaheadjs.css' %}"/>
+        <link rel="stylesheet" href="{% static 'lepidoptera/ekko-lightbox.css' %}"/>
 
-    <title>{% block title %}{{ settings.WEBSITE_NAME }}{% endblock %}</title>
+        <title>{% block title %}{{ settings.WEBSITE_NAME }}{% endblock %}</title>
 
-    {% block extra-head %}{% endblock %}
-</head>
-<body>
+        {% block extra-head %}{% endblock %}
+    </head>
 
-{% include 'lepidoptera/_navbar.html' %}
+    <body>
+        {% include 'lepidoptera/_navbar.html' %}
 
-<div class="container">
-    {% block content %}{% endblock %}
-</div>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
 
-<div class="container-fluid bg-primary">
-    {% include "lepidoptera/_footer.html" %}
-</div>
+        <div class="container-fluid bg-primary">
+            {% include "lepidoptera/_footer.html" %}
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-<script src="{% static 'lepidoptera/bootstrap.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
-<script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
-<script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="{% static 'lepidoptera/bootstrap.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
+        <script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
+        <script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.DEBUG %}.min{% endif %}.js"></script>
+        <script>
+            $(function () {
+                var compare_suggestion = function (a, b) {
+                    if (a.value < b.value)
+                        return -1;
+                    if (a.value > b.value)
+                        return 1;
+                    return 0;
+                };
 
-<script>
-    $(function () {
-        var compare_suggestion = function (a, b) {
-            if (a.value < b.value)
-                return -1;
-            if (a.value > b.value)
-                return 1;
-            return 0;
-        };
+                var multiSource = new Bloodhound({
+                    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    remote: {
+                        url: '{% url 'search_autocomplete' query_string='QUERY' %}',
+                        wildcard: 'QUERY',
+                        transform: function (response) {
+                            // We have to sort here since the 'sorter' option of Bloodhound doesn't work for remote
+                            return response.sort(compare_suggestion);
+                        }
+                    }
+                });
 
-        var multiSource = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: {
-                url: '{% url 'search_autocomplete' query_string='QUERY' %}',
-                wildcard: 'QUERY',
-                transform: function (response) {
-                    // We have to sort here since the 'sorter' option of Bloodhound doesn't work for remote
-                    return response.sort(compare_suggestion);
-                }
-            }
-        });
+                // Initialize (table) sticky headers
+                $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
 
-        // Initialize (table) sticky headers
-        $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
+                $('.multi-search').typeahead({highlight: true}, {
+                    name: 'multi-search',
+                    source: multiSource,
+                    limit: 10,
+                    templates: {
+                        suggestion: function (data) {
+                            return '<p>' + data.value + ' - ' + '<small class="text-muted">' + data.suggest_type + '</small></p>';
+                        },
+                    }
+                }).bind('typeahead:select', function (ev, suggestion) {
+                    window.location.replace(suggestion.url);
+                });
 
-        $('.multi-search').typeahead({highlight: true}, {
-            name: 'multi-search',
-            source: multiSource,
-            limit: 10,
-            templates: {
-                suggestion: function (data) {
-                    return '<p>' + data.value + ' - ' + '<small class="text-muted">' + data.suggest_type + '</small></p>';
-                },
-            }
-        }).bind('typeahead:select', function (ev, suggestion) {
-            window.location.replace(suggestion.url);
-        });
-
-        $('[data-toggle="tooltip"]').tooltip();
-
-    });
-</script>
-
-{% block bottom-of-body %}{% endblock %}
-</body>
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+        {% block bottom-of-body %}{% endblock %}
+    </body>
 </html>
