@@ -1,4 +1,4 @@
-from denorm import denormalized, depend_on_related, CountField
+from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
