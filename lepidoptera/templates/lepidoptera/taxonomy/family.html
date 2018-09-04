@@ -9,7 +9,7 @@
     <hr/>
 
     <h3>{% trans "Species in Belgium" %}</h3>
-    {% include "lepidoptera/taxonomy/_new_species_table.html" with species_list=taxon.all_species %}
+    {% include "lepidoptera/taxonomy/_new_species_table.html" with species_list=species %}
 {% endblock %}
 
 {% block bottom-of-body %}

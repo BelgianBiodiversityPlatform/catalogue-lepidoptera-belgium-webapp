@@ -24,6 +24,7 @@ def family_page(request, family_id):
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
+        'species': family.all_species.order_by('display_order'),
         'all_provinces': Province.objects.all(),
         'all_timeperiods': TimePeriod.objects.all(),
         'select_browse_menu': True
@@ -33,25 +34,37 @@ def family_page(request, family_id):
 def subfamily_page(request, subfamily_id):
     subfamily = Subfamily.objects.get(pk=subfamily_id)
 
-    return render(request, 'lepidoptera/taxonomy/subfamily.html', {'taxon': subfamily, 'select_browse_menu': True})
+    return render(request, 'lepidoptera/taxonomy/subfamily.html', {
+        'taxon': subfamily,
+        'species': subfamily.all_species.order_by('display_order'),
+        'select_browse_menu': True})
 
 
 def tribus_page(request, tribus_id):
     tribus = Tribus.objects.get(pk=tribus_id)
 
-    return render(request, 'lepidoptera/taxonomy/tribus.html', {'taxon': tribus, 'select_browse_menu': True})
+    return render(request, 'lepidoptera/taxonomy/tribus.html', {
+        'taxon': tribus,
+        'species': tribus.all_species.order_by('display_order'),
+        'select_browse_menu': True})
 
 
 def genus_page(request, genus_id):
     genus = Genus.objects.get(pk=genus_id)
 
-    return render(request, 'lepidoptera/taxonomy/genus.html', {'taxon': genus, 'select_browse_menu': True})
+    return render(request, 'lepidoptera/taxonomy/genus.html', {
+        'taxon': genus,
+        'species': genus.all_species.order_by('display_order'),
+        'select_browse_menu': True})
 
 
 def subgenus_page(request, subgenus_id):
     subgenus = Subgenus.objects.get(pk=subgenus_id)
 
-    return render(request, 'lepidoptera/taxonomy/subgenus.html', {'taxon': subgenus, 'select_browse_menu': True})
+    return render(request, 'lepidoptera/taxonomy/subgenus.html', {
+        'taxon': subgenus,
+        'species': subgenus.all_species.order_by('display_order'),
+        'select_browse_menu': True})
 
 
 def species_page(request, species_id):
