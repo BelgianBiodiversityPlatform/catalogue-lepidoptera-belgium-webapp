@@ -2,7 +2,7 @@
 <div class="card familyCard p-1">
     <a class="d-none" href="{% url 'family_page' family.id %}">link</a>
     {% if family.representative_picture %}
-        <img class="card-img-top" src="{{ family.representative_picture_thumbnail.url }}"
+        <img class="card-img-top h-100" src="{{ family.representative_picture_thumbnail.url }}"
              alt="Species representative picture"/>
     {% endif %}
 
