@@ -10,6 +10,15 @@ from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
 
 
+def python_sort_taxonomicmodel(unsorted_qs):
+    """ Takes a QuerySet of TaxonomicModel and sort them by display_order in Python.
+
+    Use in cases order_by doesn't work, such as when an order has already been applied to the QuerySet.
+    Slow, should be probably replaced by front end sorting.
+    """
+    return sorted(unsorted_qs, key=lambda t: t.display_order)
+
+
 # Managers, helpers, ...
 def get_verbatim_id_field():
     # Blank/NULL allowed for post-import record

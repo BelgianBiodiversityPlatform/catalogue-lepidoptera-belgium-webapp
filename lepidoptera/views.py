@@ -8,7 +8,7 @@ from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
     HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
-    Photographer
+    Photographer, python_sort_taxonomicmodel
 
 
 def home_page(request):
@@ -24,7 +24,7 @@ def family_page(request, family_id):
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
-        'species': family.all_species.order_by('display_order'),
+        'species': python_sort_taxonomicmodel(family.all_species),
         'all_provinces': Province.objects.all(),
         'all_timeperiods': TimePeriod.objects.all(),
         'select_browse_menu': True
@@ -36,7 +36,7 @@ def subfamily_page(request, subfamily_id):
 
     return render(request, 'lepidoptera/taxonomy/subfamily.html', {
         'taxon': subfamily,
-        'species': subfamily.all_species.order_by('display_order'),
+        'species': python_sort_taxonomicmodel(subfamily.all_species),
         'select_browse_menu': True})
 
 
@@ -45,7 +45,7 @@ def tribus_page(request, tribus_id):
 
     return render(request, 'lepidoptera/taxonomy/tribus.html', {
         'taxon': tribus,
-        'species': tribus.all_species.order_by('display_order'),
+        'species': python_sort_taxonomicmodel(tribus.all_species),
         'select_browse_menu': True})
 
 
@@ -54,7 +54,7 @@ def genus_page(request, genus_id):
 
     return render(request, 'lepidoptera/taxonomy/genus.html', {
         'taxon': genus,
-        'species': genus.all_species.order_by('display_order'),
+        'species': python_sort_taxonomicmodel(genus.all_species),
         'select_browse_menu': True})
 
 
@@ -63,7 +63,7 @@ def subgenus_page(request, subgenus_id):
 
     return render(request, 'lepidoptera/taxonomy/subgenus.html', {
         'taxon': subgenus,
-        'species': subgenus.all_species.order_by('display_order'),
+        'species': python_sort_taxonomicmodel(subgenus.all_species),
         'select_browse_menu': True})
 
 
