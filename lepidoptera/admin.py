@@ -26,7 +26,7 @@ from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Provinc
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
-UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
+UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
