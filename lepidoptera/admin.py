@@ -4,6 +4,8 @@ from urllib.request import urlopen
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 from django.core.files import File
 from django.db.models import Q
 from django.http import HttpResponseRedirect
@@ -23,6 +25,11 @@ from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Provinc
     Publication, SpeciesPicture, Photographer
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
+
+UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'is_superuser')
+
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)
 
 
 class MyMarkdownxModelAdmin(MarkdownxModelAdmin):
