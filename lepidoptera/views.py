@@ -243,7 +243,7 @@ def pictures_json(request):
         'thumbnaillURL': picture.image_thumbnail.url,
         'fullSizeURL': picture.image.url,
         'HTMLSpeciesName': picture.species.html_str_link(),
-        'HTMLMetadata': picture.html_metadata()
+        'HTMLMetadata': picture.html_metadata(full=True)
     } for picture in paginated_pictures]
 
     return JsonResponse({'hasMoreResults': paginated_pictures.has_next(),

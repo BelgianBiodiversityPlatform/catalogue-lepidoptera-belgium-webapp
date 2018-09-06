@@ -8,6 +8,7 @@ from django.utils.html import format_html
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
+from markdownx.utils import markdownify
 
 
 def python_sort_taxonomicmodel(unsorted_qs):
@@ -676,23 +677,39 @@ class SpeciesPicture(models.Model):
     date = models.DateField(blank=True, null=True)
     locality = models.CharField(max_length=255, blank=True)
 
-    def html_metadata(self):
+    comment = MarkdownxField(blank=True)
+
+    def html_metadata(self, full=False):
+        # Full means "the picture appear with less context than on the species page, so please show all fields.
+
         entries = []
-        if self.image_subject:
+
+        if full and self.image_subject:
             entries.append("<b>Subject</b>: {}".format(self.get_image_subject_display()))
-        if self.specimen_stage:
+        if full and self.specimen_stage:
             entries.append("<b>Stage</b>: {}".format(self.get_specimen_stage_display()))
+
+        if self.locality:
+            entries.append("<b>Locality</b>: {}".format(self.locality))
+        if self.date:
+            entries.append("<b>Date</b>: {}".format(self.date))
+
         if self.specimen_sex:
             entries.append("<b>Sex</b>: {}".format(self.get_specimen_sex_display()))
         if self.side:
             entries.append("<b>Side</b>: {}".format(self.get_side_display()))
 
-        s = ','.join(entries)
+        s = ''
+        if self.comment:
+            s = '<div>' + markdownify(self.comment) + '</div>'
+
+        s = s + ', '.join(entries) + '. '
 
         if self.photographer:
-            s = "<b>© {}</b><br/>".format(self.photographer.full_name) + s
+            s = s + "<b>© {}</b><br/>".format(self.photographer.full_name)
 
-        return s
+        return '<small>' + s + '</small>'
+
 
 SPECIES_PAGE_SECTIONS = {
         'imago': {

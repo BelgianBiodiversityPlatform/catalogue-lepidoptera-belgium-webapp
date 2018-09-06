@@ -104,7 +104,7 @@ class SpeciesPicturesInline(admin.TabularInline):
 
     thumbnail = AdminThumbnail(image_field='image_admin_thumbnail')
 
-    fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'verbatim_image_filename')
+    fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
 
 
 @admin.register(Family)
