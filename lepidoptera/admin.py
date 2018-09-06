@@ -14,11 +14,11 @@ from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from imagekit.admin import AdminThumbnail
 from markdownx import models
-from markdownx.widgets import AdminMarkdownxWidget
 
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
+from lepidoptera.templates.widgets import LepidopteraAdminMarkdownxWidget
 from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
     PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
@@ -35,7 +35,7 @@ admin.site.register(User, UserAdmin)
 class MyMarkdownxModelAdmin(MarkdownxModelAdmin):
     # Smaller widget
     formfield_overrides = {
-        models.MarkdownxField: {'widget': AdminMarkdownxWidget(attrs={'rows': 5, 'cols': 40})},
+        models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 5, 'cols': 40})},
     }
 
 
@@ -106,6 +106,9 @@ class SpeciesPicturesInline(admin.TabularInline):
 
     fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
 
+    formfield_overrides = {
+        models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 3, 'cols': 20})},
+    }
 
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
