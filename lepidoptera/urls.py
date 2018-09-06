@@ -25,6 +25,7 @@ urlpatterns = [
     _get_browse_json_entry('browse_vernacularnames_json'),
 
     path('gallery/', views.gallery_page, name='gallery'),
+    path('haproxy/', views.haproxy_check, name='haproxy'),
     path('pictures_json', views.pictures_json, name='pictures_json'),
 
     path('family/<int:family_id>/', views.family_page, name='family_page'),
