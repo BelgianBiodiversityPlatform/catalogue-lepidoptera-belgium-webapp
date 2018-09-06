@@ -57,7 +57,7 @@ ROOT_URLCONF = 'website.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -140,8 +140,13 @@ SETTINGS_EXPORT = [
     'LANGUAGES_AVAILABLE_IN_SELECTOR',
     'GALLERY_PAGE_SIZE',
     'GOOGLE_ANALYTICS_ID',
-    'DEBUG'
+    'DEBUG',
+    'SHOW_TEST_VERSION_WARNING',
+    'PRODUCTION_SITE_URL'
 ]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+
+SHOW_TEST_VERSION_WARNING = False  # If true, all pages (also Admin) will warn that this is a test version and that the production website is elsewhere.
+PRODUCTION_SITE_URL = "http://projects.biodiversity.be/lepidoptera"

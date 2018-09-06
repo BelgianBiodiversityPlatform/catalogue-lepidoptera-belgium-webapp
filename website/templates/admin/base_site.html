@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title }}{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        {% if settings.SHOW_TEST_VERSION_WARNING %}
+            !!! <b>TEST VERSION</b> OF THE WEBSITE. ALL EDITS WILL BE LOST !!!
+        {% else %}
+            <a href="{% url 'admin:index' %}">{{ site_header }}</a>
+        {% endif %}
+    </h1>
+
+    {% block extrastyle %}
+        {% if settings.SHOW_TEST_VERSION_WARNING %}
+            <style>
+                #header {
+                    background-color: #f8d7da;
+                }
+
+                #branding h1 {
+                    color: #721c24;
+                }
+            </style>
+        {% endif %}
+    {% endblock %}
+
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

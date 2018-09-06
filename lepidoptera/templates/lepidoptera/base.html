@@ -22,6 +22,10 @@
     </head>
 
     <body>
+        {% if settings.SHOW_TEST_VERSION_WARNING %}
+            {% include 'lepidoptera/_test_version_warning.html' %}
+        {% endif %}
+
         {% include 'lepidoptera/_navbar.html' %}
 
         <div class="container">
