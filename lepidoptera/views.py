@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 import json
 
 from django.http import JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
@@ -361,3 +362,5 @@ def browse_vernacularnames_json(request):
 
     return JsonResponse(r, safe=False)
 
+def haproxy_check(request):
+    return HttpResponse('ok', content_type='text/plain')
