@@ -26,52 +26,7 @@ def get_verbatim_id_field():
     return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
 
-class SpeciesManager(models.Manager):
-    # TODO: This messy piece of code id only used at import stage (to confirm 100%)
-    # TODO: (remove it once the app is in production)
-    def get_with_name_and_author_ignore_brackets(self, name_and_author_string, ignore_author=False):
-        try:
-            return self.get_with_name_and_author(name_and_author_string, ignore_author)
-        except Species.DoesNotExist:
-            return self.get_with_name_and_author(name_and_author_string.replace('[', '').replace(']', ''), ignore_author)
-
-    # TODO: This messy piece of code id only used at import stage (to confirm 100%)
-    # TODO: (remove it once the app is in production)
-    def get_with_name_and_author(self, name_and_author_string, ignore_author=False):
-        """Takes a string such as 'Acrolepiopsis assectella (Zeller, 1839)' and return the matching species"""
-
-        name_part = " ".join(name_and_author_string.replace('\xa0', ' ').split(" ", 2)[:2]) # cut after second space
-        name_part = name_part.strip()  # Remove leading/trailing whitespaces
-
-        name_part_genus, name_part_species = name_part.split()
-
-        author_part = name_and_author_string.replace(name_part, '')
-        author_part = author_part.strip()
-
-        if ignore_author:
-            all_matching_species = self.get_queryset().filter(name=name_part_species)
-        else:
-            all_matching_species = self.get_queryset().filter(name=name_part_species, author=author_part)
-
-        # Empty queryset: raise DoesNotExists
-        if len(all_matching_species) == 0:
-            raise Species.DoesNotExist()
-        else:
-            # One or several results. Ideally, one and only one should also match the genus
-            all_matching_species = [species for species in all_matching_species if species.genus_name == name_part_genus]
-
-            if len(all_matching_species) > 1:
-                if ignore_author:  # We retry with author...
-                    return self.get_with_name_and_author(name_and_author_string, ignore_author=False)
-
-                raise Species.MultipleObjectsReturned
-            elif len(all_matching_species) == 0:
-                raise Species.DoesNotExist()
-
-            return all_matching_species[0]
-
-
-class ValidFamiliesManager(SpeciesManager):
+class ValidFamiliesManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
 
@@ -91,7 +46,7 @@ class AcceptedSpeciesManager(models.Manager):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
 
 
-class SynonymSpeciesManager(SpeciesManager):
+class SynonymSpeciesManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
 
@@ -796,7 +751,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
     # now (focus first on taxonomy, and keep things as simple as possible)
 
     # Managers:
-    objects = SpeciesManager()
+    objects = models.Manager()
     accepted_objects = AcceptedSpeciesManager()
     synonym_objects = SynonymSpeciesManager()
 
