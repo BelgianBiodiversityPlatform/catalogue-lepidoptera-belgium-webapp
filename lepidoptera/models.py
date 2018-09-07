@@ -924,12 +924,34 @@ class HostPlantGenus(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant genera"
         ordering = ['name']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for host_plant_species in self.hostplantspecies_set.all():
+            host_plant_species.update_genus_name()
+            host_plant_species.save()
+
 
 class HostPlantSpecies(HostPlantTaxonomicModel):
     author = models.CharField(max_length=255, blank=True)
     genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
 
     lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    # Denormalized field for better performance when calling __str__() multiple times
+    genus_name = models.CharField(max_length=255, blank=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_genus_id = self.genus_id
+
+    @property
+    def genus_changed(self):
+        # Returns true if the genus has changed
+        return self.genus_id != self.__original_genus_id
+
+    def update_genus_name(self):
+        # Call me each time something may have changed my genus name
+        self.genus_name = self.genus.name
 
     @property
     def suggest_type_label(self):
@@ -940,11 +962,7 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     class Meta:
         verbose_name_plural = "Host plant species"
-        ordering = ['genus__name', 'name']
-
-    @property
-    def genus_name(self):
-        return self.genus.name
+        ordering = ['genus_name', 'name']
 
     def __str__(self):
         return "{} {}".format(self.genus_name, self.name)
@@ -952,6 +970,15 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
     @property
     def html_str(self):
         return format_html("<i>{}</i>", self.__str__())
+
+    def save(self, *args, **kwargs):
+        new_record = self.pk is None
+
+        if new_record or self.genus_changed:
+            self.update_genus_name()
+
+        super().save(*args, **kwargs)
+        self.__original_genus = self.genus
 
 
 class Observation(models.Model):
