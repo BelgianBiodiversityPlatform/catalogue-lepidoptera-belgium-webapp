@@ -4,7 +4,10 @@
 <!DOCTYPE html>
     <html lang="en">
     <head>
-        {% include 'lepidoptera/_google_analytics.html' %}
+        {% if not settings.SHOW_TEST_VERSION_WARNING and not settings.DEBUG %}
+            {% include 'lepidoptera/_google_analytics.html' %}
+        {% endif %}
+
         {% include 'lepidoptera/_favicon.html' %}
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
