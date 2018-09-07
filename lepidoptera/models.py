@@ -654,16 +654,18 @@ class SpeciesPicture(models.Model):
         if self.side:
             entries.append("<b>Side</b>: {}".format(self.get_side_display()))
 
-        s = ''
+        comment_block = ''
         if self.comment:
-            s = '<div>' + markdownify(self.comment) + '</div>'
+            comment_block = markdownify(self.comment)
 
-        s = s + ', '.join(entries) + '. '
+        attributes_block = ''
+        if entries:
+            attributes_block = ', '.join(entries) + '. '
 
         if self.photographer:
-            s = s + "<b>© {}</b><br/>".format(self.photographer.full_name)
+            attributes_block = attributes_block + "<b>© {}</b><br/>".format(self.photographer.full_name)
 
-        return '<small>' + s + '</small>'
+        return '<small>' + '<div class="mb-2">' + attributes_block + '</div><div>' + comment_block + '</div>' + '</small>'
 
 
 SPECIES_PAGE_SECTIONS = {

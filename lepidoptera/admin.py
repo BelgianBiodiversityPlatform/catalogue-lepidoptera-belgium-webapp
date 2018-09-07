@@ -349,7 +349,7 @@ class PageFragmentAdmin(MyMarkdownxModelAdmin):
 
 
 @admin.register(SpeciesPicture)
-class SpeciesPictureAdmin(admin.ModelAdmin):
+class SpeciesPictureAdmin(MyMarkdownxModelAdmin):
     list_display = ('gallery_order', 'thumbnail', 'link_to_species', 'image_subject', 'specimen_stage', 'specimen_sex',
                     'side')
 
