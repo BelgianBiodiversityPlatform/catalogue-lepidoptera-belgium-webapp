@@ -107,7 +107,7 @@ class SpeciesPicturesInline(admin.TabularInline):
     fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
 
     formfield_overrides = {
-        models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 3, 'cols': 20})},
+        models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 3, 'cols': 10})},
     }
 
 

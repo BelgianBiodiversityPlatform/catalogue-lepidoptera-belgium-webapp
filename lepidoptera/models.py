@@ -236,6 +236,12 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     objects = models.Manager()
     valid_families_objects = ValidFamiliesManager()
 
+    species_counter = models.IntegerField(default=0)
+
+    def update_species_counter(self):
+        self.species_counter = self.species_count
+        self.save()
+
     @property
     def is_valid(self):
         return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
