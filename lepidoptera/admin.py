@@ -110,6 +110,7 @@ class SpeciesPicturesInline(admin.TabularInline):
         models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 3, 'cols': 20})},
     }
 
+
 @admin.register(Family)
 class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']

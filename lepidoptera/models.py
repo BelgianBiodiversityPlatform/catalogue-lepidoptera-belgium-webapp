@@ -942,8 +942,13 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant species"
         ordering = ['genus__name', 'name']
 
+    @denormalized(models.CharField, max_length=255)
+    @depend_on_related('HostPlantGenus')
+    def genus_name(self):
+        return self.genus.name
+
     def __str__(self):
-        return "{} {}".format(self.genus.name, self.name)
+        return "{} {}".format(self.genus_name, self.name)
 
     @property
     def html_str(self):
