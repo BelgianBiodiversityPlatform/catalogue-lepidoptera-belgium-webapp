@@ -52,7 +52,7 @@ img.province-icon {
 }
 
 .activeText {
-
+    font-weight: bold;
 }
 
 #species-table-body h5 {

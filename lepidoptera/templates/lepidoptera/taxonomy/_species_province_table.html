@@ -2,10 +2,10 @@
 {% load various_helpers %}
 
 <table class="table table-bordered table-sm">
-    <thead class="small text-primary">
+    <thead class="text-primary" style="font-size: 70%;">
     <tr>
         {% for province in provinces %}
-            <th class="text-center province-title" scope="col" title="{{ province.name }}">{{ province.code }}</th>
+            <th class="text-center province-title font-weight-light" scope="col" title="{{ province.name }}">{{ province.code }}</th>
         {% endfor %}
     </tr>
     </thead>
