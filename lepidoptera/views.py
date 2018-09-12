@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from django.shortcuts import render
 
+from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
     HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
     Photographer, python_sort_taxonomicmodel
@@ -86,7 +87,9 @@ def species_page(request, species_id):
 
 
 def about_page(request):
-    return render(request, 'lepidoptera/about.html')
+    return render(request, 'lepidoptera/about.html', {
+        'version_string': get_source_version_info()
+    })
 
 
 def browse_page(request):
