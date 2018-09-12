@@ -23,6 +23,11 @@
              {% block title %}{% endblock %} - {{ settings.WEBSITE_NAME }}
         </title>
 
+        <meta name="description" content="{% block meta_description %}
+        This catalogue provides information on the systematics and the distribution per province for all Lepidoptera of Belgium.
+        Pictures and information on host plants and fly periods is also available.
+        {% endblock %}">
+
         {% block extra-head %}{% endblock %}
     </head>
 
