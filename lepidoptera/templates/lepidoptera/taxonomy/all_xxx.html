@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% block title %}{{ title }}{% endblock %}
+
 {% block content %}
     <h2>{{ title }}</h2>
     <p>{{ taxa.count }} {% trans "found" %}.</p>

@@ -19,7 +19,9 @@
         <link rel="stylesheet" href="{% static 'lepidoptera/typeaheadjs.css' %}"/>
         <link rel="stylesheet" href="{% static 'lepidoptera/ekko-lightbox.css' %}"/>
 
-        <title>{% block title %}{{ settings.WEBSITE_NAME }}{% endblock %}</title>
+        <title>
+             {% block title %}{% endblock %} - {{ settings.WEBSITE_NAME }}
+        </title>
 
         {% block extra-head %}{% endblock %}
     </head>

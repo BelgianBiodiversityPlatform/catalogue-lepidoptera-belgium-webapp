@@ -1,6 +1,8 @@
 {% extends "lepidoptera/hostplant_substrate.html" %}
 {% load i18n %}
 
+{% block title %}{{ species }} - Host plants{% endblock %}
+
 {% block h2_title %}
     {{ species.html_str }}
     {% include "lepidoptera/_entity_type_badge.html" with taxon_type_name="Host plant species" %}
