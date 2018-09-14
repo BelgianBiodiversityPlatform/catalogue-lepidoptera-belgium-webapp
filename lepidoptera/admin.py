@@ -22,7 +22,7 @@ from markdownx.admin import MarkdownxModelAdmin
 from lepidoptera.templates.widgets import LepidopteraAdminMarkdownxWidget
 from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
-    PageFragment, Status, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
+    PageFragment, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
     Publication, SpeciesPicture, Photographer
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
@@ -31,6 +31,7 @@ UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name', 'is_ac
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
 
 class ReadOnlyModelAdmin(admin.ModelAdmin):
     """
@@ -104,18 +105,6 @@ class RepresentativePictureNotNullFilter(NotNullFilter):
     parameter_name = "representative_picture"
 
 
-class LimitStatusChoiceMixin(object):
-    """To avoid duplication: Mixin for ModelAdmin.
-
-    If the model has a status field (FK to Status), limit choices to model.ALLOWED_VERBATIM_STATUS_IDS
-    """
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == 'status':
-            kwargs['queryset'] = Status.objects.filter(verbatim_status_id__in=self.model.ALLOWED_VERBATIM_STATUS_IDS)
-
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
 class SpeciesPresenceInline(admin.TabularInline):
     model = SpeciesPresence
 
@@ -145,8 +134,14 @@ class MyLogEntryAdmin(ReadOnlyModelAdmin):
 admin.site.register(LogEntry, MyLogEntryAdmin)
 
 
+def is_synonym(taxon):
+    return taxon.is_synonym
+is_synonym.short_description = 'Is a synonym?'
+is_synonym.boolean = True
+
+
 @admin.register(Family)
-class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class FamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_family_id', 'wikidata_id')
@@ -179,35 +174,35 @@ class FamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmi
 
 
 @admin.register(Subfamily)
-class SubfamilyAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SubfamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subfamily_id', )
 
-    list_display = ('display_order', 'name', 'family', 'author', 'status')
+    list_display = ('display_order', 'name', 'family', 'author')
 
     list_filter = ['family']
 
 
 @admin.register(Tribus)
-class TribusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class TribusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_tribus_id', )
 
-    list_display = ('display_order', 'name', 'subfamily', 'author', 'status')
+    list_display = ('display_order', 'name', 'subfamily', 'author')
 
 
 @admin.register(Genus)
-class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class GenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_genus_id', )
 
-    list_display = ('display_order', 'name', 'parent_for_admin_list', 'tribus', 'author', 'status')
+    list_display = ('display_order', 'name', 'parent_for_admin_list', 'tribus', 'author', is_synonym)
 
     fields = (('name', 'author'),
-              ('status', 'synonym_of'),
+              'synonym_of',
               ('tribus', 'subfamily', 'family'),
               'vernacular_name',
               'text',
@@ -215,18 +210,14 @@ class GenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin
               'verbatim_genus_id'
               )
 
-    list_filter = (
-        ('status', admin.RelatedOnlyFieldListFilter),
-    )
-
 
 @admin.register(Subgenus)
-class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SubgenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subgenus_id', )
 
-    list_display = ('display_order', 'name', 'genus', 'author', 'status')
+    list_display = ('display_order', 'name', 'genus', 'author')
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "genus":
@@ -234,7 +225,6 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAd
         return super(SubgenusAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
     fields = (('name', 'author'),
-              'status',
               'genus',
               'vernacular_name',
               'text',
@@ -244,12 +234,12 @@ class SubgenusAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAd
 
 
 @admin.register(Species)
-class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
 
-    list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', 'status')
+    list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', is_synonym)
 
     change_form_template = "lepidoptera/admin/species_changeform.html"
 
@@ -285,7 +275,7 @@ class SpeciesAdmin(LimitStatusChoiceMixin, TranslationAdmin, MyMarkdownxModelAdm
             'fields': ('verbatim_species_number',
                        'code',
                        ('name', 'author', 'binomial_name'),
-                       ('status', 'synonym_of'),
+                       'synonym_of',
                        ('subgenus', 'genus'),
                        'vernacular_name',
                        'text',

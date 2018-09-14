@@ -10,11 +10,11 @@ from django.shortcuts import render
 from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
     HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
-    Photographer, python_sort_taxonomicmodel
+    Photographer, python_sort_taxonomicmodel, ALL_LEPDIOPTERA_TAXON_MODELS
 
 
 def home_page(request):
-    valid_families = Family.valid_families_objects.all()
+    valid_families = Family.objects.all()  # No support for synonyms at Family level => they're all valid.
 
     return render(request, 'lepidoptera/home.html', {'families': valid_families})
 
@@ -181,7 +181,7 @@ def autocomplete(request, query_string):
     results = []
 
     models = HostPlantTaxonomicModel.__subclasses__()
-    models.extend(TaxonomicModel.__subclasses__())
+    models.extend(ALL_LEPDIOPTERA_TAXON_MODELS)
     models.extend([Substrate])
 
     for model in models:
