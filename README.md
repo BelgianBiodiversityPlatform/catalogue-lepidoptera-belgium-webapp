@@ -15,16 +15,6 @@ A. Configuration
 7) (in production:) $ python manage.py collectstatic
 8) (in production:) run wsgi server
 
-Tip: Sparql to get Wikidata info on a family:
-=============================================
-
-SELECT ?item ?itemLabel WHERE {
-  ?item rdfs:label "Eriocraniidae"@en.
-  ?item wdt:P105 wd:Q35409.
-}
-
-?item wdt:P105 wd:Q35409. => taxon rank is family
-
 Tip: Customize Bootstrap (colors, ...):
 =======================================
 
