@@ -5,7 +5,7 @@ import json
 
 from django.http import JsonResponse
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
@@ -22,7 +22,7 @@ def home_page(request):
 # TODO: factorize code for the taxonrank_page views?
 
 def family_page(request, family_id):
-    family = Family.objects.get(pk=family_id)
+    family = get_object_or_404(Family, pk=family_id)
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
@@ -34,7 +34,7 @@ def family_page(request, family_id):
 
 
 def subfamily_page(request, subfamily_id):
-    subfamily = Subfamily.objects.get(pk=subfamily_id)
+    subfamily = get_object_or_404(Subfamily, pk=subfamily_id)
 
     return render(request, 'lepidoptera/taxonomy/subfamily.html', {
         'taxon': subfamily,
@@ -43,7 +43,7 @@ def subfamily_page(request, subfamily_id):
 
 
 def tribus_page(request, tribus_id):
-    tribus = Tribus.objects.get(pk=tribus_id)
+    tribus = get_object_or_404(Tribus, pk=tribus_id)
 
     return render(request, 'lepidoptera/taxonomy/tribus.html', {
         'taxon': tribus,
@@ -52,7 +52,7 @@ def tribus_page(request, tribus_id):
 
 
 def genus_page(request, genus_id):
-    genus = Genus.objects.get(pk=genus_id)
+    genus = get_object_or_404(Genus, pk=genus_id)
 
     return render(request, 'lepidoptera/taxonomy/genus.html', {
         'taxon': genus,
@@ -61,7 +61,7 @@ def genus_page(request, genus_id):
 
 
 def subgenus_page(request, subgenus_id):
-    subgenus = Subgenus.objects.get(pk=subgenus_id)
+    subgenus = get_object_or_404(Subgenus, pk=subgenus_id)
 
     return render(request, 'lepidoptera/taxonomy/subgenus.html', {
         'taxon': subgenus,
@@ -70,7 +70,7 @@ def subgenus_page(request, subgenus_id):
 
 
 def species_page(request, species_id):
-    species = Species.objects.get(pk=species_id)
+    species = get_object_or_404(Species, pk=species_id)
 
     context = {
         'taxon': species,
@@ -138,7 +138,7 @@ def all_species_synonyms(request):
 
 
 def hostplant_species(request, species_id):
-    species = HostPlantSpecies.objects.get(pk=species_id)
+    species = get_object_or_404(HostPlantSpecies, pk=species_id)
 
     return render(request, 'lepidoptera/hostplant_species.html', {
         'species': species,
@@ -148,7 +148,7 @@ def hostplant_species(request, species_id):
 
 
 def hostplant_genus(request, genus_id):
-    genus = HostPlantGenus.objects.get(pk=genus_id)
+    genus = get_object_or_404(HostPlantGenus, pk=genus_id)
 
     return render(request, 'lepidoptera/hostplant_genus.html', {
         'genus': genus,
@@ -158,7 +158,7 @@ def hostplant_genus(request, genus_id):
 
 
 def hostplant_family(request, family_id):
-    family = HostPlantFamily.objects.get(pk=family_id)
+    family = get_object_or_404(HostPlantFamily, pk=family_id)
 
     return render(request, 'lepidoptera/hostplant_family.html', {
         'family': family,
@@ -167,7 +167,7 @@ def hostplant_family(request, family_id):
 
 
 def substrate_page(request, substrate_id):
-    substrate = Substrate.objects.get(pk=substrate_id)
+    substrate = get_object_or_404(Substrate, pk=substrate_id)
 
     return render(request, 'lepidoptera/substrate.html', {
         'substrate': substrate,
@@ -257,7 +257,8 @@ def pictures_json(request):
 
 def species_per_province_and_period(request):
     species_id = int(request.GET.get('speciesId'))
-    sp = Species.objects.get(pk=species_id)
+
+    sp = get_object_or_404(Species, pk=species_id)
 
     r = []
 
