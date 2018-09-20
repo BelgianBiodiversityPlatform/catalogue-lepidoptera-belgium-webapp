@@ -353,6 +353,12 @@ class Genus(ParentForAdminListMixin, TaxonomicModelWithSynonyms):
         return self.species_set.filter(synonym_of__isnull=True).count()
 
     @property
+    def additional_data_for_json(self):
+        return {
+            'synonym': self.is_synonym
+        }
+
+    @property
     def species_count(self):
         count = self.direct_species_count
         for subgenus in self.subgenus_set.all():
