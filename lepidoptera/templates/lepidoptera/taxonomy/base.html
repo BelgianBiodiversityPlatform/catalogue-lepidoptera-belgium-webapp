@@ -5,7 +5,9 @@
 {% block meta_description %}Information about {{ taxon }}{% endblock %}
 
 {% block content %}
-    {% include 'lepidoptera/taxonomy/_next_previous.html' %}
+    {% if not taxon.synonym_of %}
+        {% include 'lepidoptera/taxonomy/_next_previous.html' %}
+    {% endif %}
 
     {% include "lepidoptera/taxonomy/_title.html" %}
 
