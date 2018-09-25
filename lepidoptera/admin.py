@@ -204,9 +204,9 @@ class GenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     fields = (('name', 'author'),
               'synonym_of',
               ('tribus', 'subfamily', 'family'),
+              'display_order',
               'vernacular_name',
               'text',
-              'display_order',
               'verbatim_genus_id'
               )
 
@@ -226,9 +226,9 @@ class SubgenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
     fields = (('name', 'author'),
               'genus',
+              'display_order',
               'vernacular_name',
               'text',
-              'display_order',
               'verbatim_subgenus_id'
     )
 
@@ -277,6 +277,7 @@ class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
                        ('name', 'author', 'binomial_name'),
                        'synonym_of',
                        ('subgenus', 'genus'),
+                       'display_order',
                        'vernacular_name',
                        'text',
 
@@ -291,9 +292,7 @@ class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
                        'bionomics_section_text',
                        'habitat_section_text',
                        'hostplants_section_text',
-                       'flightperiod_section_text',
-                       
-                       'display_order')
+                       'flightperiod_section_text')
         }),
         ('First mention in Belgium', {
             'fields': ('first_mention_publication', 'first_mention_page', 'first_mention_link')
