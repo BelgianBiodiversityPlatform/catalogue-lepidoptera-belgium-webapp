@@ -655,6 +655,18 @@ SPECIES_PAGE_SECTIONS = {
 class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWithSynonyms):
     VERNACULAR_FIELDS = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
 
+    NATIVE = 'NATIVE'
+    INVASIVE = 'INVASIVE'
+    NATURALISED = 'NATURALISED'
+    MIGRANT = 'MIGRANT'
+
+    ESTABLISHMENT_MEANS_CHOICES = (
+        (NATIVE, 'Native'),
+        (INVASIVE, 'Invasive'),
+        (NATURALISED, 'Naturalised'),
+        (MIGRANT, 'Migrant'),
+    )
+
     verbatim_species_number = get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
         validate_only_numbers_and_uppercase,
@@ -683,6 +695,12 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     habitat_section_text = MarkdownxField(blank=True)
     hostplants_section_text = MarkdownxField(blank=True)
     flightperiod_section_text = MarkdownxField(blank=True)
+
+    establishment_means = models.CharField(max_length=25, choices=ESTABLISHMENT_MEANS_CHOICES, default=NATIVE)
+    # We use a date field, but the day will always be '1' (and hidden from the UI) since we just need month granularity
+    # Rationale: https://stackoverflow.com/questions/30017229/how-to-represent-month-as-field-on-django-model
+    establishment_date = models.DateField(blank=True, null=True, help_text="The 'day' part will be ignored.")
+    establishment_remarks = MarkdownxField(blank=True)
 
     @property
     def has_pictures(self):

@@ -240,6 +240,7 @@ class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
     readonly_fields = ('verbatim_species_number', 'binomial_name')
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', is_synonym)
+    list_filter = ('establishment_means',)
 
     change_form_template = "lepidoptera/admin/species_changeform.html"
 
@@ -278,6 +279,7 @@ class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
                        'synonym_of',
                        ('subgenus', 'genus'),
                        'display_order',
+                       ('establishment_means', 'establishment_date', 'establishment_remarks'),
                        'vernacular_name',
                        'text',
 
