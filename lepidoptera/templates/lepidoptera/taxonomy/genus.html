@@ -7,7 +7,7 @@
     {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="species-group names" taxon_list=taxon.species_set.all %}
 
     <h3>{% trans "Species in Belgium" %}</h3>
-    {% include "lepidoptera/taxonomy/_new_species_table.html" with species_list=species %}
+    {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species %}
 
 {% endblock %}
 
