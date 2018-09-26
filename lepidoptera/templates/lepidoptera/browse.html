@@ -115,6 +115,7 @@
                 lepidopteraGeneraUrl: "{% url 'browse_lepidoptera_genera_json' %}",
                 lepidopteraSubgeneraUrl: "{% url 'browse_lepidoptera_subgenera_json' %}",
                 lepidopteraSpeciesUrl: "{% url 'browse_lepidoptera_species_json' %}",
+                lepidopteraNonNativeSpeciesUrl: "{% url 'browse_lepidoptera_non_native_species_json' %}",
 
                 hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
                 hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
@@ -262,6 +263,12 @@
                                 label: 'Species (lepidoptera)',
                                 target: '#list-species',
                                 url: browseConf.lepidopteraSpeciesUrl,
+                                component: 'content-entry-specieslist'
+                            },
+                            {
+                                label: 'Species (lepidoptera) - Non-native only',
+                                target: '#list-nonnative-species',
+                                url: browseConf.lepidopteraNonNativeSpeciesUrl,
                                 component: 'content-entry-specieslist'
                             },
                             {

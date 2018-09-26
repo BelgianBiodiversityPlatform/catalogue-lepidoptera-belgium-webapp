@@ -283,14 +283,15 @@ def _sort_list_of_dicts_by_name(l):
     return sorted(l, key=lambda k: k['name'])
 
 
-def _browse_model_json(model, title, name_attr='name'):
+def _browse_model_json(model, title, name_attr='name', manager_name='objects'):
     try:
         model._meta.get_field(name_attr)
         name_attr_is_field = True
     except FieldDoesNotExist:
         name_attr_is_field = False
 
-    qs = model.objects.all()
+    manager = getattr(model, manager_name)
+    qs = manager.all()
 
     if name_attr_is_field:  # in this case, we can order at the DB level
         qs = qs.order_by(name_attr)
@@ -348,6 +349,10 @@ def browse_lepidoptera_subgenera_json(request):
 
 def browse_lepidoptera_species_json(request):
     return _browse_model_json(Species, 'Species', name_attr='binomial_name')
+
+
+def browse_lepidoptera_non_native_species_json(request):
+    return _browse_model_json(Species, 'Non-native species', name_attr='binomial_name', manager_name='non_native_objects')
 
 
 def browse_substrates_json(request):

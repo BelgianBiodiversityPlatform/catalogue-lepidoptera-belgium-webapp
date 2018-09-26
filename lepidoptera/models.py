@@ -37,6 +37,11 @@ class AcceptedManager(models.Manager):
         return super().get_queryset().filter(synonym_of__isnull=True)
 
 
+class NonNativeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().exclude(establishment_means__exact=Species.NATIVE)
+
+
 class ParentForAdminListMixin(object):
     """Exposes a parent_for_admin_list method, for polymorphic parents.
 
@@ -716,6 +721,9 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     # Rationale: https://stackoverflow.com/questions/30017229/how-to-represent-month-as-field-on-django-model
     establishment_date = models.DateField(blank=True, null=True, help_text="The 'day' part will be ignored.")
     establishment_remarks = MarkdownxField(blank=True)
+
+    # Extra managers:
+    non_native_objects = NonNativeManager()
 
     def get_optional_establishment_means_badge(self):
         if self.get_establishment_means_display() == 'Native':
