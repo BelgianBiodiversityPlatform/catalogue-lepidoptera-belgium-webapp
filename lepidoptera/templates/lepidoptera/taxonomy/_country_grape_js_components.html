@@ -96,7 +96,11 @@
                         that.periods = json;
                     })
                     .fail(function (jqxhr, textStatus, error) {
-                        alert("error");
+                        console.log("error grape load data");
+                        console.log(jqxhr);
+                        console.log(textStatus);
+                        console.log(error);
+
                     })
             }
         }

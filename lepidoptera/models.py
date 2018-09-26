@@ -5,6 +5,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
@@ -716,6 +717,28 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     establishment_date = models.DateField(blank=True, null=True, help_text="The 'day' part will be ignored.")
     establishment_remarks = MarkdownxField(blank=True)
 
+    def get_optional_establishment_means_badge(self):
+        if self.get_establishment_means_display() == 'Native':
+            return ''
+        return self.get_establishment_means_badge()
+
+    def get_establishment_means_badge(self):
+        """Get a Boostrap badge (full HTML) for the species establishment means"""
+        display_text = self.get_establishment_means_display()
+
+        if display_text == 'Native':
+            badge_class = 'badge-success'
+        elif display_text == 'Invasive':
+            badge_class = 'badge-danger'
+        elif display_text == 'Naturalised':
+            badge_class = 'badge-warning'
+        elif display_text == 'Migrant':
+            badge_class = 'badge-info'
+        else:
+            badge_class = "badge-light"
+
+        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')
+
     @property
     def has_pictures(self):
         return self.speciespicture_set.exists()
@@ -758,7 +781,8 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     def additional_data_for_json(self):
         return {
             'hasPic': self.has_pictures,
-            'synonym': self.is_synonym
+            'synonym': self.is_synonym,
+            'establishmentBadge': self.get_optional_establishment_means_badge()
         }
 
     @property

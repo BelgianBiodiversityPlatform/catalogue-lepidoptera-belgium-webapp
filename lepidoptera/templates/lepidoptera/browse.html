@@ -40,6 +40,8 @@
 
                 <span v-if="entry.additionalData.hasPic" class="oi oi-camera-slr"></span>
                 <span v-if="entry.additionalData.synonym" class="badge badge-secondary">Synonym</span>
+
+                <span v-html="entry.additionalData.establishmentBadge"></span>
             </li>
         </ul>
     </script>
