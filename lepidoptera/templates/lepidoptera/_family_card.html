@@ -1,6 +1,8 @@
 {% load i18n %}
+
+<a class="{% if family.is_large %}large-family-link{% endif %}" href="{% url 'family_page' family.id %}">
 <div class="card familyCard p-1">
-    <a class="d-none" href="{% url 'family_page' family.id %}">link</a>
+
     {% if family.representative_picture %}
         <img class="card-img-top h-100" src="{{ family.representative_picture_thumbnail.url }}"
              alt="Species representative picture"/>
@@ -8,7 +10,7 @@
 
     <div class="card-body p-1">
         <h6 class="card-title m-0">
-            <a class="card-link" href="{% url 'family_page' family.id %}">{{ family.name }}</a> ({{ family.species_counter }})
+            <a class="card-link {% if family.is_large %}large-family-link{% endif %}" href="{% url 'family_page' family.id %}">{{ family.name }}</a> ({{ family.species_counter }})
         </h6>
 
         <p class="m-0" style="line-height: 1.2" >
@@ -24,4 +26,4 @@
         </p>
     </div>
 </div>
-
+</a>

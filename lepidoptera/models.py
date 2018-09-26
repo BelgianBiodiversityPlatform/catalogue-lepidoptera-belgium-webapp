@@ -157,6 +157,10 @@ class TaxonomicModel(CommonTaxonomicModel):
         return False
 
     @property
+    def is_a_large_family(self):
+        return self.__class__ == Family and self.is_large
+
+    @property
     def all_parents(self):
         # Models subclassing must implement a .parent property (that returns None if top of the tree)
         parents = []
@@ -214,6 +218,16 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
     def update_species_counter(self):
         self.species_counter = self.species_count
         self.save()
+
+    @property
+    def additional_data_for_json(self):
+        return {
+            'large': self.is_large
+        }
+
+    @property
+    def is_large(self):
+        return self.species_counter > 50
 
     @property
     def species_count(self):

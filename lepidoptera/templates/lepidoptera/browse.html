@@ -7,6 +7,18 @@
 {% block content %}
     <h2>Browse data</h2>
 
+    <script type="text/x-template" id="content-entry-familylist-template">
+        <ul>
+            <li v-for="entry in jsonData.entries">
+                <a :href="entry.link" v-on:click="showModalIfNeeded(entry.additionalData.large)">
+                    <span v-html="entry.name"></span>
+                </a>
+
+                <span v-if="entry.additionalData.large" class="badge badge-secondary">Large family</span>
+            </li>
+        </ul>
+    </script>
+
     <script type="text/x-template" id="content-entry-genuslist-template">
         <ul>
             <li v-for="entry in jsonData.entries">
@@ -110,6 +122,21 @@
                 vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
             };
 
+            Vue.component('content-entry-familylist', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-familylist-template',
+                props: {
+                    jsonData: Object
+                },
+                methods: {
+                    showModalIfNeeded: function (large) {
+                        if (large === true) {
+                            showLargeFamilyModal();
+                        }
+                    }
+                }
+            });
+
             Vue.component('content-entry-genuslist', {
                 delimiters: ['[[', ']]'],
                 template: '#content-entry-genuslist-template',
@@ -203,7 +230,7 @@
                                 label: 'Families (lepidoptera)',
                                 target: '#list-families',
                                 url: browseConf.lepidopteraFamiliesUrl,
-                                component: 'content-entry-simplelist'
+                                component: 'content-entry-familylist'
                             },
                             {
                                 label: 'Subfamilies (lepidoptera)',
