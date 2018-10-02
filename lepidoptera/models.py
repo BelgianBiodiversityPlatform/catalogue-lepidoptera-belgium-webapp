@@ -846,6 +846,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
 
     class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "species"
+        default_manager_name = 'objects'
 
 
 class HostPlantFamily(HostPlantTaxonomicModel):
