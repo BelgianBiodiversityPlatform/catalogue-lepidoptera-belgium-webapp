@@ -79,52 +79,8 @@
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='cocoon' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='bionomics' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='habitat' %}
+        {% include 'lepidoptera/taxonomy/_species_section_observed_on.html' with species=taxon section_name='observed_on' %}
 
-        <div class="row">
-            <div class="col">
-                <h2>{% trans "Observed on" %}</h2>
-            </div>
-        </div>
-
-        {% if taxon.hostplants_section_text %}
-            <div class="row">
-                <div class="col">
-                    <div>{{ taxon.hostplants_section_text|markdown }}</div>
-                </div>
-            </div>
-        {% endif %}
-
-        <dl class="row">
-            {% if plant_species_observations %}
-                <dt class="col-sm-3">{% trans "Host plant (species)" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in plant_species_observations %}
-                        <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-
-            {% if plant_genus_observations %}
-                <dt class="col-sm-3">{% trans "Host plant (genera)" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in plant_genus_observations %}
-                        <a href="{{ observation.plant_genus.get_absolute_url }}"><i>{{ observation.plant_genus }}</i></a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-
-            {% if substrate_observations %}
-                <dt class="col-sm-3">{% trans "Substrates" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in substrate_observations %}
-                        <a href="{{ observation.substrate.get_absolute_url }}">{{ observation.substrate }}</a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-        </dl>
     {% endif %}
 
 {% endblock %}

@@ -669,6 +669,12 @@ SPECIES_PAGE_SECTIONS = {
             'picture_filters': {'image_subject': SpeciesPicture.HABITAT}
         },
 
+        'observed_on': {
+            'display_name': 'Observed on',
+            'text_field_name': 'hostplants_section_text',
+            'picture_filters': {'image_subject': SpeciesPicture.HOST_PLANT}
+        }
+
     }
 
 
