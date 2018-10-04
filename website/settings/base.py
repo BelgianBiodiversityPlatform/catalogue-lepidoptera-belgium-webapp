@@ -145,3 +145,5 @@ SETTINGS_EXPORT = [
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
+
+FILE_UPLOAD_PERMISSIONS = 0o644
