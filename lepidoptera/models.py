@@ -574,6 +574,9 @@ class SpeciesPicture(models.Model):
 
     comment = MarkdownxField(blank=True)
 
+    def get_absolute_url(self):
+        return self.image.url
+
     def html_metadata(self, full=False):
         # Full means "the picture appear with less context than on the species page, so please show all fields.
 

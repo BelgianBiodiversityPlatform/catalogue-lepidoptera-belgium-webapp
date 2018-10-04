@@ -118,7 +118,7 @@ class SpeciesPicturesInline(admin.TabularInline):
     readonly_fields = ('verbatim_image_filename', 'thumbnail')
     extra = 1
 
-    thumbnail = AdminThumbnail(image_field='image_admin_thumbnail')
+    thumbnail = AdminThumbnail(image_field='image_admin_thumbnail', template='lepidoptera/imagekit/admin/thumbnail.html')
 
     fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
 
