@@ -209,7 +209,7 @@ def autocomplete(request, query_string):
                 'value': getattr(s, vernacular_field_name),
                 'suggest_type': 'Vernacular name',
                 'url': s.get_absolute_url(),
-                'additional_data': _additional_data_for_model(instance)
+                'additional_data': _additional_data_for_model(s)
             })
 
     return JsonResponse(results, safe=False)
