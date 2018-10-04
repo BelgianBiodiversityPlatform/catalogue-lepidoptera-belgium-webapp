@@ -4,7 +4,7 @@
     {{ taxon | to_class_name }}:
         <b>
             {% if not forloop.last %}
-                <a href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a>
+                <a class="{% if taxon.is_a_large_family %}large-family-link{% endif %}" href="{{ taxon.get_absolute_url }}">{{ taxon.html_str }}</a>
             {%  else %}
                 {{ taxon.html_str }}
             {% endif %}

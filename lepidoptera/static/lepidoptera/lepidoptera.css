@@ -70,3 +70,10 @@ img.province-icon {
     padding-left: 10px;
     text-indent: -10px;
 }
+
+/* IE11 fix for Lightbox */
+.ekko-lightbox .modal-dialog {
+  flex: 100%!important;
+  margin-left: 0;
+  margin-right: 0;
+}

@@ -23,7 +23,7 @@
         <th scope="col">{% trans 'Seq. #' %}</th>
         <th scope="col">{% trans 'Name' %}</th>
         <th scope="col">{% trans 'Vernacular names' %}</th>
-        <th scope="col"><span class="oi oi-camera-slr"></span></th>
+        <th scope="col"><span class="oi oi-tag"></span></th>
         <th scope="col">{% trans 'Distribution' %}
             <span id="table-timeperiod-help-button" class="float-right" data-toggle="tooltip" data-html="true" title='{% include "lepidoptera/taxonomy/_species_presence_period_legend.html" with timeperiods=all_timeperiods %}'><span class="oi oi-question-mark"></span></span>
         </th>
@@ -47,6 +47,7 @@
                 </td>
 
                 <td>
+                    {{ s.get_optional_establishment_means_badge }}
                     {% if s.has_pictures %}<span class="oi oi-camera-slr"></span>{% endif %}
                 </td>
 

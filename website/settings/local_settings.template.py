@@ -1,4 +1,24 @@
+# Take inspiration to create your own settings file. This example is well suited for development.
+
 from .base import *
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'belgium_lepidoptera',
+        'HOST': 'localhost',
+    }
+}
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'SOMETHING_RANDOM_AND_SECRET'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ["*"]
+
+# A few specific for django-debug-toolbar, if you use it during development.
 
 INSTALLED_APPS.extend([
     'debug_toolbar',
@@ -24,20 +44,4 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.profiling.ProfilingPanel',
 ]
 
-INTERNAL_IPS = ['127.0.0.1']  # For django-debug-toolbar
-
-SHOW_TEST_VERSION_WARNING = True
-
-{% block salt %}
-
-{% endblock %}
-
-# To run on a dev machine without Salt:
-# - Copy-paste this file as development.py
-# - Remove the "salt" block
-# - Add missing variables (currently, we have):
-#       - DATABASES
-#       - SECRET_KEY
-#       - DEBUG
-#       - ALLOWED_HOSTS
-
+INTERNAL_IPS = ['127.0.0.1']

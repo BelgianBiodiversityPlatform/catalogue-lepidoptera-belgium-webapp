@@ -5,15 +5,16 @@ import json
 
 from django.http import JsonResponse
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
+from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
     HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
-    Photographer, python_sort_taxonomicmodel
+    Photographer, python_sort_taxonomicmodel, ALL_LEPDIOPTERA_TAXON_MODELS
 
 
 def home_page(request):
-    valid_families = Family.valid_families_objects.all()
+    valid_families = Family.objects.all()  # No support for synonyms at Family level => they're all valid.
 
     return render(request, 'lepidoptera/home.html', {'families': valid_families})
 
@@ -21,7 +22,7 @@ def home_page(request):
 # TODO: factorize code for the taxonrank_page views?
 
 def family_page(request, family_id):
-    family = Family.objects.get(pk=family_id)
+    family = get_object_or_404(Family, pk=family_id)
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
@@ -33,7 +34,7 @@ def family_page(request, family_id):
 
 
 def subfamily_page(request, subfamily_id):
-    subfamily = Subfamily.objects.get(pk=subfamily_id)
+    subfamily = get_object_or_404(Subfamily, pk=subfamily_id)
 
     return render(request, 'lepidoptera/taxonomy/subfamily.html', {
         'taxon': subfamily,
@@ -42,7 +43,7 @@ def subfamily_page(request, subfamily_id):
 
 
 def tribus_page(request, tribus_id):
-    tribus = Tribus.objects.get(pk=tribus_id)
+    tribus = get_object_or_404(Tribus, pk=tribus_id)
 
     return render(request, 'lepidoptera/taxonomy/tribus.html', {
         'taxon': tribus,
@@ -51,7 +52,7 @@ def tribus_page(request, tribus_id):
 
 
 def genus_page(request, genus_id):
-    genus = Genus.objects.get(pk=genus_id)
+    genus = get_object_or_404(Genus, pk=genus_id)
 
     return render(request, 'lepidoptera/taxonomy/genus.html', {
         'taxon': genus,
@@ -60,7 +61,7 @@ def genus_page(request, genus_id):
 
 
 def subgenus_page(request, subgenus_id):
-    subgenus = Subgenus.objects.get(pk=subgenus_id)
+    subgenus = get_object_or_404(Subgenus, pk=subgenus_id)
 
     return render(request, 'lepidoptera/taxonomy/subgenus.html', {
         'taxon': subgenus,
@@ -69,7 +70,7 @@ def subgenus_page(request, subgenus_id):
 
 
 def species_page(request, species_id):
-    species = Species.objects.get(pk=species_id)
+    species = get_object_or_404(Species, pk=species_id)
 
     context = {
         'taxon': species,
@@ -86,7 +87,9 @@ def species_page(request, species_id):
 
 
 def about_page(request):
-    return render(request, 'lepidoptera/about.html')
+    return render(request, 'lepidoptera/about.html', {
+        'version_string': get_source_version_info()
+    })
 
 
 def browse_page(request):
@@ -135,7 +138,7 @@ def all_species_synonyms(request):
 
 
 def hostplant_species(request, species_id):
-    species = HostPlantSpecies.objects.get(pk=species_id)
+    species = get_object_or_404(HostPlantSpecies, pk=species_id)
 
     return render(request, 'lepidoptera/hostplant_species.html', {
         'species': species,
@@ -145,7 +148,7 @@ def hostplant_species(request, species_id):
 
 
 def hostplant_genus(request, genus_id):
-    genus = HostPlantGenus.objects.get(pk=genus_id)
+    genus = get_object_or_404(HostPlantGenus, pk=genus_id)
 
     return render(request, 'lepidoptera/hostplant_genus.html', {
         'genus': genus,
@@ -155,7 +158,7 @@ def hostplant_genus(request, genus_id):
 
 
 def hostplant_family(request, family_id):
-    family = HostPlantFamily.objects.get(pk=family_id)
+    family = get_object_or_404(HostPlantFamily, pk=family_id)
 
     return render(request, 'lepidoptera/hostplant_family.html', {
         'family': family,
@@ -164,7 +167,7 @@ def hostplant_family(request, family_id):
 
 
 def substrate_page(request, substrate_id):
-    substrate = Substrate.objects.get(pk=substrate_id)
+    substrate = get_object_or_404(Substrate, pk=substrate_id)
 
     return render(request, 'lepidoptera/substrate.html', {
         'substrate': substrate,
@@ -173,12 +176,16 @@ def substrate_page(request, substrate_id):
     })
 
 
+def _additional_data_for_model(instance):
+    return getattr(instance, 'additional_data_for_json', {})
+
+
 # TODO: Implement more fields and models
 def autocomplete(request, query_string):
     results = []
 
     models = HostPlantTaxonomicModel.__subclasses__()
-    models.extend(TaxonomicModel.__subclasses__())
+    models.extend(ALL_LEPDIOPTERA_TAXON_MODELS)
     models.extend([Substrate])
 
     for model in models:
@@ -187,7 +194,8 @@ def autocomplete(request, query_string):
             results.append({
                 'value': str(instance),
                 'suggest_type': instance.suggest_type_label,
-                'url': instance.get_absolute_url()
+                'url': instance.get_absolute_url(),
+                'additional_data': _additional_data_for_model(instance)
             })
 
     # Also look into Species vernacular names
@@ -200,7 +208,8 @@ def autocomplete(request, query_string):
             results.append({
                 'value': getattr(s, vernacular_field_name),
                 'suggest_type': 'Vernacular name',
-                'url': s.get_absolute_url()
+                'url': s.get_absolute_url(),
+                'additional_data': _additional_data_for_model(s)
             })
 
     return JsonResponse(results, safe=False)
@@ -254,7 +263,8 @@ def pictures_json(request):
 
 def species_per_province_and_period(request):
     species_id = int(request.GET.get('speciesId'))
-    sp = Species.objects.get(pk=species_id)
+
+    sp = get_object_or_404(Species, pk=species_id)
 
     r = []
 
@@ -273,14 +283,15 @@ def _sort_list_of_dicts_by_name(l):
     return sorted(l, key=lambda k: k['name'])
 
 
-def _browse_model_json(model, title, name_attr='name'):
+def _browse_model_json(model, title, name_attr='name', manager_name='objects'):
     try:
         model._meta.get_field(name_attr)
         name_attr_is_field = True
     except FieldDoesNotExist:
         name_attr_is_field = False
 
-    qs = model.objects.all()
+    manager = getattr(model, manager_name)
+    qs = manager.all()
 
     if name_attr_is_field:  # in this case, we can order at the DB level
         qs = qs.order_by(name_attr)
@@ -338,6 +349,10 @@ def browse_lepidoptera_subgenera_json(request):
 
 def browse_lepidoptera_species_json(request):
     return _browse_model_json(Species, 'Species', name_attr='binomial_name')
+
+
+def browse_lepidoptera_non_native_species_json(request):
+    return _browse_model_json(Species, 'Non-native species', name_attr='binomial_name', manager_name='non_native_objects')
 
 
 def browse_substrates_json(request):

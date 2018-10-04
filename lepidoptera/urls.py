@@ -21,6 +21,7 @@ urlpatterns = [
     _get_browse_json_entry('browse_lepidoptera_genera_json'),
     _get_browse_json_entry('browse_lepidoptera_subgenera_json'),
     _get_browse_json_entry('browse_lepidoptera_species_json'),
+    _get_browse_json_entry('browse_lepidoptera_non_native_species_json'),
     _get_browse_json_entry('browse_substrates_json'),
     _get_browse_json_entry('browse_vernacularnames_json'),
 

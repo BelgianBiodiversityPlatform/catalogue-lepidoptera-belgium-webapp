@@ -5,6 +5,7 @@ from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
@@ -26,29 +27,19 @@ def get_verbatim_id_field():
     return models.IntegerField(unique=True, blank=True, null=True, help_text="From the Access database")
 
 
-class ValidFamiliesManager(models.Manager):
+class SynonymManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
+        return super().get_queryset().filter(synonym_of__isnull=False)
 
 
-class AcceptedGenusManager(models.Manager):
+class AcceptedManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
+        return super().get_queryset().filter(synonym_of__isnull=True)
 
 
-class SynonymGenusManager(models.Manager):
+class NonNativeManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
-
-
-class AcceptedSpeciesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
-
-
-class SynonymSpeciesManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status__verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
+        return super().get_queryset().exclude(establishment_means__exact=Species.NATIVE)
 
 
 class ParentForAdminListMixin(object):
@@ -91,37 +82,6 @@ class DisplayOrderNavigable(object):
             p = p.previous_valid()
 
         return p
-
-
-class Status(models.Model):
-    VERBATIM_ID_VALID_FAMILY = 1
-    VERBATIM_ID_FAMILY_SYNONYM = 2
-
-    VERBATIM_ID_VALID_SUBFAMILY = 3
-    VERBATIM_ID_SUBFAMILY_SYNONYM = 4
-
-    VERBATIM_ID_VALID_GENUS = 5
-    VERBATIM_ID_GENUS_SYNONYM = 6
-
-    VERBATIM_ID_VALID_TRIBUS = 13
-    VERBATIM_ID_TRIBUS_SYNONYM = 14
-
-    VERBATIM_ID_VALID_SUBGENUS = 7
-    VERBATIM_ID_SUBGENUS_SYNONYM = 8
-
-    VERBATIM_ID_VALID_SPECIES = 9
-    VERBATIM_ID_SPECIES_SYNONYM = 10
-
-    UNKNOWN = 15
-
-    verbatim_status_id = models.IntegerField(unique=True, help_text="From the Access database")
-    name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name_plural = "statuses"
 
 
 class CommonTaxonomicModel(models.Model):
@@ -179,11 +139,10 @@ class Substrate(models.Model):
 
 
 class TaxonomicModel(CommonTaxonomicModel):
-    """Common ground between all taxon-related models (for Lepidoptera)."""
-    @staticmethod
-    def get_synonym_of_field():
-        return models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='synonyms')
+    """Common ground between all taxon-related models (for Lepidoptera).
 
+    !! If your taxonomic class supports synonyms, inherit from TaxonomicModelWithSynonyms instead !!
+    """
     class Meta:
         abstract = True
         ordering = ['display_order']
@@ -191,11 +150,21 @@ class TaxonomicModel(CommonTaxonomicModel):
     # Common fields
     author = models.CharField(max_length=255)
 
-    status = models.ForeignKey(Status, on_delete=models.CASCADE)
-
     text = MarkdownxField(blank=True)
 
     display_order = models.IntegerField(unique=True)  # Field shown as "Seq. # in public pages, harmonize name?"
+
+    @property
+    def is_valid(self):
+        return True
+
+    @property
+    def is_synonym(self):
+        return False
+
+    @property
+    def is_a_large_family(self):
+        return self.__class__ == Family and self.is_large
 
     @property
     def all_parents(self):
@@ -218,13 +187,30 @@ class TaxonomicModel(CommonTaxonomicModel):
                        args=(self.pk,))
 
 
-class Family(DisplayOrderNavigable, TaxonomicModel):
-    # Synonyms currently disabled at the family level since:
-    #   - we have no data for now
-    #   - this makes implementation a bit more complex (public-facing pages, validation, foreign key to self, ...)
-    #   - See genus for a full implementation
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_FAMILY]
+class TaxonomicModelWithSynonyms(TaxonomicModel):
+    """Any taxonomic model that supports synonyms should inherit from this one.
 
+    Otherwise, they should inherit from TaxonomicModel
+    """
+    synonym_of = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE, related_name='synonyms')
+
+    @property
+    def is_valid(self):
+        return not self.is_synonym
+
+    @property
+    def is_synonym(self):
+        return self.synonym_of is not None
+
+    objects = models.Manager()
+    accepted_objects = AcceptedManager()
+    synonym_objects = SynonymManager()
+
+    class Meta:
+        abstract = True
+
+
+class Family(DisplayOrderNavigable, TaxonomicModel):
     verbatim_family_id = get_verbatim_id_field()
 
     representative_picture = models.ImageField(blank=True, null=True, upload_to='family_representative_pictures')
@@ -233,16 +219,21 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
                                                       format='JPEG',
                                                       options={'quality': 95})
 
-    objects = models.Manager()
-    valid_families_objects = ValidFamiliesManager()
+    species_counter = models.IntegerField(default=0)
+
+    def update_species_counter(self):
+        self.species_counter = self.species_count
+        self.save()
 
     @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_FAMILY)
+    def additional_data_for_json(self):
+        return {
+            'large': self.is_large
+        }
 
     @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_FAMILY_SYNONYM)
+    def is_large(self):
+        return self.species_counter > 50
 
     @property
     def species_count(self):
@@ -286,8 +277,6 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
 
 
 class Subfamily(TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBFAMILY]
-
     verbatim_subfamily_id = get_verbatim_id_field()
 
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
@@ -306,14 +295,6 @@ class Subfamily(TaxonomicModel):
 
     def get_absolute_url(self):
         return reverse('subfamily_page', kwargs={'subfamily_id': str(self.id)})
-
-    @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SUBFAMILY)
-
-    @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SUBFAMILY_SYNONYM)
 
     @property
     def parent(self):
@@ -342,19 +323,9 @@ class Subfamily(TaxonomicModel):
 
 
 class Tribus(TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_TRIBUS]
-
     verbatim_tribus_id = get_verbatim_id_field()
 
     subfamily = models.ForeignKey(Subfamily, on_delete=models.CASCADE)
-
-    @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_TRIBUS)
-
-    @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_TRIBUS_SYNONYM)
 
     @property
     def species_count(self):
@@ -385,9 +356,7 @@ class Tribus(TaxonomicModel):
         verbose_name_plural = "tribus"
 
 
-class Genus(ParentForAdminListMixin, TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_GENUS, Status.VERBATIM_ID_GENUS_SYNONYM, Status.UNKNOWN]
-
+class Genus(ParentForAdminListMixin, TaxonomicModelWithSynonyms):
     verbatim_genus_id = get_verbatim_id_field()
 
     # Sometimes a genus appears under a tribu, but sometimes only under a subfamily or a family...
@@ -396,27 +365,18 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True, on_delete=models.CASCADE)
     family = models.ForeignKey(Family, null=True, blank=True, on_delete=models.CASCADE)
 
-    synonym_of = TaxonomicModel.get_synonym_of_field()
-
-    # Managers:
-    objects = models.Manager()
-    accepted_objects = AcceptedGenusManager()
-    synonym_objects = SynonymGenusManager()
-
-    @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
-
-    @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
-
     # NOTE: Do NOT try to implement with a CountField (django-denorm) since is fails miserably when we set a filter that
     # spans accross tables (which is needed to filter where the species status is ACCEPTED.
     # If performance requires it, it's probably better to hack manually something similar to CountFiled
     @property
     def direct_species_count(self):
-        return self.species_set.filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES).count()
+        return self.species_set.filter(synonym_of__isnull=True).count()
+
+    @property
+    def additional_data_for_json(self):
+        return {
+            'synonym': self.is_synonym
+        }
 
     @property
     def species_count(self):
@@ -462,16 +422,6 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
             errors_dics['subfamily'] = ValidationError('Choose a tribus OR a family OR a subfamily', code='invalid')
             errors_dics['family'] = ValidationError('Choose a tribus OR a family OR a subfamily', code='invalid')
 
-        # Synonym: we should know whom
-        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_GENUS_SYNONYM)
-                and not self.synonym_of):
-            errors_dics['synonym_of'] = ValidationError('If status=synonym, this field is mandatory')
-
-        # Accepted: synonym doesn't make any sense
-        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_GENUS)
-                and self.synonym_of):
-            errors_dics['synonym_of'] = ValidationError('If status=accepted, this field shouldn\'t be used')
-
         if errors_dics:
             raise ValidationError(errors_dics)
 
@@ -482,8 +432,6 @@ class Genus(ParentForAdminListMixin, TaxonomicModel):
 
 
 class Subgenus(TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SUBGENUS]
-
     verbatim_subgenus_id = get_verbatim_id_field()
 
     genus = models.ForeignKey(Genus, on_delete=models.CASCADE)
@@ -493,18 +441,10 @@ class Subgenus(TaxonomicModel):
     # If performance requires it, it's probably better to hack manually something similar to CountFiled
     @property
     def species_count(self):
-        return self.species_set.filter(status__verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES).count()
+        return self.species_set.filter(synonym_of__isnull=True).count()
 
     def get_absolute_url(self):
         return reverse('subgenus_page', kwargs={'subgenus_id': str(self.id)})
-
-    @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SUBGENUS)
-
-    @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SUBGENUS_SYNONYM)
 
     @denormalized(models.CharField, max_length=255)
     @depend_on_related('Genus')
@@ -634,6 +574,9 @@ class SpeciesPicture(models.Model):
 
     comment = MarkdownxField(blank=True)
 
+    def get_absolute_url(self):
+        return self.image.url
+
     def html_metadata(self, full=False):
         # Full means "the picture appear with less context than on the species page, so please show all fields.
 
@@ -654,16 +597,18 @@ class SpeciesPicture(models.Model):
         if self.side:
             entries.append("<b>Side</b>: {}".format(self.get_side_display()))
 
-        s = ''
+        comment_block = ''
         if self.comment:
-            s = '<div>' + markdownify(self.comment) + '</div>'
+            comment_block = markdownify(self.comment)
 
-        s = s + ', '.join(entries) + '. '
+        attributes_block = ''
+        if entries:
+            attributes_block = ', '.join(entries) + '. '
 
         if self.photographer:
-            s = s + "<b>© {}</b><br/>".format(self.photographer.full_name)
+            attributes_block = attributes_block + "<b>© {}</b><br/>".format(self.photographer.full_name)
 
-        return '<small>' + s + '</small>'
+        return '<small>' + '<div class="mb-2">' + attributes_block + '</div><div>' + comment_block + '</div>' + '</small>'
 
 
 SPECIES_PAGE_SECTIONS = {
@@ -727,13 +672,29 @@ SPECIES_PAGE_SECTIONS = {
             'picture_filters': {'image_subject': SpeciesPicture.HABITAT}
         },
 
+        'observed_on': {
+            'display_name': 'Observed on',
+            'text_field_name': 'hostplants_section_text',
+            'picture_filters': {'image_subject': SpeciesPicture.HOST_PLANT}
+        }
+
     }
 
 
-class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
-    ALLOWED_VERBATIM_STATUS_IDS = [Status.VERBATIM_ID_VALID_SPECIES, Status.VERBATIM_ID_SPECIES_SYNONYM]
-
+class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWithSynonyms):
     VERNACULAR_FIELDS = ('vernacular_name_en', 'vernacular_name_fr', 'vernacular_name_nl', 'vernacular_name_de')
+
+    NATIVE = 'NATIVE'
+    INVASIVE = 'INVASIVE'
+    NATURALISED = 'NATURALISED'
+    MIGRANT = 'MIGRANT'
+
+    ESTABLISHMENT_MEANS_CHOICES = (
+        (NATIVE, 'Native'),
+        (INVASIVE, 'Invasive'),
+        (NATURALISED, 'Naturalised'),
+        (MIGRANT, 'Migrant'),
+    )
 
     verbatim_species_number = get_verbatim_id_field()
     code = models.CharField(verbose_name='Species code', max_length=50, unique=True, validators=[
@@ -741,19 +702,9 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
         MinLengthValidator(4)
     ])
 
-    synonym_of = TaxonomicModel.get_synonym_of_field()
-
     # Parents: sometimes a genus, sometimes a subgenus
     subgenus = models.ForeignKey(Subgenus, null=True, blank=True, on_delete=models.CASCADE)
     genus = models.ForeignKey(Genus, null=True, blank=True, on_delete=models.CASCADE)
-
-    # The source database contains much more (currently unused) fields, mostly text, that we decide to ignore for
-    # now (focus first on taxonomy, and keep things as simple as possible)
-
-    # Managers:
-    objects = models.Manager()
-    accepted_objects = AcceptedSpeciesManager()
-    synonym_objects = SynonymSpeciesManager()
 
     # Publication where the species was first described in Belgium
     first_mention_publication = models.ForeignKey('Publication', null=True, blank=True, on_delete=models.CASCADE,
@@ -774,17 +725,40 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
     hostplants_section_text = MarkdownxField(blank=True)
     flightperiod_section_text = MarkdownxField(blank=True)
 
+    establishment_means = models.CharField(max_length=25, choices=ESTABLISHMENT_MEANS_CHOICES, default=NATIVE)
+    # We use a date field, but the day will always be '1' (and hidden from the UI) since we just need month granularity
+    # Rationale: https://stackoverflow.com/questions/30017229/how-to-represent-month-as-field-on-django-model
+    establishment_date = models.DateField(blank=True, null=True, help_text="The 'day' part will be ignored.")
+    establishment_remarks = MarkdownxField(blank=True)
+
+    # Extra managers:
+    non_native_objects = NonNativeManager()
+
+    def get_optional_establishment_means_badge(self):
+        if self.get_establishment_means_display() == 'Native':
+            return ''
+        return self.get_establishment_means_badge()
+
+    def get_establishment_means_badge(self):
+        """Get a Boostrap badge (full HTML) for the species establishment means"""
+        display_text = self.get_establishment_means_display()
+
+        if display_text == 'Native':
+            badge_class = 'badge-success'
+        elif display_text == 'Invasive':
+            badge_class = 'badge-danger'
+        elif display_text == 'Naturalised':
+            badge_class = 'badge-warning'
+        elif display_text == 'Migrant':
+            badge_class = 'badge-info'
+        else:
+            badge_class = "badge-light"
+
+        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')
+
     @property
     def has_pictures(self):
         return self.speciespicture_set.exists()
-
-    @property
-    def is_valid(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
-
-    @property
-    def is_synonym(self):
-        return self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
 
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
@@ -824,7 +798,8 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
     def additional_data_for_json(self):
         return {
             'hasPic': self.has_pictures,
-            'synonym': self.is_synonym
+            'synonym': self.is_synonym,
+            'establishmentBadge': self.get_optional_establishment_means_badge()
         }
 
     @property
@@ -870,16 +845,6 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
             errors_dics['subgenus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
             errors_dics['genus'] = ValidationError('Choose a subgenus OR a genus', code='invalid')
 
-        # Synonym: we should know whom
-        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_SPECIES_SYNONYM)
-                and not self.synonym_of):
-            errors_dics['synonym_of'] = ValidationError('If status=synonym, this field is mandatory')
-
-        # Accepted: synonym doesn't make any sense
-        if (self.status == Status.objects.get(verbatim_status_id=Status.VERBATIM_ID_VALID_SPECIES)
-                and self.synonym_of):
-            errors_dics['synonym_of'] = ValidationError('If status=accepted, this field shouldn\'t be used')
-
         if errors_dics:
             raise ValidationError(errors_dics)
 
@@ -890,6 +855,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModel):
 
     class Meta(TaxonomicModel.Meta):
         verbose_name_plural = "species"
+        default_manager_name = 'objects'
 
 
 class HostPlantFamily(HostPlantTaxonomicModel):
@@ -922,12 +888,34 @@ class HostPlantGenus(HostPlantTaxonomicModel):
         verbose_name_plural = "Host plant genera"
         ordering = ['name']
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for host_plant_species in self.hostplantspecies_set.all():
+            host_plant_species.update_genus_name()
+            host_plant_species.save()
+
 
 class HostPlantSpecies(HostPlantTaxonomicModel):
     author = models.CharField(max_length=255, blank=True)
     genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
 
     lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+
+    # Denormalized field for better performance when calling __str__() multiple times
+    genus_name = models.CharField(max_length=255, blank=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__original_genus_id = self.genus_id
+
+    @property
+    def genus_changed(self):
+        # Returns true if the genus has changed
+        return self.genus_id != self.__original_genus_id
+
+    def update_genus_name(self):
+        # Call me each time something may have changed my genus name
+        self.genus_name = self.genus.name
 
     @property
     def suggest_type_label(self):
@@ -938,14 +926,23 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
 
     class Meta:
         verbose_name_plural = "Host plant species"
-        ordering = ['genus__name', 'name']
+        ordering = ['genus_name', 'name']
 
     def __str__(self):
-        return "{} {}".format(self.genus.name, self.name)
+        return "{} {}".format(self.genus_name, self.name)
 
     @property
     def html_str(self):
         return format_html("<i>{}</i>", self.__str__())
+
+    def save(self, *args, **kwargs):
+        new_record = self.pk is None
+
+        if new_record or self.genus_changed:
+            self.update_genus_name()
+
+        super().save(*args, **kwargs)
+        self.__original_genus = self.genus
 
 
 class Observation(models.Model):
@@ -1073,3 +1070,6 @@ class PageFragment(models.Model):
 
         if getattr(self, PageFragment._get_content_field_name(fallback_language_code)) == '':
             raise ValidationError("Content is mandatory for the fallback language ({})".format(fallback_language_code))
+
+
+ALL_LEPDIOPTERA_TAXON_MODELS = [Family, Subfamily, Tribus, Genus, Subgenus, Species]

@@ -1,7 +1,35 @@
 {% extends "lepidoptera/base.html" %}
 
+{% block title %}Browse data{% endblock %}
+
+{% block meta_description %}Browse lepidoptera species, host plants, vernacular names, ...{% endblock %}
+
 {% block content %}
     <h2>Browse data</h2>
+
+    <script type="text/x-template" id="content-entry-familylist-template">
+        <ul>
+            <li v-for="entry in jsonData.entries">
+                <a :href="entry.link" v-on:click="showModalIfNeeded(entry.additionalData.large)">
+                    <span v-html="entry.name"></span>
+                </a>
+
+                <span v-if="entry.additionalData.large" class="badge badge-secondary">Large family</span>
+            </li>
+        </ul>
+    </script>
+
+    <script type="text/x-template" id="content-entry-genuslist-template">
+        <ul>
+            <li v-for="entry in jsonData.entries">
+                <a :href="entry.link">
+                    <span v-html="entry.name"></span>
+                </a>
+
+                <span v-if="entry.additionalData.synonym" class="badge badge-secondary">Synonym</span>
+            </li>
+        </ul>
+    </script>
 
     <script type="text/x-template" id="content-entry-specieslist-template">
         <ul>
@@ -12,13 +40,18 @@
 
                 <span v-if="entry.additionalData.hasPic" class="oi oi-camera-slr"></span>
                 <span v-if="entry.additionalData.synonym" class="badge badge-secondary">Synonym</span>
+
+                <span v-html="entry.additionalData.establishmentBadge"></span>
             </li>
         </ul>
     </script>
 
     <script type="text/x-template" id="content-entry-simplelist-template">
         <ul>
-            <li v-for="entry in jsonData.entries"><a :href="entry.link"><span v-html="entry.name"></span></a>
+            <li v-for="entry in jsonData.entries">
+                <a :href="entry.link">
+                    <span v-html="entry.name"></span>
+                </a>
             </li>
         </ul>
     </script>
@@ -82,6 +115,7 @@
                 lepidopteraGeneraUrl: "{% url 'browse_lepidoptera_genera_json' %}",
                 lepidopteraSubgeneraUrl: "{% url 'browse_lepidoptera_subgenera_json' %}",
                 lepidopteraSpeciesUrl: "{% url 'browse_lepidoptera_species_json' %}",
+                lepidopteraNonNativeSpeciesUrl: "{% url 'browse_lepidoptera_non_native_species_json' %}",
 
                 hostPlantsFamiliesUrl: "{% url 'browse_hostplants_families_json' %}",
                 hostPlantsGeneraUrl: "{% url 'browse_hostplants_genera_json' %}",
@@ -90,6 +124,29 @@
                 substratesUrl: "{% url 'browse_substrates_json' %}",
                 vernacularNamesUrl: "{% url 'browse_vernacularnames_json' %}"
             };
+
+            Vue.component('content-entry-familylist', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-familylist-template',
+                props: {
+                    jsonData: Object
+                },
+                methods: {
+                    showModalIfNeeded: function (large) {
+                        if (large === true) {
+                            showLargeFamilyModal();
+                        }
+                    }
+                }
+            });
+
+            Vue.component('content-entry-genuslist', {
+                delimiters: ['[[', ']]'],
+                template: '#content-entry-genuslist-template',
+                props: {
+                    jsonData: Object
+                }
+            });
 
             Vue.component('content-entry-specieslist', {
                 delimiters: ['[[', ']]'],
@@ -176,7 +233,7 @@
                                 label: 'Families (lepidoptera)',
                                 target: '#list-families',
                                 url: browseConf.lepidopteraFamiliesUrl,
-                                component: 'content-entry-simplelist'
+                                component: 'content-entry-familylist'
                             },
                             {
                                 label: 'Subfamilies (lepidoptera)',
@@ -194,7 +251,7 @@
                                 label: 'Genera (lepidoptera)',
                                 target: '#list-genera',
                                 url: browseConf.lepidopteraGeneraUrl,
-                                component: 'content-entry-simplelist'
+                                component: 'content-entry-genuslist'
                             },
                             {
                                 label: 'Subgenera (lepidoptera)',
@@ -206,6 +263,12 @@
                                 label: 'Species (lepidoptera)',
                                 target: '#list-species',
                                 url: browseConf.lepidopteraSpeciesUrl,
+                                component: 'content-entry-specieslist'
+                            },
+                            {
+                                label: 'Species (lepidoptera) - Non-native only',
+                                target: '#list-nonnative-species',
+                                url: browseConf.lepidopteraNonNativeSpeciesUrl,
                                 component: 'content-entry-specieslist'
                             },
                             {

@@ -76,6 +76,16 @@
                 {% endif %}
             </dd>
         {% endif %}
+        <dt class="col-sm-2">{% trans "Establishment means" %}</dt>
+        <dd class="col-sm-10">
+            <p>
+                {{ taxon.get_establishment_means_badge }}
+                {% if taxon.establishment_date %}
+                    In Belgium since {{ taxon.establishment_date|date:"F Y" }}.
+                {% endif %}
+            </p>
+            <div>{{ taxon.establishment_remarks|markdown }}</div>
+        </dd>
     {% endif %}
 </dl>
 <hr />

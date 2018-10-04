@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load various_helpers %}
 
+{% block meta_description %}Information about {{ taxon }} (pictures, host plants, flight periods, ...){% endblock %}
+
 {% block extra-head %}
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
           integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
@@ -67,56 +69,6 @@
             </div>
         </div>
 
-        <hr>
-
-        <div class="row">
-            <div class="col">
-                <h2>{% trans "Observed on" %}</h2>
-            </div>
-        </div>
-
-        <hr>
-
-        {% if taxon.hostplants_section_text %}
-            <div class="row">
-                <div class="col">
-                    <div class="alert alert-success">{{ taxon.hostplants_section_text|markdown }}</div>
-                </div>
-            </div>
-        {% endif %}
-
-        <dl class="row">
-            {% if plant_species_observations %}
-                <dt class="col-sm-3">{% trans "Host plant (species)" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in plant_species_observations %}
-                        <a href="{{ observation.plant_species.get_absolute_url }}">{{ observation.plant_species.html_str }}</a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-
-            {% if plant_genus_observations %}
-                <dt class="col-sm-3">{% trans "Host plant (genera)" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in plant_genus_observations %}
-                        <a href="{{ observation.plant_genus.get_absolute_url }}"><i>{{ observation.plant_genus }}</i></a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-
-            {% if substrate_observations %}
-                <dt class="col-sm-3">{% trans "Substrates" %}:</dt>
-                <dd class="col-sm-9">
-                    {% for observation in substrate_observations %}
-                        <a href="{{ observation.substrate.get_absolute_url }}">{{ observation.substrate }}</a>
-                        {% include 'lepidoptera/_comma.html' %}
-                    {% endfor %}
-                </dd>
-            {% endif %}
-        </dl>
-
         {% include 'lepidoptera/taxonomy/_species_section_imago.html' with species=taxon section_name='imago' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='genitalia' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='egg' %}
@@ -127,8 +79,10 @@
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='cocoon' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='bionomics' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='habitat' %}
+        {% include 'lepidoptera/taxonomy/_species_section_observed_on.html' with species=taxon section_name='observed_on' %}
 
     {% endif %}
+
 {% endblock %}
 
 {% block bottom-of-body %}

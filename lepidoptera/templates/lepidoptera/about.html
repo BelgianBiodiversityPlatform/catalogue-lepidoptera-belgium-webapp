@@ -1,5 +1,9 @@
 {% extends "lepidoptera/base.html" %}
 
+{% block title %}About{% endblock %}
+
+{% block meta_description %}Additional information about the catalogue and website.{% endblock %}
+
 {% load i18n %}
 {% load page_fragments %}
 
@@ -10,5 +14,11 @@
         {% get_page_fragment 'about_page_content' %}
     </div>
 </div>
+<div class="row">
+    <div class="col">
+        <p class="text-right small text-muted text-light"></span> <a href="https://github.com/BelgianBiodiversityPlatform/catalogue-lepidoptera-belgium-webapp">Source code</a> revision: {{ version_string }}.
+    </div>
+</div>
+
 
 {% endblock content %}
