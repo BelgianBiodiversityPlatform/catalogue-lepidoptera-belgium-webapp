@@ -365,6 +365,19 @@ class Genus(ParentForAdminListMixin, TaxonomicModelWithSynonyms):
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True, on_delete=models.CASCADE)
     family = models.ForeignKey(Family, null=True, blank=True, on_delete=models.CASCADE)
 
+    # For DarwinCore views, not for the webapp
+    @denormalized(models.CharField, max_length=255)
+    @depend_on_related('Tribus')
+    @depend_on_related('Subfamily')
+    @depend_on_related('Family')
+    def family_name(self):
+        if self.family:
+            return self.family.name
+        elif self.subfamily:
+            return self.subfamily.family.name
+        elif self.tribus:
+            return self.tribus.subfamily.family.name
+
     # NOTE: Do NOT try to implement with a CountField (django-denorm) since is fails miserably when we set a filter that
     # spans accross tables (which is needed to filter where the species status is ACCEPTED.
     # If performance requires it, it's probably better to hack manually something similar to CountFiled
