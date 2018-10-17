@@ -21,6 +21,22 @@ def home_page(request):
 
 # TODO: factorize code for the taxonrank_page views?
 
+def all_species_for_family_json(request, family_id):
+    # Probably to factorize so it work for family, genus, ... levels
+    family = get_object_or_404(Family, pk=family_id)
+
+    return JsonResponse([s.json_for_species_lists for s in family.all_species], safe=False)
+
+
+def new_family_page(request, family_id):
+    family = get_object_or_404(Family, pk=family_id)
+
+    return render(request, 'lepidoptera/taxonomy/family_new.html', {
+        'taxon': family,
+        'select_browse_menu': True
+    })
+
+
 def family_page(request, family_id):
     family = get_object_or_404(Family, pk=family_id)
 
@@ -308,7 +324,6 @@ def _browse_model_json(model, title, name_attr='name', manager_name='objects'):
 
         r['entries'].append(entry)
 
-
     if not name_attr_is_field:  # We have to sort in python
         r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
 
@@ -376,6 +391,7 @@ def browse_vernacularnames_json(request):
     r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
 
     return JsonResponse(r, safe=False)
+
 
 def haproxy_check(request):
     return HttpResponse('ok', content_type='text/plain')

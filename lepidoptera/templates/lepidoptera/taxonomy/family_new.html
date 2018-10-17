@@ -1,0 +1,17 @@
+{% extends "lepidoptera/taxonomy/base.html" %}
+{% load i18n %}
+
+{% block details %}
+    <h3>{% trans "Direct lower taxa" %}</h3>
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="subfamily-group names" taxon_list=taxon.subfamily_set.all %}
+    {% include 'lepidoptera/taxonomy/_taxon_list_table.html' with title="genus-group names" taxon_list=taxon.genus_set.all %}
+
+    <hr/>
+
+    <h3>{% trans "Species in Belgium" %}</h3>
+    {% include "lepidoptera/taxonomy/_new_species_table.html" %}
+{% endblock %}
+
+{% block bottom-of-body %}
+    {% include "lepidoptera/taxonomy/_new_species_table_js.html" with species_list_service_url=taxon.species_list_service_url only %}
+{% endblock %}

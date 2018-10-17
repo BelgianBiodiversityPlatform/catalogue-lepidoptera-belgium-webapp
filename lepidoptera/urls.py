@@ -30,6 +30,9 @@ urlpatterns = [
     path('pictures_json', views.pictures_json, name='pictures_json'),
 
     path('family/<int:family_id>/', views.family_page, name='family_page'),
+    path('family_new/<int:family_id>/', views.new_family_page, name='new_family_page'),
+
+    path('species_for_family_json/<int:family_id>/', views.all_species_for_family_json, name='species_for_family_json'),
     path('subfamily/<int:subfamily_id>/', views.subfamily_page, name='subfamily_page'),
     path('tribus/<int:tribus_id>/', views.tribus_page, name='tribus_page'),
     path('genus/<int:genus_id>/', views.genus_page, name='genus_page'),

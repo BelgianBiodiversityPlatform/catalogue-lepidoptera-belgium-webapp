@@ -1,0 +1,33 @@
+<script type="text/x-template" id="grid-template">
+    <table class="table table-bordered table-hover table-striped table-sm">
+        <thead class="thead-dark">
+            <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                [[ key | capitalize ]]
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+                </span>
+            </th>
+        </thead>
+
+        <tbody>
+            <tr v-for="entry in filteredData">
+                <td v-for="key in columns">
+                    [[ entry[key] ]]
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</script>
+
+<div id="species-table-root" service-url="AAAA{{ species_list_service_url }}">
+    <form id="search">
+        Search <input name="query" v-model="searchQuery">
+    </form>
+
+    <species-grid
+        :data="gridData"
+        :columns="gridColumns"
+        :filter-key="searchQuery">
+    </species-grid>
+</div>

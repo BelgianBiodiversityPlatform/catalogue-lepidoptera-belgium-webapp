@@ -221,6 +221,10 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
 
     species_counter = models.IntegerField(default=0)
 
+    @property
+    def species_list_service_url(self):
+        return reverse('species_for_family_json', kwargs={'family_id': self.pk})
+
     def update_species_counter(self):
         self.species_counter = self.species_count
         self.save()
@@ -806,6 +810,13 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
 
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
+
+    @property
+    def json_for_species_lists(self):
+        return {
+            'seq': self.display_order,
+            'name': self.binomial_name
+        }
 
     @property
     def additional_data_for_json(self):
