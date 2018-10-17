@@ -1,3 +1,26 @@
+<script type="text/x-template" id="vernacular-names-cell-template">
+    <div>
+        <ul class="list-unstyled">
+            <li v-for="name in names"> [[ name.value ]] ([[ name.code ]])</li>
+        </ul>
+    </div>
+</script>
+
+<script type="text/x-template" id="names-cell-template">
+    <div>
+        <p class="indent-except-first mb-1">
+            <b><a :href="entry.url"><i>[[ entry.name ]]</i></a></b>
+            <span class="font-weight-light"> [[ entry.author ]]</span>
+        </p>
+
+        <div style="margin-left: 10px">
+            <p v-for="synonym in entry.synonyms" class="mb-0 font-weight-light indent-except-first">
+                = <a :href="synonym.url"><i>[[ synonym.name ]]</i></a> [[ synonym.author ]]
+            </p>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-template" id="grid-template">
     <table class="table table-bordered table-hover table-striped table-sm">
         <thead class="thead-dark">
@@ -12,15 +35,23 @@
 
         <tbody>
             <tr v-for="entry in filteredData">
-                <td v-for="key in columns">
-                    [[ entry[key] ]]
+                <td class="small text-muted">
+                    [[ entry['seq'] ]]
+                </td>
+
+                <td class="small">
+                    <names-cell :entry="entry"></names-cell>
+                </td>
+
+                <td class="small">
+                    <vernacular-names-cell :names="entry.vernacularNames"></vernacular-names-cell>
                 </td>
             </tr>
         </tbody>
     </table>
 </script>
 
-<div id="species-table-root" service-url="AAAA{{ species_list_service_url }}">
+<div id="species-table-root">
     <form id="search">
         Search <input name="query" v-model="searchQuery">
     </form>

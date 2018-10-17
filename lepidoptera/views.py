@@ -25,7 +25,7 @@ def all_species_for_family_json(request, family_id):
     # Probably to factorize so it work for family, genus, ... levels
     family = get_object_or_404(Family, pk=family_id)
 
-    return JsonResponse([s.json_for_species_lists for s in family.all_species], safe=False)
+    return JsonResponse([s.json_for_species_lists for s in family.all_species if s.is_valid], safe=False)
 
 
 def new_family_page(request, family_id):

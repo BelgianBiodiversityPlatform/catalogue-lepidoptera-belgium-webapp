@@ -21,6 +21,20 @@ def python_sort_taxonomicmodel(unsorted_qs):
     return sorted(unsorted_qs, key=lambda t: t.display_order)
 
 
+def model_field_in_all_available_languages(languages, model_instance, field_name):
+    """Returns a list of dict"""
+    l = []
+
+    for lang in languages:
+        lang_code = lang[0]
+        localized_field_name = '{field_name}_{lang_code}'.format(field_name=field_name, lang_code=lang_code)
+        field_value = getattr(model_instance, localized_field_name)
+
+        if field_value:
+            l.append({'code': lang_code.upper(), 'value': field_value})
+
+    return l
+
 # Managers, helpers, ...
 def get_verbatim_id_field():
     # Blank/NULL allowed for post-import record
@@ -815,7 +829,15 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     def json_for_species_lists(self):
         return {
             'seq': self.display_order,
-            'name': self.binomial_name
+            'name': self.binomial_name,
+            'author': self.author,
+            'url': self.get_absolute_url(),
+
+            'vernacularNames': model_field_in_all_available_languages(settings.LANGUAGES, self, 'vernacular_name'),
+
+            'synonyms': [{'name': s.binomial_name,
+                          'author': s.author,
+                          'url': s.get_absolute_url()} for s in self.synonyms.all()]
         }
 
     @property

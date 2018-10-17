@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS
+from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS, model_field_in_all_available_languages
 
 register = template.Library()
 
@@ -32,23 +32,9 @@ def species_presence_icons(species_pk, province_id):
     return mark_safe(imgs)
 
 
-def _field_in_all_available_languages(languages, model, field_name):
-    """Returns a list of dict"""
-    l = []
-
-    for lang in languages:
-        lang_code = lang[0]
-        localized_field_name = '{field_name}_{lang_code}'.format(field_name=field_name, lang_code=lang_code)
-        field_value = getattr(model, localized_field_name)
-
-        if field_value:
-            l.append({'code': lang_code.upper(), 'value': field_value})
-
-    return l
-
 @register.simple_tag
 def field_in_all_available_languages_ul(languages, model, field_name):
-    entries = _field_in_all_available_languages(languages, model, field_name)
+    entries = model_field_in_all_available_languages(languages, model, field_name)
 
     html = ''
     if entries:
@@ -59,12 +45,13 @@ def field_in_all_available_languages_ul(languages, model, field_name):
 
     return mark_safe(html)
 
+
 @register.simple_tag
 def field_in_all_available_languages(languages, model, field_name):
     """Return something such as 'Speckled Wood (EN), Bont zandoogje (NL)'"""
     s = ''
 
-    for entry in _field_in_all_available_languages(languages, model, field_name):
+    for entry in model_field_in_all_available_languages(languages, model, field_name):
         s = s + '{field_value} ({lang_code}), '.format(field_value=entry['value'], lang_code=entry['code'])
 
     if s == '':

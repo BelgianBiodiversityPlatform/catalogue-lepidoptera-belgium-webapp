@@ -3,6 +3,24 @@
         specieListServiceUrl: "{{ species_list_service_url }}"
     };
 
+    Vue.component('vernacular-names-cell', {
+        template: '#vernacular-names-cell-template',
+        delimiters: ['[[', ']]'],
+
+        props: {
+            names: Object,
+        }
+    });
+
+    Vue.component('names-cell', {
+        template: '#names-cell-template',
+        delimiters: ['[[', ']]'],
+
+        props: {
+            entry: Object,
+        }
+    });
+
     Vue.component('species-grid', {
         template: '#grid-template',
         delimiters: ['[[', ']]'],
@@ -13,10 +31,10 @@
             filterKey: String
         },
         data: function () {
-            var sortOrders = {}
+            var sortOrders = {};
             this.columns.forEach(function (key) {
                 sortOrders[key] = 1
-            })
+            });
             return {
                 sortKey: '',
                 sortOrders: sortOrders
@@ -37,8 +55,8 @@
                 }
                 if (sortKey) {
                     data = data.slice().sort(function (a, b) {
-                        a = a[sortKey]
-                        b = b[sortKey]
+                        a = a[sortKey];
+                        b = b[sortKey];
                         return (a === b ? 0 : a > b ? 1 : -1) * order
                     })
                 }
@@ -52,18 +70,18 @@
         },
         methods: {
             sortBy: function (key) {
-                this.sortKey = key
+                this.sortKey = key;
                 this.sortOrders[key] = this.sortOrders[key] * -1
             }
         }
-    })
+    });
 
     var speciesTable = new Vue({
         el: '#species-table-root',
         delimiters: ['[[', ']]'],
         data: {
             searchQuery: '',
-            gridColumns: ['seq', 'name'],
+            gridColumns: ['seq', 'name', 'vernacular names'],
             gridData: [
             ]
         },
