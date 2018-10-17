@@ -55,8 +55,17 @@
                 }
                 if (sortKey) {
                     data = data.slice().sort(function (a, b) {
-                        a = a[sortKey];
-                        b = b[sortKey];
+                        if (sortKey == 'vernacular names') {
+                            // Vernacular names: we sort by the NL one...
+                            a = a['vernacularNames'].find(function (element) { return element.code === 'NL' }).value;
+                            b = b['vernacularNames'].find(function (element) { return element.code === 'NL' }).value;
+                        } else {
+                            // By default, we sort according to the "column name" attribute
+                            // Works fine for seq, name, ...
+                            a = a[sortKey];
+                            b = b[sortKey];
+                        }
+
                         return (a === b ? 0 : a > b ? 1 : -1) * order
                     })
                 }
