@@ -28,7 +28,7 @@
                 @click="sortBy(key)"
                 :class="{ active: sortKey == key }">
                 [[ key | capitalize ]]
-                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+                <span v-if="sortKey == key" class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
                 </span>
             </th>
         </thead>

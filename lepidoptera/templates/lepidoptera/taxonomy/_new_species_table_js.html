@@ -8,7 +8,7 @@
         delimiters: ['[[', ']]'],
 
         props: {
-            names: Object,
+            names: Array
         }
     });
 
@@ -36,7 +36,7 @@
                 sortOrders[key] = 1
             });
             return {
-                sortKey: '',
+                sortKey: 'seq',
                 sortOrders: sortOrders
             }
         },
