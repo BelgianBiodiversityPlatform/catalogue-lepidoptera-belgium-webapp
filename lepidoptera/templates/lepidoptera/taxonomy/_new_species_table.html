@@ -52,8 +52,8 @@
 </script>
 
 <div id="species-table-root">
-    <form id="search">
-        Search <input name="query" v-model="searchQuery">
+    <form class="form-inline" id="search">
+        <label for="query">Filter</label>: <input class="form-control" id="query" name="query" v-model="searchQuery">
     </form>
 
     <species-grid

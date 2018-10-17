@@ -47,6 +47,8 @@
                 var order = this.sortOrders[sortKey] || 1
                 var data = this.data
                 if (filterKey) {
+                    // TODO: fix filter so it works with when data is more than simple text
+                    // TODO: (vernacular names, synonym names, ...)
                     data = data.filter(function (row) {
                         return Object.keys(row).some(function (key) {
                             return String(row[key]).toLowerCase().indexOf(filterKey) > -1
