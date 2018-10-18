@@ -9,6 +9,5 @@ saltstack_deploy:
         refs:
             - dev
     tags:
-        - python
         - deploy
         - sandbox
