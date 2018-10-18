@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<a class="{% if family.is_large %}large-family-link{% endif %}" href="{% url 'family_page' family.id %}">
+<a style="height: 100%" class="{% if family.is_large %}large-family-link{% endif %}" href="{% url 'family_page' family.id %}">
 <div class="card familyCard p-1">
 
     {% if family.representative_picture %}
