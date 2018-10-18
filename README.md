@@ -2,6 +2,7 @@ This repository contains the source code of the [Atlas of Lepidoptera of Belgium
 
 ![website screenshot](https://raw.githubusercontent.com/BelgianBiodiversityPlatform/catalogue-lepidoptera-belgium-webapp/master/website_screenshot.jpg)
 
+
 Deployment / Installation
 =========================
 
