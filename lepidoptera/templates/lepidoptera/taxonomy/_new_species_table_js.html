@@ -42,18 +42,13 @@
         },
         computed: {
             filteredData: function () {
-                var sortKey = this.sortKey
-                var filterKey = this.filterKey && this.filterKey.toLowerCase()
-                var order = this.sortOrders[sortKey] || 1
-                var data = this.data
+                var sortKey = this.sortKey;
+                var filterKey = this.filterKey;
+
+                var order = this.sortOrders[sortKey] || 1;
+                var data = this.data;
                 if (filterKey) {
-                    // TODO: fix filter so it works with when data is more than simple text
-                    // TODO: (vernacular names, synonym names, ...)
-                    data = data.filter(function (row) {
-                        return Object.keys(row).some(function (key) {
-                            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-                        })
-                    })
+                    data = data.filter(this.rowMatchFilter(filterKey));
                 }
                 if (sortKey) {
                     data = data.slice().sort(function (a, b) {
@@ -80,6 +75,30 @@
             }
         },
         methods: {
+            rowMatchFilter: function(filterString) {
+                var stringContains = function(str, substr) {
+                    // Case-insensitive, returns true or false
+                    return String(str).toLowerCase().indexOf(substr.toLowerCase()) > -1
+                };
+
+                return function (rowData) {
+                    console.log("Row: ", rowData);
+                    console.log("Filter: ", filterString);
+
+                    // Seq number: consider it as a string so its filterable
+                    if(stringContains(rowData['seq'].toString(), filterString)){ return true; }
+
+                    // Scientific name: simple filter
+                    if(stringContains(rowData['name'], filterString)){ return true; }
+
+                    // Vernacular names: if the value match in any language, we're good!
+                    if (rowData['vernacularNames'].some(function(elem) { return stringContains(elem.value, filterString);})) { return true; }
+
+                    return false;
+                }
+
+            },
+
             sortBy: function (key) {
                 this.sortKey = key;
                 this.sortOrders[key] = this.sortOrders[key] * -1

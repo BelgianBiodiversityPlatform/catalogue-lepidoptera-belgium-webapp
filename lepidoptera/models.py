@@ -35,6 +35,7 @@ def model_field_in_all_available_languages(languages, model_instance, field_name
 
     return l
 
+
 # Managers, helpers, ...
 def get_verbatim_id_field():
     # Blank/NULL allowed for post-import record
