@@ -82,9 +82,6 @@
                 };
 
                 return function (rowData) {
-                    console.log("Row: ", rowData);
-                    console.log("Filter: ", filterString);
-
                     // Seq number: consider it as a string so its filterable
                     if(stringContains(rowData['seq'].toString(), filterString)){ return true; }
 
@@ -121,6 +118,10 @@
             })
         },
         methods: {
+            resetFilter: function () {
+                this.searchQuery = '';
+            },
+
             loadData: function () {
                 var that = this;
                 $.getJSON(SpeciesTableConf.specieListServiceUrl)
