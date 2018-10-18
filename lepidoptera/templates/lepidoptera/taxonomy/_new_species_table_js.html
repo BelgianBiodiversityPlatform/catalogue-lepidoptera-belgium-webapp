@@ -97,8 +97,10 @@
             },
 
             sortBy: function (key) {
-                this.sortKey = key;
-                this.sortOrders[key] = this.sortOrders[key] * -1
+                if (this.$parent.unorderableColumns.indexOf(key) == -1) {
+                    this.sortKey = key;
+                    this.sortOrders[key] = this.sortOrders[key] * -1
+                }
             }
         }
     });
@@ -109,6 +111,7 @@
         data: {
             searchQuery: '',
             gridColumns: ['seq', 'name', 'vernacular names', 'distribution'],
+            unorderableColumns: ['distribution'],
             gridData: [
             ]
         },
