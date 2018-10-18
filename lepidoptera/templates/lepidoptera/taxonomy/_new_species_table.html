@@ -25,7 +25,7 @@
 
 <script type="text/x-template" id="grid-template">
     <div>
-        <p class="small text-muted text-right">[[ filteredData.length ]] matching rows (total: [[ data.length ]])</p>
+        <p v-if="filterKey" class="small text-muted text-right">[[ filteredData.length ]] matching rows (total: [[ data.length ]])</p>
         <table class="table table-bordered table-hover table-striped table-sm">
             <thead class="thead-dark">
             <th v-for="key in columns"
@@ -63,7 +63,7 @@
 </script>
 
 <div id="species-table-root">
-    <form class="form-inline" id="search">
+    <form class="form-inline mb-2" id="search">
         <label class="mr-2" for="query">Filter: </label>
         <input class="form-control form-control-sm mr-2" id="query" name="query" v-model="searchQuery">
         <button @click="resetFilter()" :disabled="searchQuery == '' ? true : false" type="button" class="btn btn-outline-danger btn-sm"><span class="oi oi-circle-x"></span> Reset</button>
