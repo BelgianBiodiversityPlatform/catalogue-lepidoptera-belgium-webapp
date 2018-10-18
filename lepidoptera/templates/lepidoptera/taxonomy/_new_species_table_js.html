@@ -52,10 +52,20 @@
                 }
                 if (sortKey) {
                     data = data.slice().sort(function (a, b) {
+                        var NLVernacularA, NLVernacularB;
+
+                        var getNLValue = function (vernacularNames) {
+                            // Return the value of the NL vernacularName, or '' if it doesn't exist
+                            var findNLElement = function (element) { return element.code === 'NL' };
+
+                            var nlVernacular = vernacularNames.find(findNLElement);
+                            if (nlVernacular) { return nlVernacular.value } else { return ''}
+                        };
+
                         if (sortKey == 'vernacular names') {
                             // Vernacular names: we sort by the NL one...
-                            a = a['vernacularNames'].find(function (element) { return element.code === 'NL' }).value;
-                            b = b['vernacularNames'].find(function (element) { return element.code === 'NL' }).value;
+                            a = getNLValue(a['vernacularNames']);
+                            b = getNLValue(b['vernacularNames']);
                         } else {
                             // By default, we sort according to the "column name" attribute
                             // Works fine for seq, name, ...
