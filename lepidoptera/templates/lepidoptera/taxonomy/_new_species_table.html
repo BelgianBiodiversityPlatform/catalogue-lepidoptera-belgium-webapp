@@ -1,4 +1,4 @@
-{% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+{% include 'lepidoptera/taxonomy/_distribution_viz_templates.html' %}
 
 <script type="text/x-template" id="vernacular-names-cell-template">
     <div>
@@ -53,7 +53,7 @@
 
                 <td class="px-3" style="width: 350px; overflow: auto;">
                     <div class="distribution-grape-container">
-                        <distribution-grapefruit :species-id="entry.id" service-url="{{ species_distribution_service_url }}"></distribution-grapefruit>
+                        <distribution-viz :species-id="entry.id" service-url="{{ species_distribution_service_url }}"></distribution-viz>
                     </div>
                 </td>
             </tr>

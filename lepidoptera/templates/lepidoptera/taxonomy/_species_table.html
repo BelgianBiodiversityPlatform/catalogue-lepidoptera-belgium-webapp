@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load various_helpers %}
 
-{% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+{% include 'lepidoptera/taxonomy/_distribution_viz_templates.html' %}
 
 <div class="row m-2">
     <div class="col">
@@ -53,8 +53,8 @@
 
                 <td class="px-3" style="width: 350px; overflow: auto;">
                     <div class="distribution-grape-container">
-                        <distribution-grapefruit :show-borders="false" :species-id="{{ s.pk }}"
-                                             service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
+                        <distribution-viz :show-borders="false" :species-id="{{ s.pk }}"
+                                             service-url="{% url 'species_per_province_and_period' %}"></distribution-viz>
                     </div>
 
                     <div class="distribution-table-container">

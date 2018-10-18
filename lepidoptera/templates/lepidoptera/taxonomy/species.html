@@ -23,7 +23,7 @@
     {# TODO: Validation: in admin, check that no data is entered for those in case of a synonym (that data would never be visible) #}
     {# TODO: Also check that there's no data for preexisting/imported species #}
     {% if not taxon.synonym_of %}
-        {% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+        {% include 'lepidoptera/taxonomy/_distribution_viz_templates.html' %}
 
         <h2>{% trans "Distribution" %}</h2>
 
@@ -41,8 +41,8 @@
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
                 <div id="distribution" class="w-50 mx-auto">
-                    <distribution-grapefruit :show-borders="true" :species-id="{{ taxon.pk }}"
-                                             service-url="{% url 'species_per_province_and_period' %}"></distribution-grapefruit>
+                    <distribution-viz :show-borders="true" :species-id="{{ taxon.pk }}"
+                                             service-url="{% url 'species_per_province_and_period' %}"></distribution-viz>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
 {% endblock %}
 
 {% block bottom-of-body %}
-    {% include 'lepidoptera/taxonomy/_country_grape_js_components.html' %}
+    {% include 'lepidoptera/taxonomy/_distribution_viz_js_components.html' %}
 
     <script type="text/javascript">
         $(function () {
