@@ -9,9 +9,11 @@
     <hr/>
 
     <h3>{% trans "Species in Belgium" %}</h3>
-    {% include "lepidoptera/taxonomy/_new_species_table.html" %}
+    {% url 'species_per_province_and_period' as species_distribution_service_url %}
+    {% include "lepidoptera/taxonomy/_new_species_table.html" with species_distribution_service_url=species_distribution_service_url %}
 {% endblock %}
 
 {% block bottom-of-body %}
+    {% include 'lepidoptera/taxonomy/_country_grape_js_components.html' %}
     {% include "lepidoptera/taxonomy/_new_species_table_js.html" with species_list_service_url=taxon.species_list_service_url only %}
 {% endblock %}

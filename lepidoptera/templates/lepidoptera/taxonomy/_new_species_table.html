@@ -1,3 +1,5 @@
+{% include 'lepidoptera/taxonomy/_country_grape_templates.html' %}
+
 <script type="text/x-template" id="vernacular-names-cell-template">
     <div>
         <ul class="list-unstyled">
@@ -36,7 +38,7 @@
             </thead>
 
             <tbody>
-            <tr v-for="entry in filteredData">
+            <tr v-for="entry in filteredData" :key="entry   .id">
                 <td class="small text-muted">
                     [[ entry['seq'] ]]
                 </td>
@@ -47,6 +49,12 @@
 
                 <td class="small">
                     <vernacular-names-cell :names="entry.vernacularNames"></vernacular-names-cell>
+                </td>
+
+                <td class="px-3" style="width: 350px; overflow: auto;">
+                    <div class="distribution-grape-container">
+                        <distribution-grapefruit :species-id="entry.id" service-url="{{ species_distribution_service_url }}"></distribution-grapefruit>
+                    </div>
                 </td>
             </tr>
             </tbody>

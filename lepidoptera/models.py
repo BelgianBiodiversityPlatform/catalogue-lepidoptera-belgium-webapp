@@ -829,6 +829,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     @property
     def json_for_species_lists(self):
         return {
+            'id': self.pk,
             'seq': self.display_order,
             'name': self.binomial_name,
             'author': self.author,
