@@ -5,6 +5,11 @@ saltstack_deploy:
     stage: deploy
     script:
         - sudo /usr/local/bin/salt-call --retcode-passthrough --force-color state.apply webapps.lepidoptera
+    only:
+        refs:
+            - dev
+
     tags:
         - python
         - deploy
+        - sandbox
