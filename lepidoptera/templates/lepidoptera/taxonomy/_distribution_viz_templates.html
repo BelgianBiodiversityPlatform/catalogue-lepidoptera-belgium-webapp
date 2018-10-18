@@ -1,6 +1,12 @@
 <script type="text/x-template" id="distribution-viz-template">
     <div class="row">
-        <country-grape :show-border="showBorders" v-for="period in periods" :period="period" :key="period.period_name"></country-grape>
+        <template v-if="mode == 'grape'">
+            <country-grape v-if="" :show-border="showBorders" v-for="period in periods" :period="period" :key="period.period_name"></country-grape>
+        </template>
+
+        <template v-else>
+            TABLE
+        </template>
     </div>
 </script>
 

@@ -53,7 +53,7 @@
 
                 <td class="px-3" style="width: 350px; overflow: auto;">
                     <div class="distribution-grape-container">
-                        <distribution-viz :species-id="entry.id" service-url="{{ species_distribution_service_url }}"></distribution-viz>
+                        <distribution-viz :species-id="entry.id" service-url="{{ species_distribution_service_url }}" :mode="distributionMode"></distribution-viz>
                     </div>
                 </td>
             </tr>
@@ -69,9 +69,18 @@
         <button @click="resetFilter()" :disabled="searchQuery == '' ? true : false" type="button" class="btn btn-outline-danger btn-sm"><span class="oi oi-circle-x"></span> Reset</button>
     </form>
 
+    <form>
+        <input type="radio" id="graperadio" value="grape" v-model="distributionMode">
+        <label for="graperadio">Grape view</label>
+        <br>
+        <input type="radio" id="tableradio" value="table" v-model="distributionMode">
+        <label for="tableradio">Table view</label>
+    </form>
+
     <species-grid
             :data="gridData"
             :columns="gridColumns"
-            :filter-key="searchQuery">
+            :filter-key="searchQuery"
+            :distribution-mode="distributionMode">
     </species-grid>
 </div>

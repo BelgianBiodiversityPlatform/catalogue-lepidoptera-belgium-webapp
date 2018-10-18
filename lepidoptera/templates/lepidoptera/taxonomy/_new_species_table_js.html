@@ -28,7 +28,8 @@
         props: {
             data: Array,
             columns: Array,
-            filterKey: String
+            filterKey: String,
+            distributionMode: String
         },
         data: function () {
             var sortOrders = {};
@@ -37,7 +38,7 @@
             });
             return {
                 sortKey: 'seq',
-                sortOrders: sortOrders
+                sortOrders: sortOrders,
             }
         },
         computed: {
@@ -122,6 +123,7 @@
             searchQuery: '',
             gridColumns: ['seq', 'name', 'vernacular names', 'distribution'],
             unorderableColumns: ['distribution'],
+            distributionMode: 'grape',
             gridData: [
             ]
         },
