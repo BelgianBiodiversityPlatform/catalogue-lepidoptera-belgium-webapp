@@ -15,27 +15,21 @@
         delimiters: ['[[', ']]'],
         template: '#half-province-icon-template',
         props: {
-            posX: Number,
-            posY: Number,
-            startAngle: Number,
-            endAngle: Number,
-
-            isActive: Boolean,
-            provinceCode: String
+            provinceData: Object,
         },
         data: function () {
             return {
-                moveList: this.describeArc(this.posX, this.posY, provinceGrapesConf.circleRadius, this.startAngle,
-                    this.endAngle),
+                moveList: this.describeArc(this.provinceData.posX, this.provinceData.posY, provinceGrapesConf.circleRadius, this.provinceData.startAngle,
+                    this.provinceData.endAngle),
                 textPosY: this.getTextYPos()
             }
         },
         methods: {
             getTextYPos: function () {
-                if (this.startAngle < this.endAngle) {
-                    return this.posY + 7;
+                if (this.provinceData.startAngle < this.provinceData.endAngle) {
+                    return this.provinceData.posY + 7;
                 } else {
-                    return this.posY - 6;
+                    return this.provinceData.posY - 6;
                 }
             },
             describeArc: function (x, y, radius, startAngle, endAngle) {
@@ -67,10 +61,7 @@
         delimiters: ['[[', ']]'],
         template: '#province-icon-template',
         props: {
-            posX: Number,
-            posY: Number,
-            isActive: Boolean,
-            provinceCode: String
+            provinceData: Object,
         },
         data: function () {
             return {
