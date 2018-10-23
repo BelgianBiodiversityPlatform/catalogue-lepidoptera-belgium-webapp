@@ -27,7 +27,6 @@
     <div class="row">
         <template v-if="mode == 'grape'">
             <country-grape :show-border="showBorders" v-for="period in periods" :all-provinces="allProvinces"
-                           :all-special-provinces="allSpecialProvinces"
                            :period="period"
                            :key="period.period_name"></country-grape>
         </template>
@@ -43,18 +42,20 @@
         <h5>[[ period.period_name ]]</h5>
         <svg viewBox="0 0 155 112">
             <province-icon v-for="province in provinces"
+                           v-if="!province.partOf"
                            :pos-x="province.posX"
                            :pos-y="province.posY"
                            :province-code="province.code"
                            :is-active="province.active"
                            :key="province.name"></province-icon>
 
-            <half-province-icon v-for="province in specialProvinces"
+            <half-province-icon v-for="province in provinces"
+                                v-if="province.partOf"
                                 :pos-x="province.posX"
                                 :pos-y="province.posY"
                                 :start-angle="province.startAngle"
                                 :end-angle="province.endAngle"
-                                :province-code="province.name"
+                                :province-code="province.code"
                                 :is-active="province.active"
                                 :key="province.name"></half-province-icon>
 

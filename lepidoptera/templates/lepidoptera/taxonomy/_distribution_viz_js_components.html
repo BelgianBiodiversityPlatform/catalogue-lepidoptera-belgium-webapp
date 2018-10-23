@@ -90,22 +90,37 @@
         data: function() {
             return {
                 periods: [],
-
                 allProvinces: [
-                    {name: 'Namur', code: 'NA', posX: 90, posY: 80},
-                    {name: 'Luxembourg', code: 'LX', posX: 118, posY: 96},
-                    {name: 'Liège',code: 'LG', posX: 118, posY: 64},
-                    {name: 'Limburg',code: 'LI', posX: 118, posY: 32},
-                    {name: 'Antwerpen',code: 'AN', posX: 90, posY: 16},
-                    {name: 'Oost-Vlaanderen',code: 'OV', posX: 62, posY: 32},
-                    {name: 'Hainaut',code: 'HA', posX: 62, posY: 64},
-                    {name: 'West-Vlaanderen',code: 'WV', posX: 34, posY: 16}
-                ],
+                    // TODO: this data should come from the backend
 
-                allSpecialProvinces: [
-                    {name: 'BW', posX: 90, posY: 48, startAngle: 90, endAngle: 270, active: false, partOf: 'BR'},
-                    {name: 'VB', posX: 90, posY: 48, startAngle: 270, endAngle: 90, active: false, partOf: 'BR'}
-                ]
+                    /* Brabant is not displayed as a full province but as the aggregate of BRW and VBR*/
+                    {name: 'West-Vlaanderen', code: 'WV', posX: 34, posY: 16},
+                    {name: 'Oost-Vlaanderen', code: 'OV', posX: 62, posY: 32},
+                    {name: 'Antwerpen', code: 'AN', posX: 90, posY: 16},
+                    {name: 'Limburg', code: 'LI', posX: 118, posY: 32},
+                    {
+                        name: 'Vlaams Brabant',
+                        code: 'VB',
+                        posX: 90,
+                        posY: 48,
+                        startAngle: 270,
+                        endAngle: 90,
+                        partOf: 'BR'
+                    },
+                    {
+                        name: 'Brabant Wallon',
+                        code: 'BW',
+                        posX: 90,
+                        posY: 48,
+                        startAngle: 90,
+                        endAngle: 270,
+                        partOf: 'BR'
+                    },
+                    {name: 'Hainaut', code: 'HA', posX: 62, posY: 64},
+                    {name: 'Namur', code: 'NA', posX: 90, posY: 80},
+                    {name: 'Liège', code: 'LG', posX: 118, posY: 64},
+                    {name: 'Luxembourg', code: 'LX', posX: 118, posY: 96},
+                ],
             }
         },
         mounted: function () {
@@ -138,7 +153,6 @@
             period: Object, // has a name, and a list of provinces codes where the species is present
             showBorder: Boolean,
             allProvinces: Array,
-            allSpecialProvinces: Array
         },
         data: function () {
             var cloneObject = function(a) {
@@ -164,7 +178,6 @@
 
             return {
                 provinces: activateProvinces(this.period.present_in, cloneObject(this.allProvinces)),
-                specialProvinces: activateProvinces(this.period.present_in, cloneObject(this.allSpecialProvinces))
             }
         }
     });
