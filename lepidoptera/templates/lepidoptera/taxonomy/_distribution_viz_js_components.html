@@ -7,7 +7,8 @@
         delimiters: ['[[', ']]'],
         template: '#distribution-table-template',
         props: {
-            allProvinces: Array
+            allProvinces: Array,
+            periods: Array
         }
     });
 
@@ -98,6 +99,7 @@
                         endAngle: 90,
                         partOf: 'BR'
                     },
+                    {name: 'Brabant', code: 'BR', skipInGrape: true},
                     {
                         name: 'Brabant Wallon',
                         code: 'BW',

@@ -288,6 +288,7 @@ def species_per_province_and_period(request):
     for tp in TimePeriod.objects.all():
         r.append({
             'period_name': tp.name,
+            'period_icon_url': tp.icon.url,
             'present_in': [presence.province.code for presence in sp.speciespresence_set.filter(present=True,
                                                                                                 period=tp)]
         })

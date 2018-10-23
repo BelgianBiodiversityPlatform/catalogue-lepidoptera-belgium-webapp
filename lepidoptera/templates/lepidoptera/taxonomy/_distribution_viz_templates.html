@@ -3,21 +3,16 @@
         <thead style="font-size: 70%;">
         <tr>
             <th v-for="province in allProvinces" class="text-center province-title font-weight-light" :title="province.name">[[ province.code ]]</th>
-{#            {% for province in provinces %}#}
-{#                <th class="text-center province-title font-weight-light" scope="col"#}
-{#                    title="{{ province.name }}">{{ province.code }}</th>#}
-{#            {% endfor %}#}
         </tr>
         </thead>
 
         <tbody>
         <tr>
-{#            {% for province in provinces %}#}
-{#                <td style="overflow: auto; position: relative; height: 24px;">#}
-                    {# If we want to optimize this further, we should try to do a single call instead of one by province #}
-{#                    {% species_presence_icons species.id province.id %}#}
-{#                </td>#}
-{#            {% endfor %}#}
+            <td v-for="province in allProvinces" style="overflow: auto; position: relative; height: 24px;">
+                <template v-for="period in periods">
+                    <img class="province-icon" :src="period.period_icon_url" v-if="period.present_in.indexOf(province.code) > -1">
+                </template>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -32,7 +27,7 @@
         </template>
 
         <template v-else>
-            <distribution-table :all-provinces="allProvinces"></distribution-table>
+            <distribution-table :all-provinces="allProvinces" :periods="periods"></distribution-table>
         </template>
     </div>
 </script>
@@ -42,7 +37,7 @@
         <h5>[[ period.period_name ]]</h5>
         <svg viewBox="0 0 155 112">
             <province-icon v-for="province in provinces"
-                           v-if="!province.partOf"
+                           v-if="!province.partOf && !province.skipInGrape"
                            :province-data="province"
                            :key="province.code"></province-icon>
 
