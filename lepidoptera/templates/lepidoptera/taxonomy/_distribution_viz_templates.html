@@ -2,6 +2,7 @@
     <table class="table table-bordered table-sm">
         <thead style="font-size: 70%;">
         <tr>
+            <th v-for="province in allProvinces" class="text-center province-title font-weight-light" :title="province.name">[[ province.code ]]</th>
 {#            {% for province in provinces %}#}
 {#                <th class="text-center province-title font-weight-light" scope="col"#}
 {#                    title="{{ province.name }}">{{ province.code }}</th>#}
@@ -25,12 +26,14 @@
 <script type="text/x-template" id="distribution-viz-template">
     <div class="row">
         <template v-if="mode == 'grape'">
-            <country-grape :show-border="showBorders" v-for="period in periods" :period="period"
+            <country-grape :show-border="showBorders" v-for="period in periods" :all-provinces="allProvinces"
+                           :all-special-provinces="allSpecialProvinces"
+                           :period="period"
                            :key="period.period_name"></country-grape>
         </template>
 
         <template v-else>
-            <distribution-table></distribution-table>
+            <distribution-table :all-provinces="allProvinces"></distribution-table>
         </template>
     </div>
 </script>
@@ -42,7 +45,7 @@
             <province-icon v-for="province in provinces"
                            :pos-x="province.posX"
                            :pos-y="province.posY"
-                           :province-code="province.name"
+                           :province-code="province.code"
                            :is-active="province.active"
                            :key="province.name"></province-icon>
 
