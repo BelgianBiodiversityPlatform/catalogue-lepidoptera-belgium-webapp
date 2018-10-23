@@ -41,7 +41,7 @@
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-grape" role="tabpanel" aria-labelledby="pills-grape-tab">
                 <div id="distribution" class="w-50 mx-auto">
-                    <distribution-viz :show-borders="true" :species-id="{{ taxon.pk }}"
+                    <distribution-viz mode="grape" :show-borders="true" :species-id="{{ taxon.pk }}"
                                              service-url="{% url 'species_per_province_and_period' %}"></distribution-viz>
                 </div>
             </div>

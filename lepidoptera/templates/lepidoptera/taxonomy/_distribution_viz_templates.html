@@ -1,11 +1,36 @@
+<script type="text/x-template" id="distribution-table-template">
+    <table class="table table-bordered table-sm">
+        <thead style="font-size: 70%;">
+        <tr>
+{#            {% for province in provinces %}#}
+{#                <th class="text-center province-title font-weight-light" scope="col"#}
+{#                    title="{{ province.name }}">{{ province.code }}</th>#}
+{#            {% endfor %}#}
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+{#            {% for province in provinces %}#}
+{#                <td style="overflow: auto; position: relative; height: 24px;">#}
+                    {# If we want to optimize this further, we should try to do a single call instead of one by province #}
+{#                    {% species_presence_icons species.id province.id %}#}
+{#                </td>#}
+{#            {% endfor %}#}
+        </tr>
+        </tbody>
+    </table>
+</script>
+
 <script type="text/x-template" id="distribution-viz-template">
     <div class="row">
         <template v-if="mode == 'grape'">
-            <country-grape v-if="" :show-border="showBorders" v-for="period in periods" :period="period" :key="period.period_name"></country-grape>
+            <country-grape :show-border="showBorders" v-for="period in periods" :period="period"
+                           :key="period.period_name"></country-grape>
         </template>
 
         <template v-else>
-            TABLE
+            <distribution-table></distribution-table>
         </template>
     </div>
 </script>
@@ -30,7 +55,7 @@
                                 :is-active="province.active"
                                 :key="province.name"></half-province-icon>
 
-            <line x1="75" y1="48" x2="105" y2="48" style="stroke:rgb(0,0,0);stroke-width:1" />
+            <line x1="75" y1="48" x2="105" y2="48" style="stroke:rgb(0,0,0);stroke-width:1"/>
         </svg>
     </div>
 </script>
