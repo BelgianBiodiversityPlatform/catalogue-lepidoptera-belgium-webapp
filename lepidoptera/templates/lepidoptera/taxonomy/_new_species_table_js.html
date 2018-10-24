@@ -40,7 +40,7 @@
             });
             return {
                 sortKey: 'Seq',
-                sortOrders: sortOrders,
+                sortOrders: sortOrders
             }
         },
         computed: {
@@ -129,7 +129,8 @@
             unorderableColumns: ['<span class="oi oi-tag"></span>', 'Distribution'],
             distributionMode: 'grape',
             gridData: [
-            ]
+            ],
+            stillLoading: true
         },
         mounted: function () {
             this.$nextTick(function () {
@@ -146,6 +147,7 @@
                 $.getJSON(SpeciesTableConf.specieListServiceUrl)
                     .done(function (json) {
                         that.gridData = json;
+                        that.stillLoading = false;
                     })
                     .fail(function (jqxhr, textStatus, error) {
                         console.log("error species list load data");
