@@ -16,6 +16,8 @@ SECRET_KEY = 'SOMETHING_RANDOM_AND_SECRET'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+VUE_DEBUG = False
+
 ALLOWED_HOSTS = ["*"]
 
 # A few specific for django-debug-toolbar, if you use it during development.
