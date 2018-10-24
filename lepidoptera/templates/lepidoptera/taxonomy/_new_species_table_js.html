@@ -84,12 +84,10 @@
                 return data
             }
         },
-        filters: {
-            /*capitalize: function (str) {
-                return str.charAt(0).toUpperCase() + str.slice(1)
-            }*/
-        },
         methods: {
+            goToURL: function(url) {
+                window.location.href = url;
+            },
             rowMatchFilter: function(filterString) {
                 var stringContains = function(str, substr) {
                     // Case-insensitive, returns true or false

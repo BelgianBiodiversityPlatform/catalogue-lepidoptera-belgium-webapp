@@ -39,7 +39,7 @@
             </thead>
 
             <tbody>
-            <tr v-for="entry in filteredData" :key="entry.id">
+            <tr v-for="entry in filteredData" :key="entry.id" v-on:click="goToURL(entry.url)">
                 <td class="small text-muted">
                     [[ entry['seq'] ]]
                 </td>
