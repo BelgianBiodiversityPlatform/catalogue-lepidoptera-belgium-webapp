@@ -69,13 +69,7 @@
         <button @click="resetFilter()" :disabled="searchQuery == '' ? true : false" type="button" class="btn btn-outline-danger btn-sm"><span class="oi oi-circle-x"></span> Reset</button>
     </form>
 
-    <form>
-        <input type="radio" id="graperadio" value="grape" v-model="distributionMode">
-        <label for="graperadio">Grape view</label>
-        <br>
-        <input type="radio" id="tableradio" value="table" v-model="distributionMode">
-        <label for="tableradio">Table view</label>
-    </form>
+    <distribution-viz-mode-selector v-model="distributionMode"></distribution-viz-mode-selector>
 
     <species-grid
             :data="gridData"
