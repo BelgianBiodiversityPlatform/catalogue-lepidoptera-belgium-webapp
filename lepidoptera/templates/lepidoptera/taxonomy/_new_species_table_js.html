@@ -39,7 +39,7 @@
                 sortOrders[key] = 1
             });
             return {
-                sortKey: 'seq',
+                sortKey: 'Seq',
                 sortOrders: sortOrders,
             }
         },
@@ -65,15 +65,17 @@
                             if (nlVernacular) { return nlVernacular.value } else { return ''}
                         };
 
-                        if (sortKey == 'vernacular names') {
+                        // For each sortable column: mapping between sortKey (column name) and data field
+                        if (sortKey == 'Vernacular names') {
                             // Vernacular names: we sort by the NL one...
                             a = getNLValue(a['vernacularNames']);
                             b = getNLValue(b['vernacularNames']);
-                        } else {
-                            // By default, we sort according to the "column name" attribute
-                            // Works fine for seq, name, ...
-                            a = a[sortKey];
-                            b = b[sortKey];
+                        } else if (sortKey == 'Seq') {
+                            a = a['seq'];
+                            b = b['seq'];
+                        } else if (sortKey == 'Name') {
+                            a = a['name'];
+                            b = b['name'];
                         }
 
                         return (a === b ? 0 : a > b ? 1 : -1) * order
@@ -83,9 +85,9 @@
             }
         },
         filters: {
-            capitalize: function (str) {
+            /*capitalize: function (str) {
                 return str.charAt(0).toUpperCase() + str.slice(1)
-            }
+            }*/
         },
         methods: {
             rowMatchFilter: function(filterString) {
@@ -123,8 +125,8 @@
         delimiters: ['[[', ']]'],
         data: {
             searchQuery: '',
-            gridColumns: ['seq', 'name', 'vernacular names', 'distribution'],
-            unorderableColumns: ['distribution'],
+            gridColumns: ['Seq', 'Name', 'Vernacular names', '<span class="oi oi-tag"></span>', 'Distribution'],
+            unorderableColumns: ['<span class="oi oi-tag"></span>', 'Distribution'],
             distributionMode: 'grape',
             gridData: [
             ]

@@ -834,6 +834,8 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
             'name': self.binomial_name,
             'author': self.author,
             'url': self.get_absolute_url(),
+            'hasPictures': self.has_pictures,
+            'establishmentBadgeHTML': self.get_optional_establishment_means_badge(),
 
             'vernacularNames': model_field_in_all_available_languages(settings.LANGUAGES, self, 'vernacular_name'),
 

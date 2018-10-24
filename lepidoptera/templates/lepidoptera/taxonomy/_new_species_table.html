@@ -31,7 +31,7 @@
             <th v-for="key in columns"
                 @click="sortBy(key)"
                 :class="{ active: sortKey == key }">
-                [[ key | capitalize ]]
+                <span v-html="key"></span>
                 <span v-if="sortKey == key" class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
                 </span>
             </th>
@@ -49,6 +49,11 @@
 
                 <td class="small">
                     <vernacular-names-cell :names="entry.vernacularNames"></vernacular-names-cell>
+                </td>
+
+                <td class="small">
+                    <span v-html="entry.establishmentBadgeHTML"></span>
+                    <span v-if="entry.hasPictures" class="oi oi-camera-slr"></span>
                 </td>
 
                 <td class="px-3" style="width: 350px; overflow: auto;">
