@@ -70,6 +70,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
 <script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.DEBUG %}.min{% endif %}.js"></script>
+<script src="https://unpkg.com/v-tooltip"></script>
 <script>
     var showLargeFamilyModal = function() {
         $('#loadingLargeFamilyModal').modal();
@@ -115,8 +116,6 @@
             }
             window.location.replace(suggestion.url);
         });
-
-        $('[data-toggle="tooltip"]').tooltip();
 
         $("a.large-family-link").click(function () {
             showLargeFamilyModal();

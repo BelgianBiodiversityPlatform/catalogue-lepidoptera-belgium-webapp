@@ -1,21 +1,36 @@
 <script type="text/x-template" id="distribution-table-template">
-    <table class="table table-bordered table-sm">
-        <thead style="font-size: 70%;">
-        <tr>
-            <th v-for="province in allProvinces" class="text-center province-title font-weight-light" :title="province.name">[[ province.code ]]</th>
-        </tr>
-        </thead>
+    <div>
+        <table class="table table-bordered table-sm">
+            <thead style="font-size: 70%;">
+            <tr>
+                <th v-for="province in allProvinces" class="text-center province-title font-weight-light"
+                    :title="province.name">[[ province.code ]]
+                </th>
+            </tr>
+            </thead>
 
-        <tbody>
-        <tr>
-            <td v-for="province in allProvinces" style="overflow: auto; position: relative; height: 24px;">
-                <template v-for="period in periods">
-                    <img class="province-icon" :src="period.period_icon_url" v-if="period.present_in.indexOf(province.code) > -1">
-                </template>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            <tbody>
+            <tr>
+                <td v-for="province in allProvinces" style="overflow: auto; position: relative; height: 24px;">
+                    <template v-for="period in periods">
+                        <img class="province-icon" :src="period.period_icon_url"
+                             v-if="period.present_in.indexOf(province.code) > -1">
+                    </template>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <v-popover trigger="hover">
+            <a href="#" class="small tooltip-target">table legend</a>
+
+            <ul slot="popover" class="bg-light text-dark small text-center p-2">
+                <li v-for="period in this.$parent.periods">
+                    <img :src="period.period_icon_url"/> = [[ period.period_name ]]
+                </li>
+            </ul>
+        </v-popover>
+    </div>
 </script>
 
 <script type="text/x-template" id="distribution-viz-template">
@@ -55,7 +70,8 @@
     <g>
         <path fill="none" :d="moveList" class="province" v-bind:class="{ activeProvince: provinceData.active }"/>
 
-        <text :x="provinceData.posX" :y="textPosY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="9"
+        <text :x="provinceData.posX" :y="textPosY" fill="black" text-anchor="middle" dominant-baseline="middle"
+              font-size="9"
               v-bind:class="{ activeText: provinceData.active }">
             [[ provinceData.code ]]
         </text>
@@ -71,7 +87,8 @@
                 class="province"
                 v-bind:class="{ activeProvince: provinceData.active }"/>
 
-        <text :x="provinceData.posX" :y="provinceData.posY" fill="black" text-anchor="middle" dominant-baseline="middle" font-size="11"
+        <text :x="provinceData.posX" :y="provinceData.posY" fill="black" text-anchor="middle" dominant-baseline="middle"
+              font-size="11"
               v-bind:class="{ activeText: provinceData.active }">
             [[ provinceData.code ]]
         </text>
