@@ -29,16 +29,7 @@
         <h2>{% trans "Distribution" %}</h2>
 
         <div id="distribution">
-            <div class="btn-groups btn-group-toggle">
-                <label class="btn btn-primary" :class="{ active: distributionMode === 'grape' }">
-                    <input type="radio" id="grapeview" value="grape" v-model="distributionMode">
-                    <span class="oi oi-target"></span> Grape view
-                </label>
-                <label class="btn btn-primary" :class="{ active: distributionMode === 'table' }">
-                    <input type="radio" id="tableview" value="table" v-model="distributionMode">
-                    <span class="oi oi-spreadsheet"></span> Table view
-                </label>
-            </div>
+            <distribution-viz-mode-selector v-model="distributionMode"></distribution-viz-mode-selector>
 
             <div class="w-50 mx-auto">
                 <distribution-viz :species-id="{{ taxon.pk }}" service-url="{% url 'species_per_province_and_period' %}"

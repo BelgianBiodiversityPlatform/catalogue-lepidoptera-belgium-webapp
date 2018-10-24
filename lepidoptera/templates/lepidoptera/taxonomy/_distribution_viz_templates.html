@@ -1,3 +1,18 @@
+<script type="text/x-template" id="distribution-viz-mode-selector-template">
+    <div>
+        <div class="btn-groups btn-group-toggle">
+            <label class="btn btn-primary" :class="{ active: value === 'grape' }">
+                <input type="radio" id="grapeview" value="grape" v-on:change="updateValue('grape')" :checked="value === 'grape'">
+                <span class="oi oi-target"></span> Grape view
+            </label>
+            <label class="btn btn-primary" :class="{ active: value !== 'grape' }">
+                <input type="radio" id="tableview" value="table" v-on:change="updateValue('table')" :checked="value !== 'grape'">
+                <span class="oi oi-spreadsheet"></span> Table view
+            </label>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-template" id="distribution-table-template">
     <div>
         <table class="table table-bordered table-sm">

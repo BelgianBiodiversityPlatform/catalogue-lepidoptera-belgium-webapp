@@ -3,6 +3,18 @@
         circleRadius: 15
     };
 
+    Vue.component('distribution-viz-mode-selector', {
+        delimiters: ['[[', ']]'],
+        template: '#distribution-viz-mode-selector-template',
+        props: ['value'],
+        methods: {
+            updateValue: function (value) {
+                console.log("Passe");
+                this.$emit('input', value);
+                }
+        }
+    });
+
     Vue.component('distribution-table', {
         delimiters: ['[[', ']]'],
         template: '#distribution-table-template',
