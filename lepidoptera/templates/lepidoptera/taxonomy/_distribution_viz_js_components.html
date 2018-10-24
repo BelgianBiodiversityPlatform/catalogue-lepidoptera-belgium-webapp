@@ -93,6 +93,7 @@
         },
         data: function() {
             return {
+                stillLoading: true,
                 periods: [],
                 allProvinces: [
                     // TODO: this data should come from the backend
@@ -139,6 +140,7 @@
                 $.getJSON(this.serviceUrl, {speciesId: this.speciesId})
                     .done(function (json) {
                         that.periods = json;
+                        that.stillLoading = false;
                     })
                     .fail(function (jqxhr, textStatus, error) {
                         console.log("error grape load data");
