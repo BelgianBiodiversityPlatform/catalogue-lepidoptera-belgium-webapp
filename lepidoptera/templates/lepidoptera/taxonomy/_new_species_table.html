@@ -1,0 +1,94 @@
+{% include 'lepidoptera/taxonomy/_distribution_viz_templates.html' %}
+
+<script type="text/x-template" id="vernacular-names-cell-template">
+    <div>
+        <ul class="list-unstyled">
+            <li v-for="name in names"> [[ name.value ]] ([[ name.code ]])</li>
+        </ul>
+    </div>
+</script>
+
+<script type="text/x-template" id="names-cell-template">
+    <div>
+        <p class="indent-except-first mb-1">
+            <b><a :href="entry.url"><i>[[ entry.name ]]</i></a></b>
+            <span class="font-weight-light"> [[ entry.author ]]</span>
+        </p>
+
+        <div style="margin-left: 10px">
+            <p v-for="synonym in entry.synonyms" class="mb-0 font-weight-light indent-except-first">
+                = <a :href="synonym.url"><i>[[ synonym.name ]]</i></a> [[ synonym.author ]]
+            </p>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template" id="grid-template">
+    <div>
+        <p v-if="filterKey" class="small text-muted text-right">[[ filteredData.length ]] matching rows (total: [[
+            data.length ]])</p>
+        <table class="table table-bordered table-hover table-striped table-sm">
+            <thead class="thead-dark">
+            <th v-for="key in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }">
+                <span v-html="key"></span>
+                <span v-if="sortKey == key" class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+                </span>
+            </th>
+            </thead>
+
+            <tbody>
+            <tr v-for="entry in filteredData" :key="entry.id" v-on:click="goToURL(entry.url)">
+                <td class="small text-muted">
+                    [[ entry['seq'] ]]
+                </td>
+
+                <td class="small">
+                    <names-cell :entry="entry"></names-cell>
+                </td>
+
+                <td class="small">
+                    <vernacular-names-cell :names="entry.vernacularNames"></vernacular-names-cell>
+                </td>
+
+                <td class="small">
+                    <span v-html="entry.establishmentBadgeHTML"></span>
+                    <span v-if="entry.hasPictures" class="oi oi-camera-slr"></span>
+                </td>
+
+                <td class="px-3" style="width: 350px; overflow: auto;">
+                    <div class="distribution-grape-container">
+                        <distribution-viz :species-id="entry.id" service-url="{{ species_distribution_service_url }}"
+                                          :mode="distributionMode"></distribution-viz>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<div id="species-table-root">
+    <span v-if="stillLoading" class="small">Loading species data...</span>
+
+    <template v-else>
+        <form class="form-inline mb-2" id="search">
+            <label class="mr-2" for="query">Filter: </label>
+            <input class="form-control form-control-sm mr-2" id="query" name="query" v-model="searchQuery">
+            <button @click="resetFilter()" :disabled="searchQuery == '' ? true : false" type="button"
+                    class="btn btn-outline-danger btn-sm"><span class="oi oi-circle-x"></span> Reset
+            </button>
+        </form>
+
+        <distribution-viz-mode-selector text-label="Distribution: " v-model="distributionMode"></distribution-viz-mode-selector>
+
+        <species-grid
+                :data="gridData"
+                :columns="gridColumns"
+                :filter-key="searchQuery"
+                :distribution-mode="distributionMode">
+        </species-grid>
+    </template>
+
+</div>

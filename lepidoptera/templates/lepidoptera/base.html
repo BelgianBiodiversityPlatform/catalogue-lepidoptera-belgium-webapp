@@ -67,9 +67,9 @@
 <script src="{% static 'lepidoptera/bootstrap.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
 <script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
 <script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.DEBUG %}.min{% endif %}.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.VUE_DEBUG %}.min{% endif %}.js"></script>
+<script src="https://unpkg.com/v-tooltip"></script>
 <script>
     var showLargeFamilyModal = function() {
         $('#loadingLargeFamilyModal').modal();
@@ -97,9 +97,6 @@
             }
         });
 
-        // Initialize (table) sticky headers
-        $('.sticky-header').floatThead({zIndex: 5000, position: 'absolute'});
-
         $('.multi-search').typeahead({highlight: true}, {
             name: 'multi-search',
             source: multiSource,
@@ -115,8 +112,6 @@
             }
             window.location.replace(suggestion.url);
         });
-
-        $('[data-toggle="tooltip"]').tooltip();
 
         $("a.large-family-link").click(function () {
             showLargeFamilyModal();

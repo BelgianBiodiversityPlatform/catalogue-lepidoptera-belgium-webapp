@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
 from django.core.paginator import Paginator
@@ -8,9 +9,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
 from lepidoptera.utils import get_source_version_info
-from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, TaxonomicModel, \
-    HostPlantSpecies, HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, \
-    Photographer, python_sort_taxonomicmodel, ALL_LEPDIOPTERA_TAXON_MODELS
+from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, HostPlantSpecies, \
+    HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, Photographer, \
+    ALL_LEPDIOPTERA_TAXON_MODELS
 
 
 def home_page(request):
@@ -19,16 +20,18 @@ def home_page(request):
     return render(request, 'lepidoptera/home.html', {'families': valid_families})
 
 
-# TODO: factorize code for the taxonrank_page views?
+def all_species_for_taxon_json(request, model_name, id):
+    Model = apps.get_model(app_label='lepidoptera', model_name=model_name)
+
+    model_instance = get_object_or_404(Model, pk=id)
+    return JsonResponse([s.json_for_species_lists for s in model_instance.all_species if s.is_valid], safe=False)
+
 
 def family_page(request, family_id):
     family = get_object_or_404(Family, pk=family_id)
 
     return render(request, 'lepidoptera/taxonomy/family.html', {
         'taxon': family,
-        'species': python_sort_taxonomicmodel(family.all_species),
-        'all_provinces': Province.objects.all(),
-        'all_timeperiods': TimePeriod.objects.all(),
         'select_browse_menu': True
     })
 
@@ -38,7 +41,6 @@ def subfamily_page(request, subfamily_id):
 
     return render(request, 'lepidoptera/taxonomy/subfamily.html', {
         'taxon': subfamily,
-        'species': python_sort_taxonomicmodel(subfamily.all_species),
         'select_browse_menu': True})
 
 
@@ -47,7 +49,6 @@ def tribus_page(request, tribus_id):
 
     return render(request, 'lepidoptera/taxonomy/tribus.html', {
         'taxon': tribus,
-        'species': python_sort_taxonomicmodel(tribus.all_species),
         'select_browse_menu': True})
 
 
@@ -56,7 +57,6 @@ def genus_page(request, genus_id):
 
     return render(request, 'lepidoptera/taxonomy/genus.html', {
         'taxon': genus,
-        'species': python_sort_taxonomicmodel(genus.all_species),
         'select_browse_menu': True})
 
 
@@ -65,7 +65,6 @@ def subgenus_page(request, subgenus_id):
 
     return render(request, 'lepidoptera/taxonomy/subgenus.html', {
         'taxon': subgenus,
-        'species': python_sort_taxonomicmodel(subgenus.all_species),
         'select_browse_menu': True})
 
 
@@ -272,6 +271,7 @@ def species_per_province_and_period(request):
     for tp in TimePeriod.objects.all():
         r.append({
             'period_name': tp.name,
+            'period_icon_url': tp.icon.url,
             'present_in': [presence.province.code for presence in sp.speciespresence_set.filter(present=True,
                                                                                                 period=tp)]
         })
@@ -307,7 +307,6 @@ def _browse_model_json(model, title, name_attr='name', manager_name='objects'):
             entry['additionalData'] = e.additional_data_for_json
 
         r['entries'].append(entry)
-
 
     if not name_attr_is_field:  # We have to sort in python
         r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
@@ -376,6 +375,7 @@ def browse_vernacularnames_json(request):
     r['entries'] = _sort_list_of_dicts_by_name(r['entries'])
 
     return JsonResponse(r, safe=False)
+
 
 def haproxy_check(request):
     return HttpResponse('ok', content_type='text/plain')

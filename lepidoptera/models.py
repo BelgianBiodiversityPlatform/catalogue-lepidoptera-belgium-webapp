@@ -12,13 +12,19 @@ from imagekit.processors import ResizeToFit
 from markdownx.utils import markdownify
 
 
-def python_sort_taxonomicmodel(unsorted_qs):
-    """ Takes a QuerySet of TaxonomicModel and sort them by display_order in Python.
+def model_field_in_all_available_languages(languages, model_instance, field_name):
+    """Returns a list of dict"""
+    l = []
 
-    Use in cases order_by doesn't work, such as when an order has already been applied to the QuerySet.
-    Slow, should be probably replaced by front end sorting.
-    """
-    return sorted(unsorted_qs, key=lambda t: t.display_order)
+    for lang in languages:
+        lang_code = lang[0]
+        localized_field_name = '{field_name}_{lang_code}'.format(field_name=field_name, lang_code=lang_code)
+        field_value = getattr(model_instance, localized_field_name)
+
+        if field_value:
+            l.append({'code': lang_code.upper(), 'value': field_value})
+
+    return l
 
 
 # Managers, helpers, ...
@@ -153,6 +159,10 @@ class TaxonomicModel(CommonTaxonomicModel):
     text = MarkdownxField(blank=True)
 
     display_order = models.IntegerField(unique=True)  # Field shown as "Seq. # in public pages, harmonize name?"
+
+    @property
+    def species_list_service_url(self):
+        return reverse('species_for_taxon_json', kwargs={'model_name': self.__class__.__name__, 'id': self.pk})
 
     @property
     def is_valid(self):
@@ -806,6 +816,24 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
 
     def get_absolute_url(self):
         return reverse('species_page', kwargs={'species_id': str(self.id)})
+
+    @property
+    def json_for_species_lists(self):
+        return {
+            'id': self.pk,
+            'seq': self.display_order,
+            'name': self.binomial_name,
+            'author': self.author,
+            'url': self.get_absolute_url(),
+            'hasPictures': self.has_pictures,
+            'establishmentBadgeHTML': self.get_optional_establishment_means_badge(),
+
+            'vernacularNames': model_field_in_all_available_languages(settings.LANGUAGES, self, 'vernacular_name'),
+
+            'synonyms': [{'name': s.binomial_name,
+                          'author': s.author,
+                          'url': s.get_absolute_url()} for s in self.synonyms.all()]
+        }
 
     @property
     def additional_data_for_json(self):

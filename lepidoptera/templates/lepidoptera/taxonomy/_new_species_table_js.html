@@ -1,0 +1,159 @@
+<script type="text/javascript">
+    var SpeciesTableConf = {
+        specieListServiceUrl: "{{ species_list_service_url }}"
+    };
+
+    Vue.use(VTooltip);
+
+    Vue.component('vernacular-names-cell', {
+        template: '#vernacular-names-cell-template',
+        delimiters: ['[[', ']]'],
+
+        props: {
+            names: Array
+        }
+    });
+
+    Vue.component('names-cell', {
+        template: '#names-cell-template',
+        delimiters: ['[[', ']]'],
+
+        props: {
+            entry: Object,
+        }
+    });
+
+    Vue.component('species-grid', {
+        template: '#grid-template',
+        delimiters: ['[[', ']]'],
+
+        props: {
+            data: Array,
+            columns: Array,
+            filterKey: String,
+            distributionMode: String
+        },
+        data: function () {
+            var sortOrders = {};
+            this.columns.forEach(function (key) {
+                sortOrders[key] = 1
+            });
+            return {
+                sortKey: 'Seq',
+                sortOrders: sortOrders
+            }
+        },
+        computed: {
+            filteredData: function () {
+                var sortKey = this.sortKey;
+                var filterKey = this.filterKey;
+
+                var order = this.sortOrders[sortKey] || 1;
+                var data = this.data;
+                if (filterKey) {
+                    data = data.filter(this.rowMatchFilter(filterKey));
+                }
+                if (sortKey) {
+                    data = data.slice().sort(function (a, b) {
+                        var NLVernacularA, NLVernacularB;
+
+                        var getNLValue = function (vernacularNames) {
+                            // Return the value of the NL vernacularName, or '' if it doesn't exist
+                            var findNLElement = function (element) { return element.code === 'NL' };
+
+                            var nlVernacular = vernacularNames.find(findNLElement);
+                            if (nlVernacular) { return nlVernacular.value } else { return ''}
+                        };
+
+                        // For each sortable column: mapping between sortKey (column name) and data field
+                        if (sortKey == 'Vernacular names') {
+                            // Vernacular names: we sort by the NL one...
+                            a = getNLValue(a['vernacularNames']);
+                            b = getNLValue(b['vernacularNames']);
+                        } else if (sortKey == 'Seq') {
+                            a = a['seq'];
+                            b = b['seq'];
+                        } else if (sortKey == 'Name') {
+                            a = a['name'];
+                            b = b['name'];
+                        }
+
+                        return (a === b ? 0 : a > b ? 1 : -1) * order
+                    })
+                }
+                return data
+            }
+        },
+        methods: {
+            goToURL: function(url) {
+                window.location.href = url;
+            },
+            rowMatchFilter: function(filterString) {
+                var stringContains = function(str, substr) {
+                    // Case-insensitive, returns true or false
+                    return String(str).toLowerCase().indexOf(substr.toLowerCase()) > -1
+                };
+
+                return function (rowData) {
+                    // Seq number: consider it as a string so its filterable
+                    if(stringContains(rowData['seq'].toString(), filterString)){ return true; }
+
+                    // Scientific name: simple filter
+                    if(stringContains(rowData['name'], filterString)){ return true; }
+
+                    // Vernacular names: if the value match in any language, we're good!
+                    if (rowData['vernacularNames'].some(function(elem) { return stringContains(elem.value, filterString);})) { return true; }
+
+                    return false;
+                }
+
+            },
+
+            sortBy: function (key) {
+                if (this.$parent.unorderableColumns.indexOf(key) == -1) {
+                    this.sortKey = key;
+                    this.sortOrders[key] = this.sortOrders[key] * -1
+                }
+            }
+        }
+    });
+
+    var speciesTable = new Vue({
+        el: '#species-table-root',
+        delimiters: ['[[', ']]'],
+        data: {
+            searchQuery: '',
+            gridColumns: ['Seq', 'Name', 'Vernacular names', '<span class="oi oi-tag"></span>', 'Distribution'],
+            unorderableColumns: ['<span class="oi oi-tag"></span>', 'Distribution'],
+            distributionMode: 'grape',
+            gridData: [
+            ],
+            stillLoading: true
+        },
+        mounted: function () {
+            this.$nextTick(function () {
+                this.loadData();
+            })
+        },
+        methods: {
+            resetFilter: function () {
+                this.searchQuery = '';
+            },
+
+            loadData: function () {
+                var that = this;
+                $.getJSON(SpeciesTableConf.specieListServiceUrl)
+                    .done(function (json) {
+                        that.gridData = json;
+                        that.stillLoading = false;
+                    })
+                    .fail(function (jqxhr, textStatus, error) {
+                        console.log("error species list load data");
+                        console.log(jqxhr);
+                        console.log(textStatus);
+                        console.log(error);
+                    })
+            }
+        }
+    })
+</script>

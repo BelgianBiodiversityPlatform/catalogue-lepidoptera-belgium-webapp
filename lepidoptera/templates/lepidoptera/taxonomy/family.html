@@ -9,50 +9,11 @@
     <hr/>
 
     <h3>{% trans "Species in Belgium" %}</h3>
-    {% include "lepidoptera/taxonomy/_species_table.html" with species_list=species %}
+    {% url 'species_per_province_and_period' as species_distribution_service_url %}
+    {% include "lepidoptera/taxonomy/_new_species_table.html" with species_distribution_service_url=species_distribution_service_url %}
 {% endblock %}
 
 {% block bottom-of-body %}
-    {% include 'lepidoptera/taxonomy/_country_grape_js_components.html' %}
-
-    <script type="text/javascript">
-        $(function () {
-            var vm = new Vue({
-                el: '#species-table-body',
-            });
-
-            $(".clickable-row").click(function () {
-                window.location = $(this).data("href");
-            });
-
-            var setDistributionView = function (distributionType) {
-                switch (distributionType) {
-                    case 'grape':
-                        $('.distribution-grape-container').show();
-                        $('.distribution-table-container').hide();
-                        $('#table-timeperiod-help-button').hide();
-                        break;
-                    case 'table':
-                        $('.distribution-grape-container').hide();
-                        $('.distribution-table-container').show();
-                        $('#table-timeperiod-help-button').show();
-                        break;
-                }
-            };
-
-            var $typeRadioButtons =  $('input[type=radio][name=distributionType]');
-
-            $typeRadioButtons.on('change', function () {
-                setDistributionView($(this).attr('id'));
-            });
-
-            $typeRadioButtons.each(function () {
-                if ($(this).is(":checked")) {
-                    setDistributionView($(this).attr('id'));
-                }
-            });
-
-
-        });
-    </script>
+    {% include 'lepidoptera/taxonomy/_distribution_viz_js_components.html' %}
+    {% include "lepidoptera/taxonomy/_new_species_table_js.html" with species_list_service_url=taxon.species_list_service_url only %}
 {% endblock %}

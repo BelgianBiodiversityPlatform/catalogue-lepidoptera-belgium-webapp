@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS
+from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS, model_field_in_all_available_languages
 
 register = template.Library()
 
@@ -21,34 +21,8 @@ def to_class_name(value):
 
 
 @register.simple_tag
-def species_presence_icons(species_pk, province_id):
-    presences = SpeciesPresence.objects.filter(species_id=species_pk, province_id=province_id).select_related('period')
-    icon_urls = (presence.period.icon.url for presence in presences)
-
-    imgs = ''
-    for url in icon_urls:
-        imgs = imgs + format_html("<img class=\"province-icon\" src=\"{0}\" />", url)
-
-    return mark_safe(imgs)
-
-
-def _field_in_all_available_languages(languages, model, field_name):
-    """Returns a list of dict"""
-    l = []
-
-    for lang in languages:
-        lang_code = lang[0]
-        localized_field_name = '{field_name}_{lang_code}'.format(field_name=field_name, lang_code=lang_code)
-        field_value = getattr(model, localized_field_name)
-
-        if field_value:
-            l.append({'code': lang_code.upper(), 'value': field_value})
-
-    return l
-
-@register.simple_tag
 def field_in_all_available_languages_ul(languages, model, field_name):
-    entries = _field_in_all_available_languages(languages, model, field_name)
+    entries = model_field_in_all_available_languages(languages, model, field_name)
 
     html = ''
     if entries:
@@ -59,12 +33,13 @@ def field_in_all_available_languages_ul(languages, model, field_name):
 
     return mark_safe(html)
 
+
 @register.simple_tag
 def field_in_all_available_languages(languages, model, field_name):
     """Return something such as 'Speckled Wood (EN), Bont zandoogje (NL)'"""
     s = ''
 
-    for entry in _field_in_all_available_languages(languages, model, field_name):
+    for entry in model_field_in_all_available_languages(languages, model, field_name):
         s = s + '{field_value} ({lang_code}), '.format(field_value=entry['value'], lang_code=entry['code'])
 
     if s == '':
