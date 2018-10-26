@@ -29,15 +29,15 @@ urlpatterns = [
     path('haproxy/', views.haproxy_check, name='haproxy'),
     path('pictures_json', views.pictures_json, name='pictures_json'),
 
-    path('family/<int:family_id>/', views.family_page, name='family_page'),
-    path('family_new/<int:family_id>/', views.new_family_page, name='new_family_page'),
+    path('species_for_taxon_json/<str:model_name>/<int:id>', views.all_species_for_taxon_json, name='species_for_taxon_json'),
 
-    path('species_for_family_json/<int:family_id>/', views.all_species_for_family_json, name='species_for_family_json'),
+    path('family/<int:family_id>/', views.family_page, name='family_page'),
     path('subfamily/<int:subfamily_id>/', views.subfamily_page, name='subfamily_page'),
     path('tribus/<int:tribus_id>/', views.tribus_page, name='tribus_page'),
     path('genus/<int:genus_id>/', views.genus_page, name='genus_page'),
     path('subgenus/<int:subgenus_id>/', views.subgenus_page, name='subgenus_page'),
     path('species/<int:species_id>/', views.species_page, name='species_page'),
+
     path('species_per_province_and_period/', views.species_per_province_and_period,
          name='species_per_province_and_period'),
 

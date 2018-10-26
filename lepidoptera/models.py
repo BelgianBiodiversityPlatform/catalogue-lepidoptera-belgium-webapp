@@ -12,15 +12,6 @@ from imagekit.processors import ResizeToFit
 from markdownx.utils import markdownify
 
 
-def python_sort_taxonomicmodel(unsorted_qs):
-    """ Takes a QuerySet of TaxonomicModel and sort them by display_order in Python.
-
-    Use in cases order_by doesn't work, such as when an order has already been applied to the QuerySet.
-    Slow, should be probably replaced by front end sorting.
-    """
-    return sorted(unsorted_qs, key=lambda t: t.display_order)
-
-
 def model_field_in_all_available_languages(languages, model_instance, field_name):
     """Returns a list of dict"""
     l = []
@@ -170,6 +161,10 @@ class TaxonomicModel(CommonTaxonomicModel):
     display_order = models.IntegerField(unique=True)  # Field shown as "Seq. # in public pages, harmonize name?"
 
     @property
+    def species_list_service_url(self):
+        return reverse('species_for_taxon_json', kwargs={'model_name': self.__class__.__name__, 'id': self.pk})
+
+    @property
     def is_valid(self):
         return True
 
@@ -235,10 +230,6 @@ class Family(DisplayOrderNavigable, TaxonomicModel):
                                                       options={'quality': 95})
 
     species_counter = models.IntegerField(default=0)
-
-    @property
-    def species_list_service_url(self):
-        return reverse('species_for_family_json', kwargs={'family_id': self.pk})
 
     def update_species_counter(self):
         self.species_counter = self.species_count
