@@ -21,18 +21,6 @@ def to_class_name(value):
 
 
 @register.simple_tag
-def species_presence_icons(species_pk, province_id):
-    presences = SpeciesPresence.objects.filter(species_id=species_pk, province_id=province_id).select_related('period')
-    icon_urls = (presence.period.icon.url for presence in presences)
-
-    imgs = ''
-    for url in icon_urls:
-        imgs = imgs + format_html("<img class=\"province-icon\" src=\"{0}\" />", url)
-
-    return mark_safe(imgs)
-
-
-@register.simple_tag
 def field_in_all_available_languages_ul(languages, model, field_name):
     entries = model_field_in_all_available_languages(languages, model, field_name)
 

@@ -55,10 +55,6 @@ img.province-icon {
     font-weight: bold;
 }
 
-#species-table-body h5 {
-    font-size: 0.75rem !important;
-}
-
 [data-toggle="collapse"].collapsed .if-not-collapsed {
   display: none;
 }
