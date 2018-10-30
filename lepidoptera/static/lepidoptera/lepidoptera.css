@@ -190,7 +190,7 @@ th.active .arrow {
 .tooltip.popover .popover-inner {
   background: #f9f9f9;
   color: black;
-  padding: 24px;
+  /*padding: 24px;*/
   border-radius: 5px;
   box-shadow: 0 5px 30px rgba(black, .1);
 }
@@ -209,4 +209,8 @@ th.active .arrow {
   visibility: visible;
   opacity: 1;
   transition: opacity .15s;
+}
+
+div.v-popover {
+    text-align: right;
 }

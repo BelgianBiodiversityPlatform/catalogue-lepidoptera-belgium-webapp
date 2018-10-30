@@ -28,7 +28,7 @@
         <p v-if="filterKey" class="small text-muted text-right">[[ filteredData.length ]] matching rows (total: [[
             data.length ]])</p>
         <table class="table table-bordered table-hover table-striped table-sm">
-            <thead class="thead-light">
+            <thead class="thead-light small">
             <th v-for="key in columns"
                 @click="sortBy(key)"
                 :class="{ active: sortKey == key }">

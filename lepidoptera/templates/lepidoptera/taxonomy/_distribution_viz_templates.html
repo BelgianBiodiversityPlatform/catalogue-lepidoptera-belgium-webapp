@@ -18,7 +18,7 @@
 
 <script type="text/x-template" id="distribution-table-template">
     <div>
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm mb-0">
             <thead style="font-size: 70%;">
             <tr>
                 <th v-for="province in allProvinces" class="text-center province-title font-weight-light"
@@ -42,11 +42,20 @@
         <v-popover trigger="hover">
             <a href="#" class="small tooltip-target">table legend</a>
 
-            <ul slot="popover" class="bg-light text-dark small text-center p-2">
-                <li v-for="period in this.$parent.periods">
-                    <img :src="period.period_icon_url"/> = [[ period.period_name ]]
-                </li>
-            </ul>
+            <div slot="popover" class="bg-light text-dark small  p-2">
+                <h6>Provinces</h6>
+                <ul class="list-unstyled">
+                    <li v-for="province in this.$parent.allProvinces">
+                        [[ province.code ]] = [[ province.name ]]
+                    </li>
+                </ul>
+                <h6>Periods</h6>
+                <ul class="list-unstyled">
+                    <li v-for="period in this.$parent.periods">
+                        <img :src="period.period_icon_url"/> = [[ period.period_name ]]
+                    </li>
+                </ul>
+            </div>
         </v-popover>
     </div>
 </script>
