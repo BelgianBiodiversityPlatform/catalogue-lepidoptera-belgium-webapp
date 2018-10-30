@@ -94,13 +94,13 @@ th.active .arrow {
 .arrow.asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-bottom: 4px solid #fff;
+  border-bottom: 4px solid #000;
 }
 
 .arrow.dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #fff;
+  border-top: 4px solid #000;
 }
 
 /* Tooltips, for https://www.npmjs.com/package/v-tooltip */
