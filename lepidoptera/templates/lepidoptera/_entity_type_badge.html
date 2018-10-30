@@ -1,1 +1,6 @@
-            <span class="small badge badge-secondary float-right">{{ taxon_type_name }}</span>
+<span class="small badge badge-secondary float-right">
+    {{ taxon_type_name }}
+    {% if taxon.is_synonym %}
+        (synonym)
+    {% endif %}
+</span>

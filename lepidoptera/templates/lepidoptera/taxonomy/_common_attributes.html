@@ -34,11 +34,6 @@
         {% field_in_all_available_languages settings.LANGUAGES taxon 'vernacular_name' %}
     </dd>
 
-    <dt class="col-sm-2">{% trans "Status" %}</dt>
-    <dd class="col-sm-10">
-        {{ taxon.status }}
-    </dd>
-
     {% if taxon.synonym_of %}
         <dt class="col-sm-2">{% trans "Synonym of " %}</dt>
         <dd class="col-sm-10">
