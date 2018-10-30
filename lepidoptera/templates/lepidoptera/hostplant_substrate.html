@@ -1,6 +1,7 @@
 {% extends "lepidoptera/base.html" %}
 
 {% load i18n %}
+{% load various_helpers %}
 
 {% block content %}
 <div class="row">
@@ -12,7 +13,10 @@
             <h3>{% trans "Observed lepidoptera species" %} </h3>
             <ul>
                 {% for sp in lepidoptera_species %}
-                    <li><a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a></li>
+                    <li>
+                        <a href="{{ sp.get_absolute_url }}">{{ sp.html_str }}</a>
+                        <small>[{% field_in_all_available_languages settings.LANGUAGES sp 'vernacular_name' %}]</small>
+                    </li>
                 {% endfor %}
             </ul>
             {% endif %}
