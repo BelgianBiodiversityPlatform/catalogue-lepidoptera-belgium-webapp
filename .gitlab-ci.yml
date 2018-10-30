@@ -8,7 +8,6 @@ saltstack_deploy:
     only:
         refs:
             - dev
-
     tags:
         - deploy
         - sandbox
