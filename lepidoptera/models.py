@@ -606,19 +606,19 @@ class SpeciesPicture(models.Model):
         entries = []
 
         if full and self.image_subject:
-            entries.append("<b>Subject</b>: {}".format(self.get_image_subject_display()))
+            entries.append(self.get_image_subject_display())
         if full and self.specimen_stage:
-            entries.append("<b>Stage</b>: {}".format(self.get_specimen_stage_display()))
+            entries.append(self.get_specimen_stage_display())
 
         if self.locality:
-            entries.append("<b>Locality</b>: {}".format(self.locality))
+            entries.append(self.locality)
         if self.date:
-            entries.append("<b>Date</b>: {}".format(self.date))
+            entries.append(str(self.date))
 
         if self.specimen_sex:
-            entries.append("<b>Sex</b>: {}".format(self.get_specimen_sex_display()))
+            entries.append(self.get_specimen_sex_display())
         if self.side:
-            entries.append("<b>Side</b>: {}".format(self.get_side_display()))
+            entries.append(self.get_side_display())
 
         comment_block = ''
         if self.comment:
@@ -629,7 +629,7 @@ class SpeciesPicture(models.Model):
             attributes_block = ', '.join(entries) + '. '
 
         if self.photographer:
-            attributes_block = attributes_block + "<b>© {}</b><br/>".format(self.photographer.full_name)
+            attributes_block = attributes_block + "© {}<br/>".format(self.photographer.full_name)
 
         return '<small>' + '<div class="mb-2">' + attributes_block + '</div><div>' + comment_block + '</div>' + '</small>'
 
