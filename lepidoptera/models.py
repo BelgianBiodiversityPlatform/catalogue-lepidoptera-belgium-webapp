@@ -1076,10 +1076,10 @@ class Publication(models.Model):
     page_numbers = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return '{}, {}, {}'.format(self.author, self.year, self.title)
+        return f'{self.author}, {self.year}, {self.title}, {self.journal.title}, {self.volume}, {self.page_numbers}'
 
     class Meta:
-        ordering = ['title']
+        ordering = ['author', 'year']
 
 
 class PageFragment(models.Model):
