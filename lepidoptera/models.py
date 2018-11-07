@@ -629,7 +629,7 @@ class SpeciesPicture(models.Model):
             attributes_block = ', '.join(entries) + '. '
 
         if self.photographer:
-            attributes_block = attributes_block + "© {}<br/>".format(self.photographer.full_name)
+            attributes_block = attributes_block + "©&nbsp;{}<br/>".format(self.photographer.full_name)
 
         return '<small>' + '<div class="mb-2">' + attributes_block + '</div><div>' + comment_block + '</div>' + '</small>'
 
