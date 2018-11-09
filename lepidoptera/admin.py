@@ -115,6 +115,7 @@ class ObservationsInline(admin.TabularInline):
 
 class SpeciesPicturesInline(admin.TabularInline):
     model = SpeciesPicture
+    ordering = ['image_subject', 'gallery_order']
     readonly_fields = ('verbatim_image_filename', 'thumbnail')
     extra = 1
 
