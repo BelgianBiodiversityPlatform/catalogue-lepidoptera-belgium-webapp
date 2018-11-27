@@ -13,8 +13,6 @@
                 <a :href="entry.link" v-on:click="showModalIfNeeded(entry.additionalData.large)">
                     <span v-html="entry.name"></span>
                 </a>
-
-                <span v-if="entry.additionalData.large" class="badge badge-secondary">Large family</span>
             </li>
         </ul>
     </script>
@@ -131,13 +129,6 @@
                 props: {
                     jsonData: Object
                 },
-                methods: {
-                    showModalIfNeeded: function (large) {
-                        if (large === true) {
-                            showLargeFamilyModal();
-                        }
-                    }
-                }
             });
 
             Vue.component('content-entry-genuslist', {

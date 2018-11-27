@@ -1,3 +1,5 @@
+{% load static %}
+
 {% include 'lepidoptera/taxonomy/_distribution_viz_templates.html' %}
 
 <script type="text/x-template" id="vernacular-names-cell-template">
@@ -70,7 +72,10 @@
 </script>
 
 <div id="species-table-root">
-    <span v-if="stillLoading" class="small">Loading species data...</span>
+    <div v-if="stillLoading" class="alert alert-warning">
+        <span class="oi oi-warning"></span> Loading species data, this may takes some time...
+        <img src="{% static "lepidoptera/spinner.gif" %}">
+    </div>
 
     <template v-else>
         <form class="form-inline mb-2" id="search">

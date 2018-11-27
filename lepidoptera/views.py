@@ -175,11 +175,6 @@ def substrate_page(request, substrate_id):
     })
 
 
-def _additional_data_for_model(instance):
-    return getattr(instance, 'additional_data_for_json', {})
-
-
-# TODO: Implement more fields and models
 def autocomplete(request, query_string):
     results = []
 
@@ -193,8 +188,7 @@ def autocomplete(request, query_string):
             results.append({
                 'value': str(instance),
                 'suggest_type': instance.suggest_type_label,
-                'url': instance.get_absolute_url(),
-                'additional_data': _additional_data_for_model(instance)
+                'url': instance.get_absolute_url()
             })
 
     # Also look into Species vernacular names
@@ -207,8 +201,7 @@ def autocomplete(request, query_string):
             results.append({
                 'value': getattr(s, vernacular_field_name),
                 'suggest_type': 'Vernacular name',
-                'url': s.get_absolute_url(),
-                'additional_data': _additional_data_for_model(s)
+                'url': s.get_absolute_url()
             })
 
     return JsonResponse(results, safe=False)

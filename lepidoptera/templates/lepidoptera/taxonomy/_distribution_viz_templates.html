@@ -62,7 +62,10 @@
 
 <script type="text/x-template" id="distribution-viz-template">
     <div class="row">
-        <span v-if="stillLoading" class="small">Loading distribution data...</span>
+        <span v-if="stillLoading" class="small">
+            Loading distribution data...
+            <img style="width: 20px;" src="{% static "lepidoptera/spinner.gif" %}">
+        </span>
 
         <template v-if="mode == 'grape'">
             <country-grape :show-border="showBorders" v-for="period in periods" :all-provinces="allProvinces"

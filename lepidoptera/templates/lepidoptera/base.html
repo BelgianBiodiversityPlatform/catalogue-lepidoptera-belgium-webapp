@@ -33,19 +33,6 @@
 
 <body>
 
-<div id="loadingLargeFamilyModal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"> Please wait...</h5>
-            </div>
-            <div class="modal-body">
-                <p><span class="oi oi-clock"></span> Loading a large family, this may take some time...</p>
-            </div>
-        </div>
-    </div>
-</div>
-
 {% if settings.SHOW_TEST_VERSION_WARNING %}
     {% include 'lepidoptera/_test_version_warning.html' %}
 {% endif %}
@@ -71,10 +58,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.VUE_DEBUG %}.min{% endif %}.js"></script>
 <script src="https://unpkg.com/v-tooltip"></script>
 <script>
-    var showLargeFamilyModal = function() {
-        $('#loadingLargeFamilyModal').modal();
-    };
-
     $(function () {
         var compare_suggestion = function (a, b) {
             if (a.value < b.value)
@@ -107,15 +90,7 @@
                 },
             }
         }).bind('typeahead:select', function (ev, suggestion) {
-            if (suggestion.additional_data.large) {
-                showLargeFamilyModal();
-            }
             window.location.replace(suggestion.url);
-        });
-
-        $("a.large-family-link").click(function () {
-            showLargeFamilyModal();
-            return true;
         });
     });
 </script>

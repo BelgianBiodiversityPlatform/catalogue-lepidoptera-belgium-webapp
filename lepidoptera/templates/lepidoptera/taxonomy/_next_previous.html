@@ -1,7 +1,7 @@
 <div style="margin-bottom: 20px;" class="row">
     <div class="col-4">
         {% if taxon.previous_valid %}
-            <a class="btn btn-outline-primary btn-sm {% if taxon.previous_valid.is_a_large_family %}large-family-link{% endif %}" href="{{ taxon.previous_valid.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ taxon.previous_valid.html_str }}</a>
+            <a class="btn btn-outline-primary btn-sm" href="{{ taxon.previous_valid.get_absolute_url }}"><span class="oi oi-caret-left"></span> {{ taxon.previous_valid.html_str }}</a>
         {% endif %}
     </div>
 
@@ -11,7 +11,7 @@
 
     <div class="col-4">
         {% if taxon.next_valid %}
-            <a class="float-right btn btn-outline-primary btn-sm {% if taxon.next_valid.is_a_large_family %}large-family-link{% endif %}" href="{{ taxon.next_valid.get_absolute_url }}">{{ taxon.next_valid.html_str }} <span class="oi oi-caret-right"></span></a>
+            <a class="float-right btn btn-outline-primary btn-sm" href="{{ taxon.next_valid.get_absolute_url }}">{{ taxon.next_valid.html_str }} <span class="oi oi-caret-right"></span></a>
         {% endif %}
     </div>
 </div>
