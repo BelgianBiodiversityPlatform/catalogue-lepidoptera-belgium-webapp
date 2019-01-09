@@ -11,5 +11,52 @@
 {% endblock %}
 
 {% block additional_details %}
+
     <p>{% trans "From genus" %}: <a href="{{ species.genus.get_absolute_url }}">{{ species.genus }}</a></p>
+    <div id="wikidata-info-container">
+        <p>Wikidata info</p>
+        <ul>
+            <li>Vernacular names: </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block bottom-of-body %}
+    {% get_current_language as LANGUAGE_CODE %}
+
+    <script>
+        $(function () {
+            var vm = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#wikidata-info-container',
+                data: {
+                    'speciesName': '{{ species }}',
+                    'userLanguage': '{{ LANGUAGE_CODE }}',
+                    'entity': {}
+                },
+                methods: {
+                    loadData: function () {
+                        // Search wikidata with the species name, retrieve and simplify the first result and store it in
+                        // this.entity
+                        var vm = this;
+                        $.getJSON(wdk.searchEntities(this.speciesName, this.userLanguage, 1, 'json')).done(function(jsonSearch) {
+                            if(jsonSearch.search.length === 1) {
+                                // Ok, we ran the query and had a single result
+                                var wikidataId = jsonSearch.search[0].id;
+                                // Let's ask details about this result:
+                                $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function(jsonDetails){
+                                    var entity = jsonDetails.entities[wikidataId]
+                                    vm.entity = wdk.simplify.entity(entity);
+                                });
+
+                            }
+                        });
+                    }
+                },
+                mounted: function () {
+                    this.loadData();
+                }
+            });
+        });
+    </script>
 {% endblock %}
