@@ -2,6 +2,15 @@
 {% block submit_buttons_bottom %}
     {{ block.super }}
     <div class="submit-row">
-        <input type="submit" value="Save and view on site" name="_save_and_view">
+        <input type="submit" value="Save and view on site" id="save_and_view_submit" name="_save_and_view"> (CTRL + s)
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var $ = django.jQuery;
+
+            shortcut.add("Ctrl+s",function() {
+	            $("#save_and_view_submit").click();
+            });
+        });
+    </script>
 {% endblock %}

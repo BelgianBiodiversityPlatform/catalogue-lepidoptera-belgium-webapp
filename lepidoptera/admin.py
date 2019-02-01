@@ -236,6 +236,10 @@ class SubgenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
 @admin.register(Species)
 class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+    class Media:
+        js = (
+            'lepidoptera/shortcut.js',  # app static folder
+        )
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
