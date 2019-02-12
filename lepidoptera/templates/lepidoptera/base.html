@@ -57,6 +57,7 @@
 <script src="{% static 'lepidoptera/ekko-lightbox.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue{% if not settings.VUE_DEBUG %}.min{% endif %}.js"></script>
 <script src="https://unpkg.com/v-tooltip"></script>
+<script src="{% static 'lepidoptera/find_polyfill.js' %}">  </script>
 <script>
     $(function () {
         var compare_suggestion = function (a, b) {
