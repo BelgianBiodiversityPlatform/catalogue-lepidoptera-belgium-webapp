@@ -22,7 +22,7 @@ A. Initial deployment
 B. Upgrade
 ----------
 
-1) Pull the code
+1) Pull the code.
 2) $ pip install -r requirements.txt
 3) $ python manage.py denorm_drop
 4) $ python manage.py denorm_init
