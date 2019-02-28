@@ -59,6 +59,14 @@ class ParentForAdminListMixin(object):
     parent_for_admin_list.short_description = 'parent'
 
 
+class AdminChangeUrlMixin(object):
+    @property
+    def admin_change_url(self):
+        return reverse('admin:{app_label}_{model_name}_change'.format(app_label=self._meta.app_label,
+                                                                      model_name=self._meta.model_name),
+                       args=(self.pk,))
+
+
 class DisplayOrderNavigable(object):
     """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
     def next(self):
@@ -90,7 +98,7 @@ class DisplayOrderNavigable(object):
         return p
 
 
-class CommonTaxonomicModel(models.Model):
+class CommonTaxonomicModel(AdminChangeUrlMixin, models.Model):
     """Common ground between all taxon-related models (Lepidoptera, host plants, ...)"""
     name = models.CharField(max_length=255)
 
@@ -114,7 +122,6 @@ class CommonTaxonomicModel(models.Model):
     def html_str(self):
         return self.__str__()
 
-
 class HostPlantTaxonomicModel(CommonTaxonomicModel):
     verbatim_id = get_verbatim_id_field()
 
@@ -122,7 +129,7 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
         abstract = True
 
 
-class Substrate(models.Model):
+class Substrate(AdminChangeUrlMixin, models.Model):
     name = models.CharField(max_length=255)
 
     lepidoptera_species = models.ManyToManyField('Species', through='Observation')
@@ -185,12 +192,6 @@ class TaxonomicModel(CommonTaxonomicModel):
     @property
     def all_parents_and_me(self):
         return self.all_parents + [self]
-
-    @property
-    def admin_change_url(self):
-        return reverse('admin:{app_label}_{model_name}_change'.format(app_label=self._meta.app_label,
-                                                                      model_name=self._meta.model_name),
-                       args=(self.pk,))
 
 
 class TaxonomicModelWithSynonyms(TaxonomicModel):

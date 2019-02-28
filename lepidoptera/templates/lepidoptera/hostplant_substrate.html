@@ -7,6 +7,11 @@
 <div class="row">
         <div class="col">
             <h2>{% block h2_title %}{% endblock %}</h2>
+
+            {% if request.user.is_staff %}
+                <a class="btn-sm btn btn-danger" href="{{ subject.admin_change_url }}"><span class="oi oi-lock-locked" title="admin interface"></span> Edit {{ subject|to_class_name }} in admin</a>
+            {% endif %}
+
             {% block additional_details %}{% endblock %}
 
             {% if lepidoptera_species %}

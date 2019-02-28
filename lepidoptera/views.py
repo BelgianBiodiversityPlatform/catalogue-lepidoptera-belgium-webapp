@@ -140,7 +140,7 @@ def hostplant_species(request, species_id):
     species = get_object_or_404(HostPlantSpecies, pk=species_id)
 
     return render(request, 'lepidoptera/hostplant_species.html', {
-        'species': species,
+        'subject': species,
         'lepidoptera_species': species.lepidoptera_species.all,
         'select_browse_menu': True
     })
@@ -150,7 +150,7 @@ def hostplant_genus(request, genus_id):
     genus = get_object_or_404(HostPlantGenus, pk=genus_id)
 
     return render(request, 'lepidoptera/hostplant_genus.html', {
-        'genus': genus,
+        'subject': genus,
         'lepidoptera_species': genus.lepidoptera_species.all,
         'select_browse_menu': True
     })
@@ -160,7 +160,7 @@ def hostplant_family(request, family_id):
     family = get_object_or_404(HostPlantFamily, pk=family_id)
 
     return render(request, 'lepidoptera/hostplant_family.html', {
-        'family': family,
+        'subject': family,
         'select_browse_menu': True
     })
 
@@ -169,7 +169,7 @@ def substrate_page(request, substrate_id):
     substrate = get_object_or_404(Substrate, pk=substrate_id)
 
     return render(request, 'lepidoptera/substrate.html', {
-        'substrate': substrate,
+        'subject': substrate,
         'lepidoptera_species': substrate.lepidoptera_species.all,
         'select_browse_menu': True
     })

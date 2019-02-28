@@ -1,23 +1,33 @@
 {% extends "lepidoptera/hostplant_substrate.html" %}
 {% load i18n %}
 
-{% block title %}{{ species }} - Host plants{% endblock %}
+{% block title %}{{ subject }} - Host plants{% endblock %}
 
-{% block meta_description %}Information about {{ species }} (host plant species){% endblock %}
+{% block meta_description %}Information about {{ subject }} (host plant species){% endblock %}
 
 {% block h2_title %}
-    {{ species.html_str }}
+    {{ subject.html_str }}
     {% include "lepidoptera/_entity_type_badge.html" with taxon_type_name="Host plant species" %}
 {% endblock %}
 
 {% block additional_details %}
 
-    <p>{% trans "From genus" %}: <a href="{{ species.genus.get_absolute_url }}">{{ species.genus }}</a></p>
-    <div id="wikidata-info-container">
-        <p>Wikidata info</p>
-        <ul>
-            <li>Vernacular names: </li>
-        </ul>
+    <p>{% trans "From genus" %}: <a href="{{ subject.genus.get_absolute_url }}">{{ subject.genus }}</a></p>
+    <div id="wikidata-info-container" class="row alert alert-info">
+        <div class="col-sm-3">
+            <img v-for="pictureUrl in pictureUrls" :src="pictureUrl" class="img-fluid"/>
+        </div>
+        <div class="col-sm-9">
+            <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society</p>
+            <p> [[ wikipediaAbstract ]] </p>
+            <p><b>Vernacular names</b>: [[ vernacularNamesAsStr]]</p>
+            <p>View species on:</p>
+            <ul>
+                <li><a :href="gbifUrl">GBIF</a></li>
+                <li>...</li>
+            </ul>
+
+        </div>
     </div>
 {% endblock %}
 
@@ -30,23 +40,93 @@
                 delimiters: ['[[', ']]'],
                 el: '#wikidata-info-container',
                 data: {
-                    'speciesName': '{{ species }}',
+                    'speciesName': '{{ subject }}',
                     'userLanguage': '{{ LANGUAGE_CODE }}',
-                    'entity': {}
+                    'fullEntity': null,
+                    'simplifiedEntity': null,
+                    'pictureUrls': [],
+                    'wikipediaAbstract': ""
+                },
+                computed: {
+                    gbifUrl: function() {
+                        return "https://www.gbif.org/species/" + this.simplifiedEntity.claims['P846'][0];
+                    },
+
+                    vernacularNamesAsStr: function() {
+                        var vm = this;
+                        var defaultLang = ['en', 'fr', 'nl', 'de'];
+                        var str = "";
+
+                        $.each(defaultLang, function (i, langCode) {
+                            $.each(vm.simplifiedEntity.aliases[langCode], function (j, entry) {
+                                str = str + (entry + ' (' + langCode + ') ');
+                            });
+                        });
+
+                        return str;
+                    }
                 },
                 methods: {
+                    loadWikipediaAbstract: function() {
+                        var vm = this;
+
+                        $.ajax({
+                            url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=Acer%20campestre",
+                            jsonp: "callback",
+                            dataType: "jsonp",
+                            data: {
+                                action: "query",
+                                prop: "extracts",
+                                redirects: 1,
+                                titles: vm.speciesName
+                            }
+                        }).done(function(response) {
+                            var instance = response.query.pages;
+                            vm.wikipediaAbstract = instance[Object.keys(instance)[0]].extract;
+                        });
+
+                    },
+
+                    pictureNameToUrl: function (pictureNames, dataName) {
+                        // pictureNames is an Array
+                        var vm = this;
+                        var mediaWikiApiUrl = "https://commons.wikimedia.org/w/api.php";
+
+                        $.each(pictureNames, function (i, pictureName) {
+                            $.ajax({
+                                url: mediaWikiApiUrl,
+                                jsonp: "callback",
+                                dataType: "jsonp",
+                                data: {
+                                    action: 'query',
+                                    titles: 'File:' + pictureName,
+                                    prop: 'imageinfo',
+                                    iiprop: 'url',
+                                    format: 'json'
+                                }
+
+                            }).done(function (response) {
+                                var instance = response.query.pages;
+                                vm[dataName].push(instance[Object.keys(instance)[0]].imageinfo[0].url);
+                            });
+                        });
+                    },
                     loadData: function () {
                         // Search wikidata with the species name, retrieve and simplify the first result and store it in
                         // this.entity
                         var vm = this;
-                        $.getJSON(wdk.searchEntities(this.speciesName, this.userLanguage, 1, 'json')).done(function(jsonSearch) {
-                            if(jsonSearch.search.length === 1) {
+                        $.getJSON(wdk.searchEntities(this.speciesName, this.userLanguage, 1, 'json')).done(function (jsonSearch) {
+                            if (jsonSearch.search.length === 1) {
                                 // Ok, we ran the query and had a single result
                                 var wikidataId = jsonSearch.search[0].id;
                                 // Let's ask details about this result:
-                                $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function(jsonDetails){
-                                    var entity = jsonDetails.entities[wikidataId]
-                                    vm.entity = wdk.simplify.entity(entity);
+                                $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
+                                    var entity = jsonDetails.entities[wikidataId];
+                                    vm.fullEntity = entity;
+                                    vm.simplifiedEntity = wdk.simplify.entity(entity);
+
+                                    vm.pictureNameToUrl(wdk.simplify.propertyClaims(vm.fullEntity.claims.P18), 'pictureUrls');
+                                    vm.loadWikipediaAbstract();
                                 });
 
                             }
