@@ -15,16 +15,23 @@
     <p>{% trans "From genus" %}: <a href="{{ subject.genus.get_absolute_url }}">{{ subject.genus }}</a></p>
     <div id="wikidata-info-container" class="row alert alert-info">
         <div class="col-sm-3">
-            <img v-for="pictureUrl in pictureUrls" :src="pictureUrl" class="img-fluid"/>
+            <carousel :per-page="1" :autoplay="true">
+                <slide v-for="pictureUrl in pictureUrls">
+                    <img :src="pictureUrl" class="img-fluid"/>
+               </slide>
+            </carousel>
         </div>
         <div class="col-sm-9">
-            <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society</p>
-            <p> [[ wikipediaAbstract ]] </p>
-            <p><b>Vernacular names</b>: [[ vernacularNamesAsStr]]</p>
-            <p>View species on:</p>
+            <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved
+                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society</p>
+            <p> [[ wikipediaAbstract ]] <a :href="wikipediaArticleUrl">Read more at Wikipedia</a></p>
+            <p><b>Vernacular names</b>: [[ vernacularNamesAsStr ]]</p>
+            <p><b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid"></p>
+            <p>More details at:</p>
             <ul>
                 <li><a :href="gbifUrl">GBIF</a></li>
-                <li>...</li>
+                <li><a :href="wikipediaArticleUrl">Wikipedia</a></li>
+                <li><a :href="inaturalistTaxonUrl">iNaturalist</a></li>
             </ul>
 
         </div>
@@ -39,39 +46,72 @@
             var vm = new Vue({
                 delimiters: ['[[', ']]'],
                 el: '#wikidata-info-container',
+                components: {
+  	                'carousel': VueCarousel.Carousel,
+                    'slide': VueCarousel.Slide
+                },
                 data: {
                     'speciesName': '{{ subject }}',
                     'userLanguage': '{{ LANGUAGE_CODE }}',
                     'fullEntity': null,
                     'simplifiedEntity': null,
                     'pictureUrls': [],
-                    'wikipediaAbstract': ""
+                    'wikipediaAbstract': "",
+                    'simplifiedConservationStatus': null,
+                    'conservationStatusImageUrls': []
                 },
                 computed: {
-                    gbifUrl: function() {
-                        return "https://www.gbif.org/species/" + this.simplifiedEntity.claims['P846'][0];
+                    inaturalistTaxonUrl: function () {
+                        if (this.simplifiedEntity) {
+                            return "https://www.inaturalist.org/taxa/" + this.simplifiedEntity.claims['P3151'][0];
+                        }
+                    },
+                    wikipediaArticleUrl: function () {
+                        return wdk.getSitelinkUrl({site: 'enwiki', title: this.speciesName});
                     },
 
-                    vernacularNamesAsStr: function() {
-                        var vm = this;
-                        var defaultLang = ['en', 'fr', 'nl', 'de'];
-                        var str = "";
+                    gbifUrl: function () {
+                        if (this.simplifiedEntity) {
+                            return "https://www.gbif.org/species/" + this.simplifiedEntity.claims['P846'][0];
+                        }
+                    },
 
-                        $.each(defaultLang, function (i, langCode) {
-                            $.each(vm.simplifiedEntity.aliases[langCode], function (j, entry) {
-                                str = str + (entry + ' (' + langCode + ') ');
+                    vernacularNamesAsStr: function () {
+                        if (this.simplifiedEntity) {
+                            var vm = this;
+                            var defaultLang = ['en', 'fr', 'nl', 'de'];
+                            var str = "";
+
+                            $.each(defaultLang, function (i, langCode) {
+                                $.each(vm.simplifiedEntity.aliases[langCode], function (j, entry) {
+                                    str = str + (entry + ' (' + langCode + ') ');
+                                });
                             });
-                        });
 
-                        return str;
+                            return str;
+                        }
                     }
                 },
                 methods: {
-                    loadWikipediaAbstract: function() {
+                    loadIucnStatus: function () {
+                        var vm = this;
+
+                        var wikidataId = this.simplifiedEntity.claims['P141'][0];
+
+                        $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
+                            var entity = jsonDetails.entities[wikidataId];
+                            vm.simplifiedConservationStatus = wdk.simplify.entity(entity);
+
+                            console.log("entityCons", entity);
+                            vm.pictureNameToUrl(wdk.simplify.propertyClaims(entity.claims.P18)[0], 'conservationStatusImageUrls');
+                        });
+                    },
+
+                    loadWikipediaAbstract: function () {
                         var vm = this;
 
                         $.ajax({
-                            url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=Acer%20campestre",
+                            url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1",
                             jsonp: "callback",
                             dataType: "jsonp",
                             data: {
@@ -80,7 +120,7 @@
                                 redirects: 1,
                                 titles: vm.speciesName
                             }
-                        }).done(function(response) {
+                        }).done(function (response) {
                             var instance = response.query.pages;
                             vm.wikipediaAbstract = instance[Object.keys(instance)[0]].extract;
                         });
@@ -88,11 +128,14 @@
                     },
 
                     pictureNameToUrl: function (pictureNames, dataName) {
-                        // pictureNames is an Array
                         var vm = this;
+
+                        // pictureNames can be an Array or a single element
+                        var elements = [].concat(pictureNames);
+
                         var mediaWikiApiUrl = "https://commons.wikimedia.org/w/api.php";
 
-                        $.each(pictureNames, function (i, pictureName) {
+                        $.each(elements, function (i, pictureName) {
                             $.ajax({
                                 url: mediaWikiApiUrl,
                                 jsonp: "callback",
@@ -127,6 +170,7 @@
 
                                     vm.pictureNameToUrl(wdk.simplify.propertyClaims(vm.fullEntity.claims.P18), 'pictureUrls');
                                     vm.loadWikipediaAbstract();
+                                    vm.loadIucnStatus();
                                 });
 
                             }

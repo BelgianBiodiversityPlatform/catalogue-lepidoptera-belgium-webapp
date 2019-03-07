@@ -214,3 +214,19 @@ th.active .arrow {
 div.v-popover {
     text-align: right;
 }
+
+.VueCarousel-slide {
+  position: relative;
+  color: #fff;
+  font-family: Arial;
+  font-size: 24px;
+  text-align: center;
+  min-height: 100px;
+}
+
+.label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
