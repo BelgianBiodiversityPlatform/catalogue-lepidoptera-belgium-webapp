@@ -14,23 +14,32 @@
 
     <p>{% trans "From genus" %}: <a href="{{ subject.genus.get_absolute_url }}">{{ subject.genus }}</a></p>
     <div id="wikidata-info-container" class="row alert alert-info">
-        <div class="col-sm-3">
+        <div class="col-sm-3" v-if="pictureUrls.length > 0">
             <carousel :per-page="1" :autoplay="true">
-                <slide v-for="pictureUrl in pictureUrls">
+                <slide v-for="pictureUrl in pictureUrls" :key="pictureUrl">
                     <img :src="pictureUrl" class="img-fluid"/>
-               </slide>
+                </slide>
             </carousel>
         </div>
-        <div class="col-sm-9">
+        <div class="col-sm">
             <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved
-                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society.</p><hr/>
-            <p> [[ wikipediaAbstract ]] <a :href="wikipediaArticleUrl">Read more at Wikipedia</a></p>
-            <p><b>Vernacular names</b>: [[ vernacularNamesAsStr ]]</p>
-            <p><b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid"></p>
-            <p>More details at:
-                <a class="btn btn-primary btn-sm" :href="gbifUrl">GBIF</a></li>
+                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society.</p>
+            <hr/>
+            <p v-if="wikipediaAbstract"> [[ wikipediaAbstract ]]
+                <a :href="wikipediaArticleUrl">Read more at Wikipedia</a>
+            </p>
+            <p v-if="vernacularNamesAsStr !== ''">
+                <b>Vernacular names</b>: [[ vernacularNamesAsStr ]]
+            </p>
+            <p v-if="conservationStatusImageUrls.length > 0">
+                <b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid">
+            </p>
+            <p>More details about [[ speciesName ]] at:
+                <a class="btn btn-primary btn-sm" :class="{ 'disabled': gbifUrl === undefined}"
+                   :href="gbifUrl">GBIF</a></li>
                 <a class="btn btn-primary btn-sm" :href="wikipediaArticleUrl">Wikipedia</a>
-                <a class="btn btn-primary btn-sm" :href="inaturalistTaxonUrl">iNaturalist</a>
+                <a class="btn btn-primary btn-sm" :class="{ 'disabled': inaturalistTaxonUrl === undefined}"
+                   :href="inaturalistTaxonUrl">iNaturalist</a>
             </p>
         </div>
     </div>
@@ -45,7 +54,7 @@
                 delimiters: ['[[', ']]'],
                 el: '#wikidata-info-container',
                 components: {
-  	                'carousel': VueCarousel.Carousel,
+                    'carousel': VueCarousel.Carousel,
                     'slide': VueCarousel.Slide
                 },
                 data: {
@@ -54,13 +63,13 @@
                     'fullEntity': null,
                     'simplifiedEntity': null,
                     'pictureUrls': [],
-                    'wikipediaAbstract': "",
+                    'wikipediaAbstract': undefined,
                     'simplifiedConservationStatus': null,
                     'conservationStatusImageUrls': []
                 },
                 computed: {
                     inaturalistTaxonUrl: function () {
-                        if (this.simplifiedEntity) {
+                        if (this.simplifiedEntity && ('P3151' in this.simplifiedEntity.claims)) {
                             return "https://www.inaturalist.org/taxa/" + this.simplifiedEntity.claims['P3151'][0];
                         }
                     },
@@ -69,7 +78,7 @@
                     },
 
                     gbifUrl: function () {
-                        if (this.simplifiedEntity) {
+                        if (this.simplifiedEntity && ('P846' in this.simplifiedEntity.claims)) {
                             return "https://www.gbif.org/species/" + this.simplifiedEntity.claims['P846'][0];
                         }
                     },
@@ -93,16 +102,16 @@
                 methods: {
                     loadIucnStatus: function () {
                         var vm = this;
+                        if ('P141' in this.simplifiedEntity.claims) {
+                            var wikidataId = this.simplifiedEntity.claims['P141'][0];
 
-                        var wikidataId = this.simplifiedEntity.claims['P141'][0];
+                            $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
+                                var entity = jsonDetails.entities[wikidataId];
+                                vm.simplifiedConservationStatus = wdk.simplify.entity(entity);
 
-                        $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
-                            var entity = jsonDetails.entities[wikidataId];
-                            vm.simplifiedConservationStatus = wdk.simplify.entity(entity);
-
-                            console.log("entityCons", entity);
-                            vm.pictureNameToUrl(wdk.simplify.propertyClaims(entity.claims.P18)[0], 'conservationStatusImageUrls');
-                        });
+                                vm.pictureNameToUrl(wdk.simplify.propertyClaims(entity.claims.P18)[0], 'conservationStatusImageUrls');
+                            });
+                        }
                     },
 
                     loadWikipediaAbstract: function () {
