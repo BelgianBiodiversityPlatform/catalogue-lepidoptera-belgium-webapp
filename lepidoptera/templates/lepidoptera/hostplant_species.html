@@ -34,7 +34,7 @@
             <p v-if="conservationStatusImageUrls.length > 0">
                 <b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid">
             </p>
-            <p>More details about [[ speciesName ]] at:
+            <p>More details about <i>[[ speciesName ]]</i> at:
                 <a class="btn btn-primary btn-sm" :class="{ 'disabled': gbifUrl === undefined}"
                    :href="gbifUrl">GBIF</a></li>
                 <a class="btn btn-primary btn-sm" :href="wikipediaArticleUrl">Wikipedia</a>
