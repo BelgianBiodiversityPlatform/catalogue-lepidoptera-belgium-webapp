@@ -23,17 +23,15 @@
         </div>
         <div class="col-sm-9">
             <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved
-                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society</p>
+                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society.</p><hr/>
             <p> [[ wikipediaAbstract ]] <a :href="wikipediaArticleUrl">Read more at Wikipedia</a></p>
             <p><b>Vernacular names</b>: [[ vernacularNamesAsStr ]]</p>
             <p><b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid"></p>
-            <p>More details at:</p>
-            <ul>
-                <li><a :href="gbifUrl">GBIF</a></li>
-                <li><a :href="wikipediaArticleUrl">Wikipedia</a></li>
-                <li><a :href="inaturalistTaxonUrl">iNaturalist</a></li>
-            </ul>
-
+            <p>More details at:
+                <a class="btn btn-primary btn-sm" :href="gbifUrl">GBIF</a></li>
+                <a class="btn btn-primary btn-sm" :href="wikipediaArticleUrl">Wikipedia</a>
+                <a class="btn btn-primary btn-sm" :href="inaturalistTaxonUrl">iNaturalist</a>
+            </p>
         </div>
     </div>
 {% endblock %}
