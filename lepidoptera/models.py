@@ -764,7 +764,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
         else:
             badge_class = "badge-light"
 
-        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')
+        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')  # nosec
 
     @property
     def has_pictures(self):

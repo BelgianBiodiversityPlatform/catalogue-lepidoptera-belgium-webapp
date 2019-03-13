@@ -17,4 +17,4 @@ def get_page_fragment(context, identifier):
 
     fragment = PageFragment.objects.get(identifier=identifier)
 
-    return mark_safe(markdownify(fragment.get_content_in(context.request.LANGUAGE_CODE)))
+    return mark_safe(markdownify(fragment.get_content_in(context.request.LANGUAGE_CODE)))  # nosec
