@@ -13,7 +13,7 @@
 {% block additional_details %}
 
     <p>{% trans "From genus" %}: <a href="{{ subject.genus.get_absolute_url }}">{{ subject.genus }}</a></p>
-    <div id="wikidata-info-container" class="row alert alert-info">
+    <div id="wikidata-info-container" class="row alert alert-info" v-if="fullEntity !== null">
         <div class="col-sm-3" v-if="pictureUrls.length > 0">
             <carousel :per-page="1" :autoplay="true">
                 <slide v-for="pictureUrl in pictureUrls" :key="pictureUrl">
@@ -60,7 +60,7 @@
                 data: {
                     'speciesName': '{{ subject }}',
                     'userLanguage': '{{ LANGUAGE_CODE }}',
-                    'fullEntity': null,
+                    'fullEntity': null,  // Also used as a flag: if fullEntity is null, we have no data about the species
                     'simplifiedEntity': null,
                     'pictureUrls': [],
                     'wikipediaAbstract': undefined,
@@ -84,10 +84,11 @@
                     },
 
                     vernacularNamesAsStr: function () {
+                        var str = "";
+
                         if (this.simplifiedEntity) {
                             var vm = this;
                             var defaultLang = ['en', 'fr', 'nl', 'de'];
-                            var str = "";
 
                             $.each(defaultLang, function (i, langCode) {
                                 $.each(vm.simplifiedEntity.aliases[langCode], function (j, entry) {
@@ -95,8 +96,8 @@
                                 });
                             });
 
-                            return str;
                         }
+                        return str;
                     }
                 },
                 methods: {
