@@ -1,12 +1,11 @@
-Django==2.0.8
+Django==2.0.13
 Pillow==5.0.0
 gunicorn==19.7.1
 psycopg2==2.7.3.2
 pytz==2017.3
 django-markdownx==2.0.23
 django-settings-export==1.2.1
-django-modeltranslation==0.13b1
+django-modeltranslation==0.13
 django-imagekit==4.0.2
 -e git://github.com/django-denorm/django-denorm@57bd310ad2f97aebb51794f59c60f342ccacab33#egg=denorm
 requests==2.20.0
-wikidata==0.6.1

@@ -59,6 +59,14 @@ class ParentForAdminListMixin(object):
     parent_for_admin_list.short_description = 'parent'
 
 
+class AdminChangeUrlMixin(object):
+    @property
+    def admin_change_url(self):
+        return reverse('admin:{app_label}_{model_name}_change'.format(app_label=self._meta.app_label,
+                                                                      model_name=self._meta.model_name),
+                       args=(self.pk,))
+
+
 class DisplayOrderNavigable(object):
     """Models that subclass this should have a 'display_order' field, provides next/prev methods."""
     def next(self):
@@ -90,7 +98,7 @@ class DisplayOrderNavigable(object):
         return p
 
 
-class CommonTaxonomicModel(models.Model):
+class CommonTaxonomicModel(AdminChangeUrlMixin, models.Model):
     """Common ground between all taxon-related models (Lepidoptera, host plants, ...)"""
     name = models.CharField(max_length=255)
 
@@ -103,7 +111,11 @@ class CommonTaxonomicModel(models.Model):
 
     @property
     def suggest_type_label(self):
-        return self._meta.model_name
+        rank = self._meta.model_name
+        if isinstance(self, TaxonomicModelWithSynonyms) and self.is_synonym:
+            return f'{rank} synonym'
+        else:
+            return rank
 
     class Meta:
         abstract = True
@@ -114,7 +126,6 @@ class CommonTaxonomicModel(models.Model):
     def html_str(self):
         return self.__str__()
 
-
 class HostPlantTaxonomicModel(CommonTaxonomicModel):
     verbatim_id = get_verbatim_id_field()
 
@@ -122,7 +133,7 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
         abstract = True
 
 
-class Substrate(models.Model):
+class Substrate(AdminChangeUrlMixin, models.Model):
     name = models.CharField(max_length=255)
 
     lepidoptera_species = models.ManyToManyField('Species', through='Observation')
@@ -185,12 +196,6 @@ class TaxonomicModel(CommonTaxonomicModel):
     @property
     def all_parents_and_me(self):
         return self.all_parents + [self]
-
-    @property
-    def admin_change_url(self):
-        return reverse('admin:{app_label}_{model_name}_change'.format(app_label=self._meta.app_label,
-                                                                      model_name=self._meta.model_name),
-                       args=(self.pk,))
 
 
 class TaxonomicModelWithSynonyms(TaxonomicModel):
@@ -763,7 +768,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
         else:
             badge_class = "badge-light"
 
-        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')
+        return mark_safe(f'<span class="badge {badge_class}">{display_text}</span>')  # nosec
 
     @property
     def has_pictures(self):
@@ -835,9 +840,11 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
             if taxon.__class__.__name__ == 'Family':
                 return taxon
 
-    @property
+    @denormalized(models.CharField, max_length=255)
+    @depend_on_related('Genus')
+    @depend_on_related('Subgenus')
     def binomial_name(self):
-        return '{genus} {specific_epithet}'.format(genus=self.genus_name, specific_epithet=self.name)
+        return f'{self.genus_name} {self.name}'
 
     @denormalized(models.CharField, max_length=255)
     @depend_on_related('Genus')

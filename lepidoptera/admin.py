@@ -1,13 +1,8 @@
-from tempfile import NamedTemporaryFile
-from urllib.parse import urlparse
-from urllib.request import urlopen
-
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 from django.contrib.admin.models import LogEntry
-from django.core.files import File
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -20,7 +15,6 @@ from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
 
 from lepidoptera.templates.widgets import LepidopteraAdminMarkdownxWidget
-from lepidoptera.wikidata_utils import get_images_url_for_entity
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
     PageFragment, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
     Publication, SpeciesPicture, Photographer
@@ -65,6 +59,29 @@ class MyMarkdownxModelAdmin(MarkdownxModelAdmin):
     formfield_overrides = {
         models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 5, 'cols': 40})},
     }
+
+
+class SaveAndViewOnSiteMixin(object):
+    class Media:
+        js = (
+            'lepidoptera/shortcut.js',  # app static folder
+        )
+
+    change_form_template = "lepidoptera/admin/change_form_save_view_on_site.html"
+
+    def response_change(self, request, obj):
+        res = super(SaveAndViewOnSiteMixin, self).response_change(request, obj)
+        if "_save_and_view" in request.POST:
+            return HttpResponseRedirect(obj.get_absolute_url())
+        else:
+            return res
+
+    def response_add(self, request, obj, post_url_continue=None):
+        res = super(SaveAndViewOnSiteMixin, self).response_add(request, obj, post_url_continue)
+        if "_save_and_view" in request.POST:
+            return HttpResponseRedirect(obj.get_absolute_url())
+        else:
+            return res
 
 
 class NotNullFilter(admin.SimpleListFilter):
@@ -142,7 +159,7 @@ is_synonym.boolean = True
 
 
 @admin.register(Family)
-class FamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class FamilyAdmin(SaveAndViewOnSiteMixin,TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_family_id', 'wikidata_id')
@@ -151,31 +168,9 @@ class FamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
     list_filter = [RepresentativePictureNotNullFilter]
 
-    actions = ['assign_picture_from_wikidata']
-
-    def assign_picture_from_wikidata(self, request, queryset):
-        i = 0
-        for taxon in queryset:
-            if taxon.wikidata_id:
-                img_urls = get_images_url_for_entity(taxon.wikidata_id)
-                if img_urls:
-                    img_url = img_urls[0]
-                    temp_img = NamedTemporaryFile(delete=True)
-                    temp_img.write(urlopen(img_url).read())
-                    temp_img.flush()
-                    filename_img = urlparse(img_url).path.split('/')[-1]
-                    taxon.representative_picture.save(filename_img, File(temp_img))
-                    taxon.save()
-                    i = i + 1
-        self.message_user(request, "Successfully assigned pictures to %s families" % i)
-
-    assign_picture_from_wikidata.short_description = (
-        "Assign illustative picture from Wikidata (if available) to selected taxa"
-    )
-
 
 @admin.register(Subfamily)
-class SubfamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class SubfamilyAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subfamily_id', )
@@ -186,7 +181,7 @@ class SubfamilyAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
 
 @admin.register(Tribus)
-class TribusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class TribusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_tribus_id', )
@@ -195,7 +190,7 @@ class TribusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
 
 @admin.register(Genus)
-class GenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class GenusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_genus_id', )
@@ -213,7 +208,7 @@ class GenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
 
 @admin.register(Subgenus)
-class SubgenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class SubgenusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_subgenus_id', )
@@ -235,29 +230,13 @@ class SubgenusAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
 
 
 @admin.register(Species)
-class SpeciesAdmin(TranslationAdmin, MyMarkdownxModelAdmin):
+class SpeciesAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
 
     list_display = ('display_order', 'code', 'name', 'parent_for_admin_list', 'author', is_synonym)
     list_filter = ('establishment_means',)
-
-    change_form_template = "lepidoptera/admin/species_changeform.html"
-
-    def response_change(self, request, obj):
-        res = super(SpeciesAdmin, self).response_change(request, obj)
-        if "_save_and_view" in request.POST:
-            return HttpResponseRedirect(obj.get_absolute_url())
-        else:
-            return res
-
-    def response_add(self, request, obj, post_url_continue=None):
-        res = super(SpeciesAdmin, self).response_add(request, obj, post_url_continue)
-        if "_save_and_view" in request.POST:
-            return HttpResponseRedirect(obj.get_absolute_url())
-        else:
-            return res
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(SpeciesAdmin, self).get_form(request, obj, **kwargs)

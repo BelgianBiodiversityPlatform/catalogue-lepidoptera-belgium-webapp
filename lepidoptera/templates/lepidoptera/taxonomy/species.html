@@ -48,15 +48,16 @@
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='mine' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='cocoon' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='bionomics' %}
-        <div class="row">
-            <div class="col">
-                <h3>{% trans "Flight periods" %}</h3>
-                {% if taxon.flightperiod_section_text %}
+
+        {% if taxon.flightperiod_section_text %}
+            <div class="row">
+                <div class="col">
+                    <h3>{% trans "Flight periods" %}</h3>
                     <div>{{ taxon.flightperiod_section_text|markdown }}</div>
-                {% endif %}
+                </div>
             </div>
-        </div>
-        <hr/>
+            <hr/>
+        {% endif %}
         {% include 'lepidoptera/taxonomy/_species_section_observed_on.html' with species=taxon section_name='observed_on' %}
         {% include 'lepidoptera/taxonomy/_species_section_generic.html' with species=taxon section_name='habitat' %}
 

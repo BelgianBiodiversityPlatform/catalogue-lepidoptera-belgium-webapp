@@ -1,15 +1,194 @@
 {% extends "lepidoptera/hostplant_substrate.html" %}
 {% load i18n %}
 
-{% block title %}{{ species }} - Host plants{% endblock %}
+{% block title %}{{ subject }} - Host plants{% endblock %}
 
-{% block meta_description %}Information about {{ species }} (host plant species){% endblock %}
+{% block meta_description %}Information about {{ subject }} (host plant species){% endblock %}
 
 {% block h2_title %}
-    {{ species.html_str }}
+    {{ subject.html_str }}
     {% include "lepidoptera/_entity_type_badge.html" with taxon_type_name="Host plant species" %}
 {% endblock %}
 
 {% block additional_details %}
-    <p>{% trans "From genus" %}: <a href="{{ species.genus.get_absolute_url }}">{{ species.genus }}</a></p>
+
+    <p>{% trans "From genus" %}: <a href="{{ subject.genus.get_absolute_url }}">{{ subject.genus }}</a></p>
+    <div id="wikidata-info-container" class="row alert alert-info" v-if="fullEntity !== null">
+        <div class="col-sm-3" v-if="pictureUrls.length > 0">
+            <carousel :per-page="1" :autoplay="true">
+                <slide v-for="pictureUrl in pictureUrls" :key="pictureUrl">
+                    <img :src="pictureUrl" class="img-fluid"/>
+                </slide>
+            </carousel>
+        </div>
+        <div class="col-sm">
+            <p class="small"><span class="oi oi-warning"></span> Information in this section was automatically retrieved
+                from Wikipedia/Wikidata and is not endorsed by the Flemish Entomological Society.</p>
+            <hr/>
+            <p v-if="wikipediaAbstract"> [[ wikipediaAbstract ]]
+                <a :href="wikipediaArticleUrl">Read more at Wikipedia</a>
+            </p>
+            <p v-if="vernacularNamesAsStr !== ''">
+                <b>Vernacular names</b>: [[ vernacularNamesAsStr ]]
+            </p>
+            <p v-if="conservationStatusImageUrls.length > 0">
+                <b>IUCN conservation status</b>: <img :src="conservationStatusImageUrls[0]" class="img-fluid">
+            </p>
+            <p>More details about <i>[[ speciesName ]]</i> at:
+                <a class="btn btn-primary btn-sm" :class="{ 'disabled': gbifUrl === undefined}"
+                   :href="gbifUrl">GBIF</a></li>
+                <a class="btn btn-primary btn-sm" :href="wikipediaArticleUrl">Wikipedia</a>
+                <a class="btn btn-primary btn-sm" :class="{ 'disabled': inaturalistTaxonUrl === undefined}"
+                   :href="inaturalistTaxonUrl">iNaturalist</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottom-of-body %}
+    {% get_current_language as LANGUAGE_CODE %}
+
+    <script>
+        $(function () {
+            var vm = new Vue({
+                delimiters: ['[[', ']]'],
+                el: '#wikidata-info-container',
+                components: {
+                    'carousel': VueCarousel.Carousel,
+                    'slide': VueCarousel.Slide
+                },
+                data: {
+                    'speciesName': '{{ subject }}',
+                    'userLanguage': '{{ LANGUAGE_CODE }}',
+                    'fullEntity': null,  // Also used as a flag: if fullEntity is null, we have no data about the species
+                    'simplifiedEntity': null,
+                    'pictureUrls': [],
+                    'wikipediaAbstract': undefined,
+                    'simplifiedConservationStatus': null,
+                    'conservationStatusImageUrls': []
+                },
+                computed: {
+                    inaturalistTaxonUrl: function () {
+                        if (this.simplifiedEntity && ('P3151' in this.simplifiedEntity.claims)) {
+                            return "https://www.inaturalist.org/taxa/" + this.simplifiedEntity.claims['P3151'][0];
+                        }
+                    },
+                    wikipediaArticleUrl: function () {
+                        return wdk.getSitelinkUrl({site: 'enwiki', title: this.speciesName});
+                    },
+
+                    gbifUrl: function () {
+                        if (this.simplifiedEntity && ('P846' in this.simplifiedEntity.claims)) {
+                            return "https://www.gbif.org/species/" + this.simplifiedEntity.claims['P846'][0];
+                        }
+                    },
+
+                    vernacularNamesAsStr: function () {
+                        var str = "";
+
+                        if (this.simplifiedEntity) {
+                            var vm = this;
+                            var defaultLang = ['en', 'fr', 'nl', 'de'];
+
+                            $.each(defaultLang, function (i, langCode) {
+                                $.each(vm.simplifiedEntity.aliases[langCode], function (j, entry) {
+                                    str = str + (entry + ' (' + langCode + ') ');
+                                });
+                            });
+
+                        }
+                        return str;
+                    }
+                },
+                methods: {
+                    loadIucnStatus: function () {
+                        var vm = this;
+                        if ('P141' in this.simplifiedEntity.claims) {
+                            var wikidataId = this.simplifiedEntity.claims['P141'][0];
+
+                            $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
+                                var entity = jsonDetails.entities[wikidataId];
+                                vm.simplifiedConservationStatus = wdk.simplify.entity(entity);
+
+                                vm.pictureNameToUrl(wdk.simplify.propertyClaims(entity.claims.P18)[0], 'conservationStatusImageUrls');
+                            });
+                        }
+                    },
+
+                    loadWikipediaAbstract: function () {
+                        var vm = this;
+
+                        $.ajax({
+                            url: "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1",
+                            jsonp: "callback",
+                            dataType: "jsonp",
+                            data: {
+                                action: "query",
+                                prop: "extracts",
+                                redirects: 1,
+                                titles: vm.speciesName
+                            }
+                        }).done(function (response) {
+                            var instance = response.query.pages;
+                            vm.wikipediaAbstract = instance[Object.keys(instance)[0]].extract;
+                        });
+
+                    },
+
+                    pictureNameToUrl: function (pictureNames, dataName) {
+                        var vm = this;
+
+                        // pictureNames can be an Array or a single element
+                        var elements = [].concat(pictureNames);
+
+                        var mediaWikiApiUrl = "https://commons.wikimedia.org/w/api.php";
+
+                        $.each(elements, function (i, pictureName) {
+                            $.ajax({
+                                url: mediaWikiApiUrl,
+                                jsonp: "callback",
+                                dataType: "jsonp",
+                                data: {
+                                    action: 'query',
+                                    titles: 'File:' + pictureName,
+                                    prop: 'imageinfo',
+                                    iiprop: 'url',
+                                    format: 'json'
+                                }
+
+                            }).done(function (response) {
+                                var instance = response.query.pages;
+                                vm[dataName].push(instance[Object.keys(instance)[0]].imageinfo[0].url);
+                            });
+                        });
+                    },
+                    loadData: function () {
+                        // Search wikidata with the species name, retrieve and simplify the first result and store it in
+                        // this.entity
+                        var vm = this;
+                        $.getJSON(wdk.searchEntities(this.speciesName, this.userLanguage, 1, 'json')).done(function (jsonSearch) {
+                            if (jsonSearch.search.length === 1) {
+                                // Ok, we ran the query and had a single result
+                                var wikidataId = jsonSearch.search[0].id;
+                                // Let's ask details about this result:
+                                $.getJSON(wdk.getEntities(wikidataId, this.userLanguage)).done(function (jsonDetails) {
+                                    var entity = jsonDetails.entities[wikidataId];
+                                    vm.fullEntity = entity;
+                                    vm.simplifiedEntity = wdk.simplify.entity(entity);
+
+                                    vm.pictureNameToUrl(wdk.simplify.propertyClaims(vm.fullEntity.claims.P18), 'pictureUrls');
+                                    vm.loadWikipediaAbstract();
+                                    vm.loadIucnStatus();
+                                });
+
+                            }
+                        });
+                    }
+                },
+                mounted: function () {
+                    this.loadData();
+                }
+            });
+        });
+    </script>
 {% endblock %}

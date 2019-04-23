@@ -31,7 +31,7 @@ def field_in_all_available_languages_ul(languages, model, field_name):
             html = html + '<li>{} ({})</li>'.format(entry['value'], entry['code'])
         html = html + '</ul>'
 
-    return mark_safe(html)
+    return mark_safe(html)  # nosec
 
 
 @register.simple_tag
@@ -50,7 +50,7 @@ def field_in_all_available_languages(languages, model, field_name):
 
 @register.filter
 def markdown(value, arg=None):
-    return mark_safe(markdownify(value))
+    return mark_safe(markdownify(value))  # nosec
 
 
 @register.filter
@@ -96,4 +96,4 @@ def do_section_pics(parser, token):
 
 @register.simple_tag
 def section_display_name(section_name):
-    return mark_safe(SPECIES_PAGE_SECTIONS[section_name]['display_name'])
+    return mark_safe(SPECIES_PAGE_SECTIONS[section_name]['display_name'])  # nosec
