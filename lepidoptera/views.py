@@ -213,7 +213,16 @@ def autocomplete(request, query_string):
             'url': instance.get_absolute_url()
         })
 
-    return JsonResponse(results, safe=False)
+    # We may have duplicates, let's remove them (keeping order)
+    seen = set()
+    results_nodup = []
+    for d in results:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            results_nodup.append(d)
+
+    return JsonResponse(results_nodup, safe=False)
 
 
 def gallery_page(request):
