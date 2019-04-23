@@ -204,6 +204,15 @@ def autocomplete(request, query_string):
                 'url': s.get_absolute_url()
             })
 
+    # Species: we also search the binomial name
+    instances = Species.objects.filter(binomial_name__icontains=query_string)
+    for instance in instances:
+        results.append({
+            'value': instance.binomial_name,
+            'suggest_type': instance.suggest_type_label,
+            'url': instance.get_absolute_url()
+        })
+
     return JsonResponse(results, safe=False)
 
 
