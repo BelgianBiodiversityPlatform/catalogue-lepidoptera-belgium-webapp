@@ -844,7 +844,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     @depend_on_related('Genus')
     @depend_on_related('Subgenus')
     def binomial_name(self):
-        return '{genus} {specific_epithet}'.format(genus=self.genus_name, specific_epithet=self.name)
+        return f'{self.genus_name} {self.name}'
 
     @denormalized(models.CharField, max_length=255)
     @depend_on_related('Genus')
