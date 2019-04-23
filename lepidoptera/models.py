@@ -111,7 +111,11 @@ class CommonTaxonomicModel(AdminChangeUrlMixin, models.Model):
 
     @property
     def suggest_type_label(self):
-        return self._meta.model_name
+        rank = self._meta.model_name
+        if isinstance(self, TaxonomicModelWithSynonyms) and self.is_synonym:
+            return f'{rank} synonym'
+        else:
+            return rank
 
     class Meta:
         abstract = True
