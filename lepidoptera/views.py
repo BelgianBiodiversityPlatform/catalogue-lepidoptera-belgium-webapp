@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import json
 
 from django.http import JsonResponse
@@ -388,8 +388,35 @@ def browse_vernacularnames_json(request):
     return JsonResponse(r, safe=False)
 
 
+PAGE_SIZE = 100
+
+
 def all_species_details_json(request):
-    return JsonResponse([s.json_details for s in Species.objects.all()], safe=False)
+    species = Species.objects.all().order_by('pk')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(species, PAGE_SIZE)
+    try:
+        paginated_species = paginator.page(page)
+    except PageNotAnInteger:
+        paginated_species = paginator.page(1)
+    except EmptyPage:
+        paginated_species = paginator.page(paginator.num_pages)
+
+    paginated_species_page = list(
+        map(lambda s: s.json_details, list(paginated_species))
+    )
+
+    response = {
+        'page': page,
+        'resultsPerPage': PAGE_SIZE,
+        'hasMoreResults': paginated_species.has_next(),
+        'totalResultsCount': paginator.count,
+        'pagesCount': paginator.num_pages,
+        'results': paginated_species_page
+    }
+
+    return JsonResponse(response, safe=False)
 
 
 def haproxy_check(request):
