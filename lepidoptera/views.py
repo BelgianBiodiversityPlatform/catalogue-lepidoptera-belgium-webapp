@@ -388,5 +388,9 @@ def browse_vernacularnames_json(request):
     return JsonResponse(r, safe=False)
 
 
+def all_species_details_json(request):
+    return JsonResponse([s.json_details for s in Species.objects.all()], safe=False)
+
+
 def haproxy_check(request):
     return HttpResponse('ok', content_type='text/plain')

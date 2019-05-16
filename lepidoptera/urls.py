@@ -52,5 +52,7 @@ urlpatterns = [
     path('hostplant/family/<int:family_id>/', views.hostplant_family, name='hostplant_family_page'),
     path('substrate/<int:substrate_id>/', views.substrate_page, name='substrate_page'),
 
-    path('search_autocomplete/<str:query_string>', views.autocomplete, name='search_autocomplete')
+    path('search_autocomplete/<str:query_string>', views.autocomplete, name='search_autocomplete'),
+
+    path('all_species_details_json/', views.all_species_details_json)
 ]

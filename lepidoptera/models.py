@@ -810,6 +810,7 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
 
     @property
     def json_for_species_lists(self):
+        """ Returns just what we needs for the species table, see json_details for richer data """
         return {
             'id': self.pk,
             'seq': self.display_order,
@@ -825,6 +826,16 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
                           'author': s.author,
                           'url': s.get_absolute_url()} for s in self.synonyms.all()]
         }
+
+    @property
+    def json_details(self):
+        """ Superset of json_for_species_lists, heavier but more complete """
+        json_base = self.json_for_species_lists
+
+        json_base['is_synonym'] = self.is_synonym
+        json_base['observations'] = [o.json_details for o in self.observation_set.all()]
+
+        return json_base
 
     @property
     def additional_data_for_json(self):
@@ -986,6 +997,23 @@ class Observation(models.Model):
     plant_species = models.ForeignKey(HostPlantSpecies, blank=True, null=True, on_delete=models.CASCADE)
     plant_genus = models.ForeignKey(HostPlantGenus, blank=True, null=True, on_delete=models.CASCADE)
     substrate = models.ForeignKey(Substrate, blank=True, null=True, on_delete= models.CASCADE)
+
+    @property
+    def json_details(self):
+        obj = next(fk for fk in [self.plant_species, self.plant_genus, self.substrate] if fk is not None)
+        return {
+            'observationType': obj.__class__.__name__,
+            'name': str(obj)
+        }
+
+    @property
+    def observation_type(self):
+        if self.plant_species:
+            return 'plant_species'
+        elif self.plant_genus:
+            return 'plant_genus'
+        else:
+            return 'substrate'
 
     def clean(self):
         errors = {}  # we aggregate errors for a complete output
