@@ -774,10 +774,17 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
     def has_pictures(self):
         return self.speciespicture_set.exists()
 
+    @property
+    def has_observations(self):
+        return self.observation_set.exists()
+
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
+            # Special case for "observed on". We may have host plant / substrate data without text or pictures
+            if section_name == 'observed_on' and self.has_observations:
+                return True
 
-            # We have a section for a species if we have either text or pictures for it
+            # Normal case: We have a section for a species if we have either text or pictures for it
             if (self.get_text_for_section(section_name) != '') or (self.get_pictures_for_section(section_name).count() > 0):
                 return True
 
