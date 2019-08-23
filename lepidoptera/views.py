@@ -10,8 +10,8 @@ from django.shortcuts import render, get_object_or_404
 
 from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, HostPlantSpecies, \
-    HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, Observation, SpeciesPicture, Photographer, \
-    ALL_LEPDIOPTERA_TAXON_MODELS
+    HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, SpeciesPicture, Photographer, \
+    ALL_LEPDIOPTERA_TAXON_MODELS, SubstrateObservation, PlantSpeciesObservation, PlantGenusObservation
 
 
 def home_page(request):
@@ -73,9 +73,9 @@ def species_page(request, species_id):
 
     context = {
         'taxon': species,
-        'substrate_observations': Observation.objects.filter(species=species, substrate__isnull=False),
-        'plant_species_observations': Observation.objects.filter(species=species, plant_species__isnull=False),
-        'plant_genus_observations': Observation.objects.filter(species=species, plant_genus__isnull=False),
+        'substrate_observations': SubstrateObservation.objects.filter(species=species),
+        'plant_species_observations': PlantSpeciesObservation.objects.filter(species=species),
+        'plant_genus_observations': PlantGenusObservation.objects.filter(species=species),
         'all_provinces': Province.objects.all(),
         'all_timeperiods': TimePeriod.objects.all(),
 

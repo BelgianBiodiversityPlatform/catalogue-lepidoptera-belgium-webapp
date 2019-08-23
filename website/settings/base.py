@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'markdownx',
     'imagekit',
     'denorm',
+    'ordered_model',
 
     'lepidoptera'
 ]

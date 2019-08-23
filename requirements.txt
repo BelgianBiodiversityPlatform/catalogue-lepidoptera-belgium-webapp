@@ -9,3 +9,4 @@ django-modeltranslation==0.13
 django-imagekit==4.0.2
 -e git://github.com/django-denorm/django-denorm@57bd310ad2f97aebb51794f59c60f342ccacab33#egg=denorm
 requests==2.20.0
+django-ordered-model==3.3.0

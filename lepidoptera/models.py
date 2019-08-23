@@ -1,3 +1,5 @@
+from itertools import chain
+
 from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -10,6 +12,7 @@ from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
 from markdownx.utils import markdownify
+from ordered_model.models import OrderedModel
 
 
 def model_field_in_all_available_languages(languages, model_instance, field_name):
@@ -136,7 +139,7 @@ class HostPlantTaxonomicModel(CommonTaxonomicModel):
 class Substrate(AdminChangeUrlMixin, models.Model):
     name = models.CharField(max_length=255)
 
-    lepidoptera_species = models.ManyToManyField('Species', through='Observation')
+    lepidoptera_species = models.ManyToManyField('Species', through='SubstrateObservation')
 
     def html_str(self):
         return self.__str__()
@@ -776,7 +779,8 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
 
     @property
     def has_observations(self):
-        return self.observation_set.exists()
+        return (self.plantspeciesobservation_set.exists() or self.plantgenusobservation_set.exists()
+                or self.substrateobservation_set.exists())
 
     def has_content_for_section(self, section_name):
         if section_name in SPECIES_PAGE_SECTIONS:  # Plausible requested section.
@@ -840,7 +844,11 @@ class Species(DisplayOrderNavigable, ParentForAdminListMixin, TaxonomicModelWith
         json_base = self.json_for_species_lists
 
         json_base['is_synonym'] = self.is_synonym
-        json_base['observations'] = [o.json_details for o in self.observation_set.all()]
+
+        all_observations = chain(self.plantspeciesobservation_set.all(), self.plantgenusobservation_set.all(),
+                                 self.substrateobservation_set.all())
+
+        json_base['observations'] = [o.json_details for o in all_observations]
 
         return json_base
 
@@ -927,7 +935,7 @@ class HostPlantGenus(HostPlantTaxonomicModel):
     family = models.ForeignKey(HostPlantFamily, on_delete=models.CASCADE)
     author = models.CharField(max_length=255, blank=True)
 
-    lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+    lepidoptera_species = models.ManyToManyField(Species, through='PlantGenusObservation')
 
     def get_absolute_url(self):
         return reverse('hostplant_genus_page', kwargs={'genus_id': str(self.id)})
@@ -951,7 +959,7 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
     author = models.CharField(max_length=255, blank=True)
     genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
 
-    lepidoptera_species = models.ManyToManyField(Species, through='Observation')
+    lepidoptera_species = models.ManyToManyField(Species, through='PlantSpeciesObservation')
 
     # Denormalized field for better performance when calling __str__() multiple times
     genus_name = models.CharField(max_length=255, blank=True)
@@ -997,49 +1005,49 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
         self.__original_genus = self.genus
 
 
-class Observation(models.Model):
-    """A (lepidoptera) species has been seen on either a plant species, either a plant genus, or a Substrate"""
+class PlantSpeciesObservation(OrderedModel):
+    """A (lepidoptera) species has been seen on a plant species"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
-
     plant_species = models.ForeignKey(HostPlantSpecies, blank=True, null=True, on_delete=models.CASCADE)
-    plant_genus = models.ForeignKey(HostPlantGenus, blank=True, null=True, on_delete=models.CASCADE)
-    substrate = models.ForeignKey(Substrate, blank=True, null=True, on_delete= models.CASCADE)
+
+    order_with_respect_to = 'species'
 
     @property
     def json_details(self):
-        obj = next(fk for fk in [self.plant_species, self.plant_genus, self.substrate] if fk is not None)
         return {
-            'observationType': obj.__class__.__name__,
-            'name': str(obj)
+            'observationType': 'PlantSpecies',
+            'name': str(self.plant_species)
         }
 
+
+class PlantGenusObservation(OrderedModel):
+    """A (lepidoptera) species has been seen on a plant genus"""
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+    plant_genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
+
+    order_with_respect_to = 'species'
+
     @property
-    def observation_type(self):
-        if self.plant_species:
-            return 'plant_species'
-        elif self.plant_genus:
-            return 'plant_genus'
-        else:
-            return 'substrate'
+    def json_details(self):
+        return {
+            'observationType': 'PlantGenus',
+            'name': str(self.plant_genus)
+        }
 
-    def clean(self):
-        errors = {}  # we aggregate errors for a complete output
 
-        # Should be linked to either a plant species, a plant genus or a substrate
-        fields = [self.plant_species_id, self.plant_genus_id, self.substrate_id]
-        if len([field for field in fields if field is not None]) != 1:
-            msg = 'Choose a plant species OR a genus OR a substrate'
-            errors['plant_species'] = ValidationError(msg, code='invalid')
-            errors['plant_genus'] = ValidationError(msg, code='invalid')
-            errors['substrate'] = ValidationError(msg, code='invalid')
+class SubstrateObservation(OrderedModel):
+    """A (lepidoptera) species has been seen on a substrate"""
+    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+    substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
 
-        if errors:
-            raise ValidationError(errors)
+    order_with_respect_to = 'species'
 
-    def save(self, *args, **kwargs):
-        # Let's make sure model.clean() is called on each save (enable validation also for import script)
-        self.full_clean()
-        return super(Observation, self).save(*args, **kwargs)
+    @property
+    def json_details(self):
+        return {
+            'observationType': 'Substrate',
+            'name': str(self.substrate)
+        }
 
 
 class Province(models.Model):

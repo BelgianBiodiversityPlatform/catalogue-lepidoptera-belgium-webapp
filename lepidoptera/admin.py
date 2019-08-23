@@ -13,11 +13,12 @@ from markdownx import models
 
 from modeltranslation.admin import TranslationAdmin
 from markdownx.admin import MarkdownxModelAdmin
+from ordered_model.admin import OrderedTabularInline, OrderedInlineModelAdminMixin
 
 from lepidoptera.templates.widgets import LepidopteraAdminMarkdownxWidget
 from .models import Family, Subfamily, Tribus, Genus, Subgenus, Species, Province, TimePeriod, SpeciesPresence, \
-    PageFragment, Observation, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, \
-    Publication, SpeciesPicture, Photographer
+    PageFragment, HostPlantSpecies, HostPlantGenus, HostPlantFamily, Substrate, Journal, Publication, SpeciesPicture, \
+    Photographer, PlantSpeciesObservation, PlantGenusObservation, SubstrateObservation
 
 admin.site.site_header = '{} - Administration interface'.format(settings.WEBSITE_NAME)
 
@@ -126,8 +127,31 @@ class SpeciesPresenceInline(admin.TabularInline):
     model = SpeciesPresence
 
 
-class ObservationsInline(admin.TabularInline):
-    model = Observation
+class PlantSpeciesObservationsInline(OrderedTabularInline):
+    model = PlantSpeciesObservation
+
+    fields = ('plant_species', 'order', 'move_up_down_links',)
+    readonly_fields = ('order', 'move_up_down_links',)
+    extra = 1
+    ordering = ('order',)
+
+
+class PlantGenusObservationsInline(OrderedTabularInline):
+    model = PlantGenusObservation
+
+    fields = ('plant_genus', 'order', 'move_up_down_links',)
+    readonly_fields = ('order', 'move_up_down_links',)
+    extra = 1
+    ordering = ('order',)
+
+
+class SubstratesObservationsInline(OrderedTabularInline):
+    model = SubstrateObservation
+
+    fields = ('substrate', 'order', 'move_up_down_links',)
+    readonly_fields = ('order', 'move_up_down_links',)
+    extra = 1
+    ordering = ('order',)
 
 
 class SpeciesPicturesInline(admin.TabularInline):
@@ -230,7 +254,7 @@ class SubgenusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAd
 
 
 @admin.register(Species)
-class SpeciesAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SpeciesAdmin(OrderedInlineModelAdminMixin, SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
@@ -281,7 +305,8 @@ class SpeciesAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdm
         })
     )
 
-    inlines = [SpeciesPresenceInline, ObservationsInline, SpeciesPicturesInline]
+    inlines = [SpeciesPresenceInline, PlantSpeciesObservationsInline, PlantGenusObservationsInline,
+               SubstratesObservationsInline, SpeciesPicturesInline]
 
 
 @admin.register(Province)
@@ -297,11 +322,6 @@ class TimePeriodAdmin(admin.ModelAdmin):
 @admin.register(SpeciesPresence)
 class SpeciesPresencePeriodAdmin(admin.ModelAdmin):
     pass
-
-
-@admin.register(Observation)
-class ObservationAdmin(admin.ModelAdmin):
-    list_display = ('species', 'plant_species', 'plant_genus', 'substrate')
 
 
 @admin.register(HostPlantSpecies)
