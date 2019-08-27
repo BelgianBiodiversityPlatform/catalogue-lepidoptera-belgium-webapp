@@ -1,4 +1,4 @@
-import subprocess
+import subprocess  # nosec
 
 
 def get_source_version_info():

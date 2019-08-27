@@ -11,7 +11,7 @@ DATABASES = {
 }
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'SOMETHING_RANDOM_AND_SECRET'
+SECRET_KEY = 'SOMETHING_RANDOM_AND_SECRET'  # nosec
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
