@@ -11,7 +11,7 @@ from django.shortcuts import render, get_object_or_404
 from lepidoptera.utils import get_source_version_info
 from .models import Family, Subfamily, Species, Tribus, Genus, Subgenus, Province, TimePeriod, HostPlantSpecies, \
     HostPlantGenus, HostPlantFamily, HostPlantTaxonomicModel, Substrate, SpeciesPicture, Photographer, \
-    ALL_LEPDIOPTERA_TAXON_MODELS, SubstrateObservation, PlantSpeciesObservation, PlantGenusObservation
+    ALL_LEPDIOPTERA_TAXON_MODELS, SubstrateObservation, PlantSpeciesObservation, PlantGenusObservation, Publication
 
 
 def home_page(request):
@@ -223,6 +223,12 @@ def autocomplete(request, query_string):
             results_nodup.append(d)
 
     return JsonResponse(results_nodup, safe=False)
+
+
+def references_page(request):
+    publications = Publication.objects.all().order_by('author', 'year')
+
+    return render(request, 'lepidoptera/references.html', {'publications': publications})
 
 
 def gallery_page(request):

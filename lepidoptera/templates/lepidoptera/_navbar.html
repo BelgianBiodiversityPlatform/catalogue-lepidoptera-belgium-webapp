@@ -11,6 +11,7 @@
         {% url 'home' as home_url %}
         {% url 'about' as about_url %}
         {% url 'browse' as browse_url %}
+        {% url 'references' as references_url %}
         {% url 'gallery' as gallery_url %}
 
         <ul class="navbar-nav mr-auto">
@@ -30,6 +31,12 @@
                 {% include 'lepidoptera/_nav_entry.html' with active_link=True label="Gallery" href=gallery_url oi_icon_identifier="oi-image" %}
             {% else %}
                 {% include 'lepidoptera/_nav_entry.html' with active_link=False label="Gallery" href=gallery_url oi_icon_identifier="oi-image" %}
+            {% endif %}
+
+            {% if request.path == references_url %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=True label="References" href=references_url oi_icon_identifier="oi-book" %}
+            {% else %}
+                {% include 'lepidoptera/_nav_entry.html' with active_link=False label="References" href=references_url oi_icon_identifier="oi-book" %}
             {% endif %}
 
             {% if request.path == about_url %}

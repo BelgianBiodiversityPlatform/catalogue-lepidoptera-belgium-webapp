@@ -230,3 +230,7 @@ div.v-popover {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.publication-details {
+    padding-left: 40px;
+}
