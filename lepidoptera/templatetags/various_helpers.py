@@ -1,10 +1,9 @@
 from django import template
 from django.template import TemplateSyntaxError
-from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from markdownx.utils import markdownify
 
-from lepidoptera.models import SpeciesPresence, SPECIES_PAGE_SECTIONS, model_field_in_all_available_languages
+from lepidoptera.models import SPECIES_PAGE_SECTIONS, model_field_in_all_available_languages
 
 register = template.Library()
 
