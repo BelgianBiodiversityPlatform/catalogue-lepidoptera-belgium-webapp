@@ -352,11 +352,12 @@ class JournalAdmin(admin.ModelAdmin):
 
 @admin.register(Publication)
 class PublicationAdmin(admin.ModelAdmin):
-    readonly_fields = ('verbatim_id',)
+    readonly_fields = ('verbatim_id', 'markdown_reference')
     search_fields = ['title', 'author']
 
     list_display = ('title', 'author', 'year', 'journal')
     fields = (
+        'markdown_reference',
         'author',
         'year',
         'title',
