@@ -48,9 +48,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="{% static 'lepidoptera/bootstrap.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.min.js"></script>
 <script src="{% static 'lepidoptera/_language_selector.js' %}"></script>
@@ -62,6 +60,10 @@
 <script src="{% static 'lepidoptera/find_polyfill.js' %}">  </script>
 <script>
     $(function () {
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
         var compare_suggestion = function (a, b) {
             if (a.value < b.value)
                 return -1;

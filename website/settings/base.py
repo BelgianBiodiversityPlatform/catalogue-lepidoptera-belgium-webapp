@@ -153,5 +153,9 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 
 FILE_UPLOAD_PERMISSIONS = 0o644
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'lepidoptera.markdown_extensions.publications'
+]
+
 SHOW_TEST_VERSION_WARNING = False  # If true, all pages (also Admin) will warn that this is a test version and that the production website is elsewhere.
 PRODUCTION_SITE_URL = "http://projects.biodiversity.be/lepidoptera"

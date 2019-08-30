@@ -3,7 +3,7 @@ Pillow==5.0.0
 gunicorn==19.7.1
 psycopg2==2.7.3.2
 pytz==2017.3
-django-markdownx==2.0.23
+django-markdownx==2.0.28
 django-settings-export==1.2.1
 django-modeltranslation==0.13
 django-imagekit==4.0.2

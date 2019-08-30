@@ -1,6 +1,6 @@
 {% extends "lepidoptera/base.html" %}
 
-{% block title %}Gallery{% endblock %}
+{% block title %}References{% endblock %}
 
 {% block meta_description %}List of references from the literature{% endblock %}
 
@@ -8,10 +8,10 @@
     <h2>Complete references list</h2>
 
     {% for publication in publications %}
-        <h6 class="font-weight-bold">{{ publication.author }} {{ publication.year }}</h6>
-        <p class="publication-details text-muted">{{ publication.title }} — {{ publication.journal.title }} {{ publication.volume }}
-            {% if publication.issue %}({{ publication.issue }}){% endif %}: {{ publication.page_numbers }}.
-        </p>
+        <h6 class="font-weight-bold">{{ publication.author }} {{ publication.year }}
+            {% if request.user.is_staff %}<span class="small float-right text-danger">{{ publication.markdown_reference }}</span>{% endif %}
+        </h6>
+        <p class="publication-details text-muted">{{ publication.formatted_reference }}</p>
     {% endfor %}
 
 {% endblock %}

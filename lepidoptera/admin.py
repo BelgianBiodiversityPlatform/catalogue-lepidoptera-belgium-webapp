@@ -162,7 +162,8 @@ class SpeciesPicturesInline(admin.TabularInline):
 
     thumbnail = AdminThumbnail(image_field='image_admin_thumbnail', template='lepidoptera/imagekit/admin/thumbnail.html')
 
-    fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side', 'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
+    fields = ('thumbnail', 'photographer', 'image', 'image_subject', 'specimen_stage', 'specimen_sex', 'side',
+              'gallery_order', 'date', 'locality', 'comment', 'verbatim_image_filename')
 
     formfield_overrides = {
         models.MarkdownxField: {'widget': LepidopteraAdminMarkdownxWidget(attrs={'rows': 3, 'cols': 10})},
@@ -352,9 +353,9 @@ class JournalAdmin(admin.ModelAdmin):
 @admin.register(Publication)
 class PublicationAdmin(admin.ModelAdmin):
     readonly_fields = ('verbatim_id',)
-    search_fields = ['title', ]
+    search_fields = ['title', 'author']
 
-    list_display = ('title', 'author', 'journal')
+    list_display = ('title', 'author', 'year', 'journal')
     fields = (
         'author',
         'year',

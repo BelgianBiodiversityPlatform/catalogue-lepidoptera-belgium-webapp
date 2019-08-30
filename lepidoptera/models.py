@@ -1114,8 +1114,25 @@ class Publication(models.Model):
     def __str__(self):
         return f'{self.author}, {self.year}, {self.title}, {self.journal.title}, {self.volume}, {self.page_numbers}'
 
+    @property
+    def formatted_reference_author_year(self):
+        return f"{self.year} {self.author}. {self.formatted_reference}"
+
+    @property
+    def formatted_reference(self):
+        issue_str = ""
+        if self.issue:
+            issue_str = f"({self.issue})"
+
+        return f"{self.title} — {self.journal.title} {self.volume} {issue_str}: {self.page_numbers}."
+
+    @denormalized(models.CharField, max_length=276)
+    def markdown_reference(self):
+        return f"[[PUB: {self.author} {self.year}]]"
+
     class Meta:
         ordering = ['author', 'year']
+        unique_together = ['author', 'year']
 
 
 class PageFragment(models.Model):
