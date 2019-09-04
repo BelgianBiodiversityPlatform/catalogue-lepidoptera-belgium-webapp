@@ -6,7 +6,8 @@ from lepidoptera.models import Publication
 
 
 class PublicationsInlineProcessor(InlineProcessor):
-    def _tooltip_html_content(self, publication_markdwon_reference):
+    @staticmethod
+    def _tooltip_html_content(publication_markdwon_reference):
         try:
             pub = Publication.objects.get(markdown_reference=publication_markdwon_reference)
         except Publication.DoesNotExist:
@@ -20,9 +21,8 @@ class PublicationsInlineProcessor(InlineProcessor):
         a.set('href', '#')
         a.set('data-toggle', 'tooltip')
         full_markdown_ref = m.group(0) # also incuding [[PUB ]]
-        a.set('title', self._tooltip_html_content(full_markdown_ref))
+        a.set('title', PublicationsInlineProcessor._tooltip_html_content(full_markdown_ref))
         return a, m.start(0), m.end(0)
-
 
 
 class PublicationsExtension(Extension):
