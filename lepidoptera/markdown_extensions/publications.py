@@ -20,7 +20,7 @@ class PublicationsInlineProcessor(InlineProcessor):
         a.text = m.group(1)
         a.set('href', '#')
         a.set('data-toggle', 'tooltip')
-        full_markdown_ref = m.group(0) # also incuding [[PUB ]]
+        full_markdown_ref = m.group(0) # also including [[PUB ]]
         a.set('title', PublicationsInlineProcessor._tooltip_html_content(full_markdown_ref))
         return a, m.start(0), m.end(0)
 
