@@ -12,7 +12,6 @@ from imagekit.models import ImageSpecField
 from markdownx.models import MarkdownxField
 from imagekit.processors import ResizeToFit
 from markdownx.utils import markdownify
-from ordered_model.models import OrderedModel
 
 
 def model_field_in_all_available_languages(languages, model_instance, field_name):
@@ -1005,12 +1004,10 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
         self.__original_genus = self.genus
 
 
-class PlantSpeciesObservation(OrderedModel):
+class PlantSpeciesObservation(models.Model):
     """A (lepidoptera) species has been seen on a plant species"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     plant_species = models.ForeignKey(HostPlantSpecies, blank=True, null=True, on_delete=models.CASCADE)
-
-    order_with_respect_to = 'species'
 
     @property
     def json_details(self):
@@ -1020,12 +1017,10 @@ class PlantSpeciesObservation(OrderedModel):
         }
 
 
-class PlantGenusObservation(OrderedModel):
+class PlantGenusObservation(models.Model):
     """A (lepidoptera) species has been seen on a plant genus"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     plant_genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
-
-    order_with_respect_to = 'species'
 
     @property
     def json_details(self):
@@ -1035,12 +1030,10 @@ class PlantGenusObservation(OrderedModel):
         }
 
 
-class SubstrateObservation(OrderedModel):
+class SubstrateObservation(models.Model):
     """A (lepidoptera) species has been seen on a substrate"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
-
-    order_with_respect_to = 'species'
 
     @property
     def json_details(self):
