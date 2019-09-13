@@ -1,3 +1,4 @@
+from adminsortable.admin import NonSortableParentAdmin, SortableTabularInline
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -126,15 +127,15 @@ class SpeciesPresenceInline(admin.TabularInline):
     model = SpeciesPresence
 
 
-class PlantSpeciesObservationsInline(admin.TabularInline):
+class PlantSpeciesObservationsInline(SortableTabularInline):
     model = PlantSpeciesObservation
 
 
-class PlantGenusObservationsInline(admin.TabularInline):
+class PlantGenusObservationsInline(SortableTabularInline):
     model = PlantGenusObservation
 
 
-class SubstratesObservationsInline(admin.TabularInline):
+class SubstratesObservationsInline(SortableTabularInline):
     model = SubstrateObservation
 
 
@@ -239,7 +240,7 @@ class SubgenusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAd
 
 
 @admin.register(Species)
-class SpeciesAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SpeciesAdmin(NonSortableParentAdmin, SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')

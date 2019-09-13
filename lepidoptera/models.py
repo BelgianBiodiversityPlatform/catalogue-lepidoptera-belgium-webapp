@@ -1,5 +1,7 @@
 from itertools import chain
 
+from adminsortable.fields import SortableForeignKey
+from adminsortable.models import SortableMixin
 from denorm import denormalized, depend_on_related
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -1004,10 +1006,15 @@ class HostPlantSpecies(HostPlantTaxonomicModel):
         self.__original_genus = self.genus
 
 
-class PlantSpeciesObservation(models.Model):
+class PlantSpeciesObservation(SortableMixin):
     """A (lepidoptera) species has been seen on a plant species"""
-    species = models.ForeignKey(Species, on_delete=models.CASCADE)
+    species = SortableForeignKey(Species, on_delete=models.CASCADE)
     plant_species = models.ForeignKey(HostPlantSpecies, blank=True, null=True, on_delete=models.CASCADE)
+
+    the_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+
+    class Meta:
+        ordering = ['the_order']
 
     @property
     def json_details(self):
@@ -1017,10 +1024,15 @@ class PlantSpeciesObservation(models.Model):
         }
 
 
-class PlantGenusObservation(models.Model):
+class PlantGenusObservation(SortableMixin):
     """A (lepidoptera) species has been seen on a plant genus"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     plant_genus = models.ForeignKey(HostPlantGenus, on_delete=models.CASCADE)
+
+    the_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+
+    class Meta:
+        ordering = ['the_order']
 
     @property
     def json_details(self):
@@ -1030,10 +1042,15 @@ class PlantGenusObservation(models.Model):
         }
 
 
-class SubstrateObservation(models.Model):
+class SubstrateObservation(SortableMixin):
     """A (lepidoptera) species has been seen on a substrate"""
     species = models.ForeignKey(Species, on_delete=models.CASCADE)
     substrate = models.ForeignKey(Substrate, on_delete=models.CASCADE)
+
+    the_order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+
+    class Meta:
+        ordering = ['the_order']
 
     @property
     def json_details(self):
