@@ -85,6 +85,10 @@ class SaveAndViewOnSiteMixin(object):
             return res
 
 
+class SaveAndViewOnSiteSortableMixin(SaveAndViewOnSiteMixin):
+    """Same as SaveAndViewOnSiteMixin, but tweaked to be compatible with django-admin-sortable"""
+    change_form_template = "lepidoptera/admin/change_form_save_view_on_site_sortable.html"
+
 class NotNullFilter(admin.SimpleListFilter):
     title = _('Filter title not set')
 
@@ -169,7 +173,7 @@ is_synonym.boolean = True
 
 
 @admin.register(Family)
-class FamilyAdmin(SaveAndViewOnSiteMixin,TranslationAdmin, MyMarkdownxModelAdmin):
+class FamilyAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name']
 
     readonly_fields = ('verbatim_family_id', 'wikidata_id')
@@ -240,7 +244,7 @@ class SubgenusAdmin(SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAd
 
 
 @admin.register(Species)
-class SpeciesAdmin(NonSortableParentAdmin, SaveAndViewOnSiteMixin, TranslationAdmin, MyMarkdownxModelAdmin):
+class SpeciesAdmin(SaveAndViewOnSiteSortableMixin, NonSortableParentAdmin,  TranslationAdmin, MyMarkdownxModelAdmin):
     search_fields = ['name', 'code']
 
     readonly_fields = ('verbatim_species_number', 'binomial_name')
