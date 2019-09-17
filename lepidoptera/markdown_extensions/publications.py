@@ -27,7 +27,7 @@ class PublicationsInlineProcessor(InlineProcessor):
 
 class PublicationsExtension(Extension):
     def extendMarkdown(self, md):
-        PUBLICATIONS_RE = r'\[\[PUB:([\w0-9_ -.]+)\]\]'
+        PUBLICATIONS_RE = r"\[\[PUB:([\w0-9_ -.–]+)\]\]"
 
         publicationPattern = PublicationsInlineProcessor(PUBLICATIONS_RE)
 
