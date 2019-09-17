@@ -1138,7 +1138,7 @@ class Publication(models.Model):
 
     @denormalized(models.CharField, max_length=276)
     def markdown_reference(self):
-        return f"[[PUB: {self.author} {self.year}]]"
+        return f"[[PUB:{self.author} {self.year}]]"
 
     class Meta:
         ordering = ['author', 'year']
